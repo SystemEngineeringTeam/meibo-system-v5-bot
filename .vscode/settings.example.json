@@ -1,0 +1,22 @@
+{
+  "files.associations": {
+    "wrangler.json": "jsonc"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.*.ts",
+    "tsconfig.json": "tsconfig.*.json",
+    "package.json": "bun.lock",
+    ".env": ".env.*"
+  },
+  "eslint.useFlatConfig": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
+}
