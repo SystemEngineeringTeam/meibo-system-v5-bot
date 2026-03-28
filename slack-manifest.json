@@ -1,0 +1,53 @@
+{
+	"_metadata": {
+		"major_version": 1,
+		"minor_version": 0
+	},
+	"display_information": {
+		"name": "名簿管理BOT"
+	},
+	"features": {
+		"bot_user": {
+			"display_name": "meibo-bot",
+			"always_online": true
+		},
+		"shortcuts": [
+			{
+				"name": "Health Check!",
+				"type": "global",
+				"callback_id": "health-check",
+				"description": "起動確認用ショートカット"
+			}
+		],
+		"slash_commands": [
+			{
+				"command": "/health-check",
+				"description": "起動確認用スラッシュコマンド",
+				"url": "https://XXX.trycloudflare.com/health-check"
+			}
+		]
+	},
+	"oauth_config": {
+		"scopes": {
+			"bot": [
+				"app_mentions:read",
+				"chat:write",
+				"chat:write.public",
+				"commands"
+			]
+		}
+	},
+	"settings": {
+		"event_subscriptions": {
+			"request_url": "https://XXX.trycloudflare.com/",
+			"bot_events": [
+				"app_mention"
+			]
+		},
+		"interactivity": {
+			"is_enabled": true,
+			"request_url": "https://XXX.trycloudflare.com/",
+			"message_menu_options_url": "https://XXX.trycloudflare.com/"
+		}
+	}
+}
