@@ -1,16 +1,13 @@
-import type { SlackEdgeAppEnv } from 'slack-cloudflare-workers';
-import { SlackApp } from 'slack-cloudflare-workers';
+import { Hono } from 'hono';
+import { restApp } from './rest';
+import { slackApp } from './slack';
 
-export default {
-  async fetch(
-    request: Request,
-    env: SlackEdgeAppEnv,
-    ctx: ExecutionContext,
-  ): Promise<Response> {
-    const app = new SlackApp({ env });
+const app = new Hono();
 
-    app.command('/health-check', async () => 'Hi! I am healthy!');
+// REST API
+app.route('/rest', restApp);
 
-    return await app.run(request, ctx);
-  },
-};
+// Slack用エンドポイント
+app.route('/slack', slackApp);
+
+export default { fetch: app.fetch };

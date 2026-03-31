@@ -11,21 +11,17 @@
 			"display_name": "meibo-bot",
 			"always_online": true
 		},
-		"shortcuts": [
-			{
-				"name": "Health Check!",
-				"type": "global",
-				"callback_id": "health-check",
-				"description": "起動確認用ショートカット"
-			}
-		],
 		"slash_commands": [
 			{
 				"command": "/health-check",
 				"description": "起動確認用スラッシュコマンド",
-				"url": "https://XXX.trycloudflare.com/health-check"
+				"url": "https://quantity-peak-fabulous-lady.trycloudflare.com"
 			}
-		]
+		],
+		"app_home": {
+			"messages_tab_enabled": true,
+			"messages_tab_read_only_enabled": false
+		}
 	},
 	"oauth_config": {
 		"scopes": {
@@ -33,21 +29,26 @@
 				"app_mentions:read",
 				"chat:write",
 				"chat:write.public",
-				"commands"
+				"commands",
+				"users:read",
+				"im:write",
+				"im:history"
 			]
 		}
 	},
 	"settings": {
 		"event_subscriptions": {
-			"request_url": "https://XXX.trycloudflare.com/",
+			"request_url": "https://quantity-peak-fabulous-lady.trycloudflare.com",
 			"bot_events": [
-				"app_mention"
+				"app_mention",
+				"team_join",
+				"message.im"
 			]
 		},
 		"interactivity": {
 			"is_enabled": true,
-			"request_url": "https://XXX.trycloudflare.com/",
-			"message_menu_options_url": "https://XXX.trycloudflare.com/"
+			"request_url": "https://quantity-peak-fabulous-lady.trycloudflare.com",
+			"message_menu_options_url": "https://quantity-peak-fabulous-lady.trycloudflare.com"
 		}
 	}
 }
