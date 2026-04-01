@@ -16,7 +16,7 @@
 	],
 	"kv_namespaces": [
 		{
-			"binding": "STATE",
+			"binding": "LINK_KV",
 			"id": "9661c824622e4eef9452ae938f70168b"
 		}
 	]

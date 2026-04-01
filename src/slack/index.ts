@@ -1,9 +1,9 @@
 import type { SlackEdgeAppEnv } from 'slack-cloudflare-workers';
 import { Hono } from 'hono';
 import { SlackApp } from 'slack-cloudflare-workers';
-import { healthCheckHandler } from './commands/health-check';
-import { messageHandler } from './events/message';
-import { teamJoinHandler } from './events/team-join';
+import { healthCheckHandler } from './handlers/commands/health-check';
+import { messageHandler } from './handlers/events/message';
+import { teamJoinHandler } from './handlers/events/team-join';
 
 export const slackApp = new Hono<{ Bindings: SlackEdgeAppEnv }>();
 

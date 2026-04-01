@@ -1,11 +1,15 @@
+import type { HonoEnv } from './types/hono';
 import { Hono } from 'hono';
-import { restApp } from './rest';
+import { authMiddleware, loggedInHandler, loginHandler } from './auth';
 import { slackApp } from './slack';
 
-const app = new Hono();
+const app = new Hono<HonoEnv>();
 
-// REST API
-app.route('/rest', restApp);
+app.get('/', async (c) => c.text('Hello, World!'));
+
+app.use(authMiddleware);
+app.get('/login', loginHandler);
+app.get('/logged-in', loggedInHandler);
 
 // Slack用エンドポイント
 app.route('/slack', slackApp);
