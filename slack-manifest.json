@@ -15,7 +15,7 @@
 			{
 				"command": "/health-check",
 				"description": "起動確認用スラッシュコマンド",
-				"url": "https://quantity-peak-fabulous-lady.trycloudflare.com"
+				"url": "https://idea-overcome-weed-purple.trycloudflare.com/slack"
 			}
 		],
 		"app_home": {
@@ -38,7 +38,7 @@
 	},
 	"settings": {
 		"event_subscriptions": {
-			"request_url": "https://quantity-peak-fabulous-lady.trycloudflare.com",
+			"request_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack",
 			"bot_events": [
 				"app_mention",
 				"team_join",
@@ -47,8 +47,8 @@
 		},
 		"interactivity": {
 			"is_enabled": true,
-			"request_url": "https://quantity-peak-fabulous-lady.trycloudflare.com",
-			"message_menu_options_url": "https://quantity-peak-fabulous-lady.trycloudflare.com"
+			"request_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack",
+			"message_menu_options_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack"
 		}
 	}
 }
