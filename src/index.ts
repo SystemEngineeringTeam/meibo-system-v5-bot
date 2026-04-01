@@ -8,13 +8,13 @@ const app = new Hono<HonoEnv>();
 
 app.use(injectDbMiddleware);
 
-app.get('/', async (c) => c.text('Hello, World!'));
-
-app.use(authMiddleware);
-app.get('/login', loginHandler);
-app.get('/logged-in', loggedInHandler);
-
 // Slack用エンドポイント
 app.route('/slack', slackApp);
+
+app.get('/', async (c) => c.text('Hello, World!'));
+
+app.get('/login', loginHandler);
+app.use(authMiddleware);
+app.get('/logged-in', loggedInHandler);
 
 export default { fetch: app.fetch };

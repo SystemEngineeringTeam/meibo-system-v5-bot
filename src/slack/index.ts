@@ -7,11 +7,13 @@ import { teamJoinHandler } from './handlers/events/team-join';
 
 export const slackApp = new Hono<HonoSlackAppBindings>();
 
-slackApp.all('/slack', async (c) => {
+slackApp.all('/', async (c) => {
   const slackApp = new SlackApp({ env: c.env });
 
   slackApp.command('/health-check', healthCheckHandler);
   slackApp.event('team_join', teamJoinHandler);
+  // slackApp.event('team_access_granted', );
+  // slackApp.event('team_access_revoked', );
   slackApp.event('message', messageHandler);
 
   return await slackApp.run(c.req.raw, c.executionCtx);
