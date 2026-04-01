@@ -24,7 +24,8 @@
     {
       "binding": "D1",
       "database_name": "meibo-system-v5-bot",
-      "database_id": "c3c214b5-1204-4e42-a7ab-6cc733dc9144"
+      "database_id": "c3c214b5-1204-4e42-a7ab-6cc733dc9144",
+			"migrations_dir": "drizzle/migrations"
     }
   ]
   /**

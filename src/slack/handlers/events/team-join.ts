@@ -14,7 +14,7 @@ export const teamJoinHandler: EventLazyHandler<'team_join', HonoSlackAppEnv> = a
     console.error('Failed to insert user into database:', error);
     await context.client.chat.postMessage({
       channel: userId,
-      text: 'Welcome! :tada:\nユーザの登録に失敗しました。管理者に連絡してください。\n名簿システム',
+      text: 'Welcome! :tada:\nユーザの登録に失敗しました。管理者に連絡してください',
     });
     return;
   }
