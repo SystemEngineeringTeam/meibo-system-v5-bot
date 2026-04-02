@@ -44,11 +44,8 @@
 			]
 		}
 	},
-	"exclude": [
-		"test"
-	],
 	"include": [
-		"worker-configuration.d.ts",
+		"src/worker-configuration.d.ts",
 		"src/**/*.ts",
 		"vitest.config.mts",
 	]

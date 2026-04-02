@@ -7,7 +7,7 @@
     "*.ts": "${capture}.*.ts",
     "tsconfig.json": "tsconfig.*.json",
     "package.json": "bun.lock",
-    ".env": ".env.*"
+    ".dev.vars": ".dev.vars.*"
   },
   "eslint.useFlatConfig": true,
   "[typescript]": {
@@ -18,5 +18,11 @@
   },
   "[jsonc]": {
     "editor.defaultFormatter": "vscode.json-language-features"
-  }
+  },
+	"json.schemas": [
+		{
+			"fileMatch": ["slack-manifest.json"],
+			"url": "https://raw.githubusercontent.com/slackapi/manifest-schema/main/manifest.schema.json"
+		}
+	]
 }
