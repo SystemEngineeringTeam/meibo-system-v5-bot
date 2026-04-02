@@ -5,7 +5,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "meibo-system-v5-bot",
-	"main": "src/index.ts",
+	"main": "src/index.tsx",
 	"compatibility_date": "2025-09-27",
 	"observability": {
 		"enabled": true
@@ -22,6 +22,10 @@
 		{
 			"binding": "CHANNEL_KV",
 			"id": "61882864b68347019c031e6e53ddcc40"
+		},
+		{
+			"binding": "USER_KV",
+			"id": "377ddd2491e54fda8496a450c261f444"
 		}
 	],
 	/**

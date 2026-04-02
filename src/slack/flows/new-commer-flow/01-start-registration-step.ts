@@ -23,20 +23,21 @@ export const startRegistrationStep = async (userId: string, context: SlackAppCon
     if (!channelId) throw new Error('No channel ID');
 
     // KV にユーザーIDとチャンネルIDを保存
-    await kv.put<ChannelData>(env.LINK_KV, userId, { channelId });
+    await kv.put<ChannelData>(env.CHANNEL_KV, userId, { channelId });
 
     // メッセージを送信
     await context.client.chat.postMessage({
       channel: channelId,
-      text: generateMessage(loginUrl),
+      text: generateText(loginUrl),
+      mrkdwn: true,
     });
   } catch (error) {
     console.error('Failed to send welcome DM:', error);
   }
 };
 
-function generateMessage(loginUrl: URL): string {
-  return `*【重要】部員情報を登録してください* – 名簿管理システム
+function generateText(loginUrl: URL): string {
+  return `*【重要】部員登録をしてください* – 名簿管理システム
 
 STEP 1: 下記リンクより Gmail アカウントを紐づけてください
 ログインURL: ${loginUrl.toString()}

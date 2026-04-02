@@ -31,8 +31,9 @@
 		"strict": true,
 		/* Skip type checking all .d.ts files. */
 		"skipLibCheck": true,
+		"jsxImportSource": "hono/jsx",
 		"types": [
-			"./worker-configuration.d.ts",
+			"./src/worker-configuration.d.ts",
 			"node"
 		],
 		"paths": {
@@ -47,6 +48,6 @@
 	"include": [
 		"src/worker-configuration.d.ts",
 		"src/**/*.ts",
-		"vitest.config.mts",
+		"src/**/*.tsx",
 	]
 }

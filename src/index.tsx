@@ -1,6 +1,7 @@
 import type { HonoEnv } from './types/hono';
 import { Hono } from 'hono';
 import { authMiddleware, loggedInHandler, loginHandler } from './auth';
+import PageLayout from './components/layouts/PageLayout';
 import { slackApp } from './slack';
 
 const app = new Hono<HonoEnv>();
@@ -8,7 +9,11 @@ const app = new Hono<HonoEnv>();
 // Slack用エンドポイント
 app.route('/slack', slackApp);
 
-app.get('/', async (c) => c.text('Hello, World!'));
+app.get('/', async (c) => c.render(
+  <PageLayout>
+    <h1>Hello, World!</h1>
+  </PageLayout>,
+));
 
 app.use(authMiddleware);
 app.get('/login', loginHandler);
