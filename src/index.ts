@@ -10,8 +10,8 @@ app.route('/slack', slackApp);
 
 app.get('/', async (c) => c.text('Hello, World!'));
 
-app.get('/login', loginHandler);
 app.use(authMiddleware);
+app.get('/login', loginHandler);
 app.get('/logged-in', loggedInHandler);
 
 export default { fetch: app.fetch };

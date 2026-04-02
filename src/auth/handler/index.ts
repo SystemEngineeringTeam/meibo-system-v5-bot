@@ -1,5 +1,5 @@
 import type { HonoHandler } from '@/types/hono';
-import type { LinkData } from '@/types/link';
+import type { LinkData } from '@/types/kv';
 import { login } from '@auth0/auth0-hono';
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 
@@ -21,11 +21,11 @@ export const loginHandler: HonoHandler<'/login'> = async (c) => {
   });
 
   // Auth0のログイン処理へリダイレクト
-  await login({
+  return await login({
     authorizationParams: {
       scope: 'openid profile email',
     },
-    redirectAfterLogin: '/dashboard',
+    redirectAfterLogin: '/logged-in',
     silent: false,
   })(c, async () => {});
 };
@@ -53,9 +53,7 @@ export const loggedInHandler: HonoHandler<'/logged-in'> = async (c) => {
 
   // TODO: backend に対してユーザ作成リクエストを送る
 
-  const slackUserId = data.slackUserId;
-
   // TODO: Slack Bot から連携完了のメッセージを送る
 
-  return c.text(`Linked Slack user ID: ${slackUserId}`);
+  return c.text(`Linked!!`);
 };

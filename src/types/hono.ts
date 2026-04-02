@@ -1,7 +1,7 @@
 import type { OIDCEnv } from '@auth0/auth0-hono';
 import type { Context } from 'hono';
 import type { BlankInput, H } from 'hono/types';
-import type { SlackEdgeAppEnv } from 'slack-cloudflare-workers';
+import type { AuthorizeResult, PreAuthorizeSlackAppContext, SlackAPIClient, SlackEdgeAppEnv } from 'slack-cloudflare-workers';
 
 export type HonoEnv = OIDCEnv<CloudflareBindings>;
 export type HonoContext<T extends string = string> = Context<HonoEnv, T, BlankInput>;
@@ -11,3 +11,12 @@ export type HonoSlackAppEnv = SlackEdgeAppEnv & CloudflareBindings;
 export interface HonoSlackAppBindings { Bindings: HonoSlackAppEnv }
 export type HonoSlackAppContext<T extends string = string> = Context<HonoSlackAppBindings, T, BlankInput>;
 export type SlackAppEnvWithCFBindings = SlackEdgeAppEnv & CloudflareBindings;
+
+export type SlackAppContext = PreAuthorizeSlackAppContext & {
+  client: SlackAPIClient;
+  botToken: string;
+  botId: string;
+  botUserId: string;
+  userToken?: string;
+  authorizeResult: AuthorizeResult;
+};

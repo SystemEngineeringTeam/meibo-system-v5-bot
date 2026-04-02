@@ -6,6 +6,7 @@
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev --local",
+		"dev:https": "wrangler dev --local --local-protocol=https",
 		"start": "wrangler dev",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings ./src/worker-configuration.d.ts",
 		"check": "bun lint && bun typo && bun typecheck",

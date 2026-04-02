@@ -51,7 +51,6 @@ export default antfu({
       'ts/no-unsafe-argument': 'error',
       'node/prefer-global/process': 'off',
       'ts/no-empty-object-type': 'off',
-      'func-style': ['error', 'expression'],
       'no-case-declarations': 'off',
       'regexp/no-obscure-range': ['error', { allowed: 'all' }],
       'ts/no-redeclare': 'off',

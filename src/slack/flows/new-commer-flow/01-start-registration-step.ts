@@ -1,0 +1,45 @@
+import type { SlackAppContext } from 'slack-cloudflare-workers';
+import type { HonoSlackAppEnv } from '@/types/hono';
+import type { ChannelData, LinkData } from '@/types/kv';
+import { v4 as uuidv4 } from 'uuid';
+import { kv } from '@/utils/kv';
+
+export const startRegistrationStep = async (userId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+  // ユーザIDと紐づく一意なキー
+  const key = uuidv4();
+  await kv.put<LinkData>(env.LINK_KV, key, { slackUserId: userId });
+
+  // ログインURLを生成
+  const loginUrl = new URL('/login', env.SLACK_BOT_BASE_URL!);
+  loginUrl.searchParams.set('key', key);
+
+  try {
+    // DM を開く
+    const im = await context.client.conversations.open({
+      users: userId,
+    });
+
+    const channelId = im.channel?.id;
+    if (!channelId) throw new Error('No channel ID');
+
+    // KV にユーザーIDとチャンネルIDを保存
+    await kv.put<ChannelData>(env.LINK_KV, userId, { channelId });
+
+    // メッセージを送信
+    await context.client.chat.postMessage({
+      channel: channelId,
+      text: generateMessage(loginUrl),
+    });
+  } catch (error) {
+    console.error('Failed to send welcome DM:', error);
+  }
+};
+
+function generateMessage(loginUrl: URL): string {
+  return `*【重要】部員情報を登録してください* – 名簿管理システム
+
+STEP 1: 下記リンクより Gmail アカウントを紐づけてください
+ログインURL: ${loginUrl.toString()}
+
+※このURLは一時的なもので、他の人と共有しないでください。`;
+}

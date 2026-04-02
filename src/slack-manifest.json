@@ -16,6 +16,11 @@
         "command": "/health-check",
         "description": "起動確認用スラッシュコマンド",
         "url": "https://meibo-bot-dev.sysken.net/slack"
+      },
+      {
+        "command": "/team-join-test",
+        "description": "チーム参加テスト用スラッシュコマンド",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
       }
     ],
     "app_home": {

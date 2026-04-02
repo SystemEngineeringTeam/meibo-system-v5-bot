@@ -1,20 +1,20 @@
 import type { HonoSlackAppBindings } from '@/types/hono';
 import { Hono } from 'hono';
 import { SlackApp } from 'slack-cloudflare-workers';
-import { healthCheckHandler } from './handlers/commands/health-check';
+import { healthCheckCommandHandler } from './handlers/commands/health-check';
+import { teamJoinTestCommandHandler } from './handlers/commands/team-join-test';
 import { messageHandler } from './handlers/events/message';
-import { teamJoinHandler } from './handlers/events/team-join';
+import { teamJoinEventHandler } from './handlers/events/team-join';
 
 export const slackApp = new Hono<HonoSlackAppBindings>();
 
 slackApp.all('/', async (c) => {
-  const slackApp = new SlackApp({ env: c.env });
+  const app = new SlackApp({ env: c.env });
 
-  slackApp.command('/health-check', healthCheckHandler);
-  slackApp.event('team_join', teamJoinHandler);
-  // slackApp.event('team_access_granted', );
-  // slackApp.event('team_access_revoked', );
-  slackApp.event('message', messageHandler);
+  app.command('/health-check', healthCheckCommandHandler);
+  app.command('/team-join-test', teamJoinTestCommandHandler);
+  app.event('team_join', teamJoinEventHandler);
+  app.event('message', messageHandler);
 
-  return await slackApp.run(c.req.raw, c.executionCtx);
+  return await app.run(c.req.raw, c.executionCtx);
 });
