@@ -6,14 +6,14 @@
 	"scripts": {
 		"deploy": "wrangler deploy",
 		"dev": "wrangler dev --local",
-		"dev:https": "wrangler dev --local --local-protocol=https",
 		"start": "wrangler dev",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings ./src/worker-configuration.d.ts",
 		"check": "bun lint && bun typo && bun typecheck",
 		"lint": "eslint \"./**/*.{ts,json}\" --fix",
 		"lint:ci": "eslint \"./**/*.{ts,json}\" --max-warnings=0",
 		"typo": "cspell \"./src/**\" --gitignore",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"tunnel": "cloudflared tunnel run meibo-slack-bot-dev"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^7.7.3",

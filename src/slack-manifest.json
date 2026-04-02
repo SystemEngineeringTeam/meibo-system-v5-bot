@@ -1,54 +1,54 @@
 {
-	"_metadata": {
-		"major_version": 1,
-		"minor_version": 0
-	},
-	"display_information": {
-		"name": "名簿管理BOT"
-	},
-	"features": {
-		"bot_user": {
-			"display_name": "meibo-bot",
-			"always_online": true
-		},
-		"slash_commands": [
-			{
-				"command": "/health-check",
-				"description": "起動確認用スラッシュコマンド",
-				"url": "https://idea-overcome-weed-purple.trycloudflare.com/slack"
-			}
-		],
-		"app_home": {
-			"messages_tab_enabled": true,
-			"messages_tab_read_only_enabled": false
-		}
-	},
-	"oauth_config": {
-		"scopes": {
-			"bot": [
-				"app_mentions:read",
-				"chat:write",
-				"chat:write.public",
-				"commands",
-				"users:read",
-				"im:write",
-				"im:history"
-			]
-		}
-	},
-	"settings": {
-		"event_subscriptions": {
-			"request_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack",
-			"bot_events": [
-				"app_mention",
-				"team_join",
-				"message.im"
-			]
-		},
-		"interactivity": {
-			"is_enabled": true,
-			"request_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack",
-			"message_menu_options_url": "https://idea-overcome-weed-purple.trycloudflare.com/slack"
-		}
-	}
+  "_metadata": {
+    "major_version": 1,
+    "minor_version": 0
+  },
+  "display_information": {
+    "name": "名簿管理BOT"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "meibo-bot",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/health-check",
+        "description": "起動確認用スラッシュコマンド",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
+      }
+    ],
+    "app_home": {
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "chat:write",
+        "chat:write.public",
+        "commands",
+        "users:read",
+        "im:write",
+        "im:history"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://meibo-bot-dev.sysken.net/slack",
+      "bot_events": [
+        "app_mention",
+        "team_join",
+        "message.im"
+      ]
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://meibo-bot-dev.sysken.net/slack",
+      "message_menu_options_url": "https://meibo-bot-dev.sysken.net/slack"
+    }
+  }
 }

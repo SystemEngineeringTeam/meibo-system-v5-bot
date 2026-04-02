@@ -1,13 +1,5 @@
 [tools]
 bun = "1.3"
-"npm:@dotenvx/dotenvx" = "1.55"
-
-# NOTE: `.env` からの環境変数の注入は dotenvx に任せるため, Wrangler の `.env` の読み取りを無効化する.
-# Wrangler に任せると復号前の値が注入されてしまう.
-# ref: https://developers.cloudflare.com/workers/configuration/environment-variables/#:~:text=Controlling,handling
-[env]
-CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV = false
-CLOUDFLARE_INCLUDE_PROCESS_ENV = true
 
 [tasks.setup]
 run = [
@@ -16,11 +8,9 @@ run = [
   "bun i",
 ]
 
-[tasks.exec-dev]
-run = "dotenvx run -f .env -f .env.dev --overload"
-
-[tasks.exec-prod]
-run = "dotenvx run -f .env -f .env.prod --overload"
-
 [tasks.dev]
-run = "mise exec-dev -- bun dev"
+run = """
+bun run dev &
+bun run tunnel &
+wait
+"""
