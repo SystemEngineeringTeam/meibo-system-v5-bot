@@ -67,7 +67,7 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
   };
 
   // TODO: backend に対してユーザ作成リクエストを送る
-  // await kv.put<Userdaat>(c.env.USER_KV, linkData.slackUserId, { userId: res.user.id });
+  // await kv.put<UserData>(c.env.USER_KV, linkData.slackUserId, { userId: res.user.id });
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });
