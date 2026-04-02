@@ -20,14 +20,6 @@
       "id": "9661c824622e4eef9452ae938f70168b"
     }
   ],
-  "d1_databases": [
-    {
-      "binding": "D1",
-      "database_name": "meibo-system-v5-bot",
-      "database_id": "c3c214b5-1204-4e42-a7ab-6cc733dc9144",
-			"migrations_dir": "drizzle/migrations"
-    }
-  ]
   /**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

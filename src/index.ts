@@ -1,12 +1,9 @@
 import type { HonoEnv } from './types/hono';
 import { Hono } from 'hono';
 import { authMiddleware, loggedInHandler, loginHandler } from './auth';
-import { injectDbMiddleware } from './middlewares/db';
 import { slackApp } from './slack';
 
 const app = new Hono<HonoEnv>();
-
-app.use(injectDbMiddleware);
 
 // Slack用エンドポイント
 app.route('/slack', slackApp);

@@ -1,23 +1,10 @@
 import type { EventLazyHandler } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { slackUsers } from '@/db/schema';
 
-export const teamJoinHandler: EventLazyHandler<'team_join', HonoSlackAppEnv> = async ({ context, payload, env }) => {
+export const teamJoinHandler: EventLazyHandler<'team_join', HonoSlackAppEnv> = async ({ context, payload }) => {
   const userId = payload.user.id;
 
-  try {
-    // ユーザをデータベースに登録
-    await env.DB.insert(slackUsers).values({
-      slackUserId: userId,
-    });
-  } catch (error) {
-    console.error('Failed to insert user into database:', error);
-    await context.client.chat.postMessage({
-      channel: userId,
-      text: 'Welcome! :tada:\nユーザの登録に失敗しました。管理者に連絡してください',
-    });
-    return;
-  }
+  // TODO: ユーザを登録
 
   try {
     // DM を開く
