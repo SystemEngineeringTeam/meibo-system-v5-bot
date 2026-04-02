@@ -18,13 +18,15 @@ const globalStyle = css`
 
 const mainStyle = css`
   height: calc(100vh - 64px);
-  padding: 40px;
+  padding: 40px 20px 100px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 `;
 
 interface Props {
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
 export default function PageLayout({ children }: Props) {

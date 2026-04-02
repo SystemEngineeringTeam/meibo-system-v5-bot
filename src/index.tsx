@@ -6,14 +6,14 @@ import { slackApp } from './slack';
 
 const app = new Hono<HonoEnv>();
 
-// Slack用エンドポイント
-app.route('/slack', slackApp);
-
 app.get('/', async (c) => c.render(
   <PageLayout>
     <h1>Hello, World!</h1>
   </PageLayout>,
 ));
+
+// Slack用エンドポイント
+app.route('/slack', slackApp);
 
 app.use(authMiddleware);
 app.get('/login', loginHandler);

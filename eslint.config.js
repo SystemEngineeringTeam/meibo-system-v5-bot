@@ -58,7 +58,7 @@ export default antfu({
       // https://typescript-eslint.io/rules/dot-notation/
       'dot-notation': 'off',
       'ts/dot-notation': 'error',
-
+      'no-alert': 'off',
     },
   },
   rules: {
