@@ -7,7 +7,15 @@ interface Props {
 }
 
 const buttonWrapperStyle = css`
-  padding: 20px;
+  padding-top: 30px;
+`;
+
+const buttonStyle = css`
+  padding: 15px 15px;
+  color: #fff;
+  background-color: #1777FF;
+  text-decoration: none;
+  border-radius: 8px;
 `;
 
 export function SuccessPage({ teamId, appId }: Props) {
@@ -17,7 +25,7 @@ export function SuccessPage({ teamId, appId }: Props) {
       <p>SlackのDMより，引き続き登録を行ってください。</p>
 
       <div class={buttonWrapperStyle}>
-        <a href={`slack://app?team=${teamId}&id=${appId}&tab=message`}>Slackを開く</a>
+        <a class={buttonStyle} href={`slack://app?team=${teamId}&id=${appId}&tab=message`}>Slackを開く</a>
       </div>
     </PageLayout>
   );

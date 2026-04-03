@@ -8,7 +8,7 @@ import { kv } from '@/utils/kv';
 import { SuccessPage } from './components/SuccessPage';
 
 export const selectMemberTypeStep = async (c: HonoContext) => {
-// セッションの取得
+  // セッションの取得
   const session = await c.var.auth0Client?.getSession();
   if (!session) return c.text('Not logged in', 401);
 
