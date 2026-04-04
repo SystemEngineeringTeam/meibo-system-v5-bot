@@ -11,6 +11,8 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
     return;
   }
 
+  // TODO: API を叩いてユーザのステータスを更新する
+
   try {
     await Promise.all([
       // 承認・拒否の結果をスレッドで送信
