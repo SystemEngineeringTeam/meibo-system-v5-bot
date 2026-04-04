@@ -6,5 +6,7 @@ export const memberApprovalActionHandler = (approve: boolean): BlockActionAckHan
   const approverSlackUserId = payload.user.id;
   const payerSlackUserId = payload.message.metadata?.event_payload?.payerSlackUserId as string;
   const timestamp = payload.message.ts;
-  await updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, context, env);
+  const teamId = payload.team?.id;
+
+  await updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, context, env);
 };

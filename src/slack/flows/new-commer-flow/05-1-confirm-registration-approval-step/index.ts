@@ -1,6 +1,7 @@
 import type { AnyMessageBlock, SlackAppContext } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { PayeeData } from '@/types/kv';
+import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
 import { kv } from '@/utils/kv';
 
 export interface ConfirmRegistrationApprovalStepResult {
@@ -9,8 +10,8 @@ export interface ConfirmRegistrationApprovalStepResult {
   reason?: 'no_request_data' | 'error';
 }
 
-export const confirmRegistrationApprovalStep = async (payerSlackUserId: string, payeeName: string, context: SlackAppContext, env: HonoSlackAppEnv): Promise<ConfirmRegistrationApprovalStepResult> => {
-  const channelId = env.NOTIFY_CHANNEL_ID;
+export const confirmRegistrationApprovalStep = async (payerSlackUserId: string, payeeName: string, teamId: string | undefined, context: SlackAppContext, env: HonoSlackAppEnv): Promise<ConfirmRegistrationApprovalStepResult> => {
+  const channelId = await getNotifyChannelId(teamId, env);
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 

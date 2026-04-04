@@ -6,7 +6,8 @@ import { noticeRegistrationPendingStep } from '@/slack/flows/new-commer-flow/05-
 export const selectFeePayeeActionHandler: BlockActionAckHandler<'static_select', HonoSlackAppEnv> = async ({ context, payload, env }) => {
   const payerSlackUserId = payload.user.id;
   const payeeName = payload.actions[0].selected_option.value;
+  const teamId = payload.team?.id;
 
-  const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, context, env);
+  const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, teamId, context, env);
   await noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, context, env);
 };

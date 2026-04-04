@@ -22,3 +22,8 @@ export interface UserData {
 export interface PayeeData {
   slackUserId: string;
 }
+
+// key: ワークスペースID
+export interface SettingsData {
+  notifyChannelId: string;
+}

@@ -30,6 +30,10 @@
 		{
 			"binding": "PAYEE_KV",
 			"id": "0a02636cd0f241e8a461e0ae94137029"
+		},
+		{
+			"binding": "SETTINGS_KV",
+			"id": "2d126c54f04d485b9e412226ceb83e8d"
 		}
 	],
 	/**

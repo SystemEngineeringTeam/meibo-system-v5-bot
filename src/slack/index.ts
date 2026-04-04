@@ -7,10 +7,12 @@ import { selectMemberTypeActionHandler } from './handlers/actions/select-member-
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
 import { selectMemberTypeStepTestCommandHandler } from './handlers/commands/select-member-type-step-test';
 import { selectFeePayeeStepTestCommandHandler } from './handlers/commands/select-payee-step-test';
+import { setNotifyChannelCommandHandler } from './handlers/commands/set-notify-channel';
 import { teamJoinTestCommandHandler } from './handlers/commands/team-join-test';
 import { messageHandler } from './handlers/events/message';
 import { teamJoinEventHandler } from './handlers/events/team-join';
 import { inputMemberDetailViewHandler } from './handlers/views/input-member-detail';
+import { adminOnlySlashCommand } from './middlewares/admin-only';
 
 export const slackApp = new Hono<HonoSlackAppBindings>();
 
@@ -19,6 +21,9 @@ slackApp.all('/', async (c) => {
 
   app.command('/health-check', healthCheckCommandHandler);
   app.event('message', messageHandler);
+
+  // [管理者用] 通知チャンネルの設定
+  app.command('/set-notify-channel', adminOnlySlashCommand(setNotifyChannelCommandHandler));
 
   // STEP 1
   app.event('team_join', teamJoinEventHandler);
