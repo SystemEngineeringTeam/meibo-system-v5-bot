@@ -26,6 +26,10 @@
 		{
 			"binding": "USER_KV",
 			"id": "377ddd2491e54fda8496a450c261f444"
+		},
+		{
+			"binding": "PAYEE_KV",
+			"id": "0a02636cd0f241e8a461e0ae94137029"
 		}
 	],
 	/**

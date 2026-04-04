@@ -26,6 +26,11 @@
         "command": "/test-select-member-type-step",
         "description": "新入生フローの部員種別選択ステップのテスト用スラッシュコマンド",
         "url": "https://meibo-bot-dev.sysken.net/slack"
+      },
+      {
+        "command": "/test-select-fee-payee-step",
+        "description": "新入生フローの支払い相手選択ステップのテスト用スラッシュコマンド",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
       }
     ],
     "app_home": {

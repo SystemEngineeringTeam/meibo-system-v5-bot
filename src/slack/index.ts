@@ -4,6 +4,7 @@ import { SlackApp } from 'slack-cloudflare-workers';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
 import { selectMemberTypeStepTestCommandHandler } from './handlers/commands/select-member-type-step-test';
+import { selectFeePayeeStepTestCommandHandler } from './handlers/commands/select-payee-step-test';
 import { teamJoinTestCommandHandler } from './handlers/commands/team-join-test';
 import { messageHandler } from './handlers/events/message';
 import { teamJoinEventHandler } from './handlers/events/team-join';
@@ -28,8 +29,11 @@ slackApp.all('/', async (c) => {
   app.action('select_member_type_internal', selectMemberTypeActionHandler('internal'));
   app.action('select_member_type_external', selectMemberTypeActionHandler('external'));
 
-  // STEP 3 → 4: 部員情報の確認・登録完了通知
+  // STEP 3 → 4: 入力情報のチェック・支払い相手の選択肢の表示
   app.view('input_member_detail', inputMemberDetailViewHandler);
+  app.command('/test-select-fee-payee-step', selectFeePayeeStepTestCommandHandler);
+
+  // STEP 5: 承認依頼の送信
 
   return await app.run(c.req.raw, c.executionCtx);
 });
