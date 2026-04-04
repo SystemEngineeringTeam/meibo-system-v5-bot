@@ -39,7 +39,7 @@ export const startRegistrationStep = async (userId: string, context: SlackAppCon
 function generateText(loginUrl: URL): string {
   return `*【重要】部員登録をしてください* – 名簿管理システム
 
-STEP 1: 下記リンクより Gmail アカウントを紐づけてください
+*STEP 1: 下記リンクより Gmail アカウントを紐づけてください
 ログインURL: ${loginUrl.toString()}
 
 ※このURLは一時的なもので、他の人と共有しないでください。`;

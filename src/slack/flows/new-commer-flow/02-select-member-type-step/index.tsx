@@ -1,4 +1,4 @@
-import type { AnyMessageBlock } from 'slack-cloudflare-workers';
+import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { HonoContext } from '@/types/hono';
 import type { ChannelData, LinkData } from '@/types/kv';
 import { deleteCookie, getCookie } from 'hono/cookie';
@@ -71,13 +71,17 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });
-  await slackApp.client.chat.postMessage({
-    channel: channelData.channelId,
+  await sendSelectMemberTypeMessage(slackApp.client, channelData.channelId);
+
+  return c.render(<SuccessPage teamId={c.env.SLACK_BOT_TEAM_ID} appId={c.env.SLACK_BOT_APP_ID} />);
+};
+
+export function sendSelectMemberTypeMessage(client: SlackAPIClient, channelId: string) {
+  return client.chat.postMessage({
+    channel: channelId,
     text: generateText(),
     blocks: generateBlocks(),
   });
-
-  return c.render(<SuccessPage teamId={c.env.SLACK_BOT_TEAM_ID} appId={c.env.SLACK_BOT_APP_ID} />);
 };
 
 function generateText(): string {
@@ -85,14 +89,12 @@ function generateText(): string {
 }
 
 function generateBlocks(): AnyMessageBlock[] {
-  // 部員種別を選択してください
-  // 内部生（現役）/内部生（OB・OG）/外部生（現役）/外部生（OB・OG）
   return [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: 'STEP 2: 部員種別を選択してください',
+        text: '*STEP 2*: 部員種別を選択してください',
       },
     },
     {
@@ -102,33 +104,19 @@ function generateBlocks(): AnyMessageBlock[] {
           type: 'button',
           text: {
             type: 'plain_text',
-            text: '内部生（現役）',
+            text: '内部生(愛工大生)',
           },
-          value: 'current_internal',
+          value: 'internal',
+          action_id: 'select_member_type_internal',
         },
         {
           type: 'button',
           text: {
             type: 'plain_text',
-            text: '内部生（OB・OG）',
+            text: '外部生(他大学生)',
           },
-          value: 'former_internal',
-        },
-        {
-          type: 'button',
-          text: {
-            type: 'plain_text',
-            text: '外部生（現役）',
-          },
-          value: 'current_external',
-        },
-        {
-          type: 'button',
-          text: {
-            type: 'plain_text',
-            text: '外部生（OB・OG）',
-          },
-          value: 'former_external',
+          value: 'external',
+          action_id: 'select_member_type_external',
         },
       ],
     },
