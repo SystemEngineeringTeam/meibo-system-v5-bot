@@ -1,8 +1,12 @@
 import type { AnyModalBlock, SlackAppContext } from 'slack-cloudflare-workers';
+import type { InferIssue } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
+import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import dayjs from 'dayjs';
+import { safeParse } from 'valibot';
 import { kv } from '@/utils/kv';
+import { memberDetailSchema } from './validation';
 
 export const inputMemberDetailStep = async (userId: string, selectedValue: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
@@ -43,6 +47,22 @@ export const inputMemberDetailStep = async (userId: string, selectedValue: strin
   });
 };
 
+export const createMemberDetail = (inputValues: NormalizedViewState): Record<string, string> | null => {
+  const memberDetail = safeParse(memberDetailSchema, inputValues);
+
+  if (!memberDetail.success) return toSlackErrors(memberDetail.issues);
+
+  try {
+  // TODO: ユーザ詳細情報を作成する API を呼び出す
+    return null;
+  } catch (error) {
+    console.error('Failed to create member detail:', error);
+    return {
+      warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+    };
+  }
+};
+
 function generateBlocks(selectedValue: string): AnyModalBlock[] {
   const isInternal = selectedValue === 'internal';
 
@@ -54,6 +74,10 @@ function generateBlocks(selectedValue: string): AnyModalBlock[] {
         text: '*STEP 3*: 部員情報を入力してください\n:warning: 必ず大学に登録されている正式な情報を入力してください :warning:',
       },
     },
+    {
+      type: 'divider',
+      block_id: 'warning_divider',
+    },
     ...generateMemberBaseBlocks(),
     ...generateMemberSensitiveBlocks(),
     ...(isInternal ? generateInternalOnlyBlocks() : generateExternalOnlyBlocks()),
@@ -64,7 +88,7 @@ function generateMemberBaseBlocks(): AnyModalBlock[] {
   return [
     {
       type: 'input',
-      block_id: 'last_name',
+      block_id: 'lastName',
       label: {
         type: 'plain_text',
         text: '苗字: 例) 佐藤',
@@ -76,7 +100,7 @@ function generateMemberBaseBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'first_name',
+      block_id: 'firstName',
       label: {
         type: 'plain_text',
         text: '名前: 例) 智',
@@ -88,7 +112,7 @@ function generateMemberBaseBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'last_name_kana',
+      block_id: 'lastNameKana',
       label: {
         type: 'plain_text',
         text: '苗字のフリガナ: 例) サトウ',
@@ -100,7 +124,7 @@ function generateMemberBaseBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'first_name_kana',
+      block_id: 'firstNameKana',
       label: {
         type: 'plain_text',
         text: '名前のフリガナ: 例) サトル',
@@ -167,7 +191,7 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'phone',
+      block_id: 'phoneNumber',
       label: {
         type: 'plain_text',
         text: '電話番号: 例) 090-1234-5678',
@@ -179,7 +203,7 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'current_zip',
+      block_id: 'currentZipCode',
       label: {
         type: 'plain_text',
         text: '現住所の郵便番号: 例) 123-4567',
@@ -191,7 +215,7 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'current_address',
+      block_id: 'currentAddress',
       label: {
         type: 'plain_text',
         text: '現住所: 例) 愛知県名古屋市中区本丸1-1',
@@ -203,7 +227,7 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'parents_zip',
+      block_id: 'parentsZipCode',
       label: {
         type: 'plain_text',
         text: '実家の住所の郵便番号: 例) 123-4567',
@@ -215,7 +239,7 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'parents_address',
+      block_id: 'parentsAddress',
       label: {
         type: 'plain_text',
         text: '実家の住所: 例) 愛知県名古屋市中区本丸1-1',
@@ -232,7 +256,7 @@ function generateInternalOnlyBlocks(): AnyModalBlock[] {
   return [
     {
       type: 'input',
-      block_id: 'student_id',
+      block_id: 'studentId',
       label: {
         type: 'plain_text',
         text: '学籍番号: 例) k23001',
@@ -249,7 +273,7 @@ function generateExternalOnlyBlocks(): AnyModalBlock[] {
   return [
     {
       type: 'input',
-      block_id: 'school_name_block',
+      block_id: 'schoolName',
       label: {
         type: 'plain_text',
         text: '学校名',
@@ -261,7 +285,7 @@ function generateExternalOnlyBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'school_major_block',
+      block_id: 'schoolMajor',
       label: {
         type: 'plain_text',
         text: '学部・学科・専攻など',
@@ -274,7 +298,7 @@ function generateExternalOnlyBlocks(): AnyModalBlock[] {
     },
     {
       type: 'input',
-      block_id: 'organization_block',
+      block_id: 'organization',
       label: {
         type: 'plain_text',
         text: '所属団体名',
@@ -286,4 +310,17 @@ function generateExternalOnlyBlocks(): AnyModalBlock[] {
       optional: true,
     },
   ];
+}
+
+function toSlackErrors(issues: Array<InferIssue<typeof memberDetailSchema>>): Record<string, string> {
+  const errors: Record<string, string> = {};
+
+  for (const issue of issues) {
+    const blockId = issue.path?.[0]?.key;
+    if (typeof blockId === 'string') {
+      errors[blockId] = issue.message;
+    }
+  }
+
+  return errors;
 }
