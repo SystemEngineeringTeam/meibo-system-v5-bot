@@ -2,7 +2,7 @@ import type { AnyMessageBlock, SlackAppContext } from 'slack-cloudflare-workers'
 import type { InferInput } from 'valibot';
 import type { memberDetailSchema } from '@/slack/flows/new-commer-flow/03-input-member-detail-step/validation';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ApprovalRequestData, ChannelData } from '@/types/kv';
+import type { ChannelData } from '@/types/kv';
 import { kv } from '@/utils/kv';
 
 export const selectFeePayeeStep = async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema>, context: SlackAppContext, env: HonoSlackAppEnv) => {
@@ -20,10 +20,11 @@ export const selectFeePayeeStep = async (slackUserId: string, requestData: Infer
     channel: channelData.channelId,
     text: `*STEP 4*: 部費の支払い相手を選択してください`,
     blocks: generateBlocks([...payeeList, 'ぺんぎん :penguin:', 'あざらし', 'えびふらい']), // TODO: テスト用のダミーデータ
+    metadata: {
+      event_type: 'request_fee_payee',
+      event_payload: requestData,
+    },
   });
-
-  // 承認依頼内容の保存
-  await kv.put<ApprovalRequestData>(env.APPROVAL_REQUEST_KV, slackUserId, { requestData });
 };
 
 function generateBlocks(payeeList: string[]): AnyMessageBlock[] {

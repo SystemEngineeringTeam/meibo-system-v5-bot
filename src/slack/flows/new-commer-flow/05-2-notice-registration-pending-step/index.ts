@@ -1,10 +1,10 @@
 import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { ConfirmRegistrationApprovalStepResult } from '../05-1-confirm-registration-approval-step';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData } from '@/types/kv';
+import type { ChannelData, PayeeData } from '@/types/kv';
 import { kv } from '@/utils/kv';
 
-export const noticeRegistrationPendingStep = async (slackUserId: string, result: ConfirmRegistrationApprovalStepResult, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const noticeRegistrationPendingStep = async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
   if (!channelData) {
@@ -12,10 +12,12 @@ export const noticeRegistrationPendingStep = async (slackUserId: string, result:
     return;
   }
 
+  const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
+
   try {
     await context.client.chat.postMessage({
       channel: channelData.channelId,
-      text: generateText(result),
+      text: generateText(result, payeeName, payeeData?.slackUserId),
       mrkdwn: true,
     });
   } catch (error) {
@@ -26,14 +28,12 @@ export const noticeRegistrationPendingStep = async (slackUserId: string, result:
   return true;
 };
 
-function generateText(result: ConfirmRegistrationApprovalStepResult): string {
+function generateText(result: ConfirmRegistrationApprovalStepResult, payeeName: string, payeeSlackUserId?: string): string {
   if (result.success) {
     return `:hourglass_flowing_sand: *承認申請を送信しました*
-しばらく経っても承認されない場合は役員に確認してください`;
-  }
+しばらく経っても承認されない場合は役員に確認してください
 
-  if (result.reason === 'sent') {
-    return `:white_check_mark: *承認申請は送信済みです*`;
+支払い相手: ${payeeName}(${payeeSlackUserId ? `<@${payeeSlackUserId}>` : '不明'})`;
   }
 
   if (result.reason === 'no_request_data') {

@@ -8,5 +8,5 @@ export const selectFeePayeeActionHandler: BlockActionAckHandler<'static_select',
   const payeeName = payload.actions[0].selected_option.value;
 
   const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, context, env);
-  await noticeRegistrationPendingStep(payerSlackUserId, result, context, env);
+  await noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, context, env);
 };

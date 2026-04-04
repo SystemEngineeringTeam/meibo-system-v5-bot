@@ -30,10 +30,6 @@
 		{
 			"binding": "PAYEE_KV",
 			"id": "0a02636cd0f241e8a461e0ae94137029"
-		},
-		{
-			"binding": "APPROVAL_REQUEST_KV",
-			"id": "4b83b828baf04266a49b4770a92b600c"
 		}
 	],
 	/**
