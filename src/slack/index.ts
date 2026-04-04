@@ -1,6 +1,7 @@
 import type { HonoSlackAppBindings } from '@/types/hono';
 import { Hono } from 'hono';
 import { SlackApp } from 'slack-cloudflare-workers';
+import { selectFeePayeeActionHandler } from './handlers/actions/select-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
 import { selectMemberTypeStepTestCommandHandler } from './handlers/commands/select-member-type-step-test';
@@ -34,6 +35,7 @@ slackApp.all('/', async (c) => {
   app.command('/test-select-fee-payee-step', selectFeePayeeStepTestCommandHandler);
 
   // STEP 5: 承認依頼の送信
+  app.action('select_fee_payee', selectFeePayeeActionHandler);
 
   return await app.run(c.req.raw, c.executionCtx);
 });

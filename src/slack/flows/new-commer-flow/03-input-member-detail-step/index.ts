@@ -1,5 +1,5 @@
 import type { AnyModalBlock, SlackAppContext } from 'slack-cloudflare-workers';
-import type { InferIssue } from 'valibot';
+import type { InferInput, InferIssue } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
@@ -47,18 +47,40 @@ export const inputMemberDetailStep = async (userId: string, selectedValue: strin
   });
 };
 
-export const createMemberDetail = (inputValues: NormalizedViewState): Record<string, string> | null => {
+interface CreateMemberDetailResultSuccess {
+  success: true;
+  // TODO: API から取得したユーザ情報を返す
+  data: InferInput<typeof memberDetailSchema>;
+}
+
+interface CreateMemberDetailResultFailure {
+  success: false;
+  errors: Record<string, string>;
+}
+
+export const createMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
   const memberDetail = safeParse(memberDetailSchema, inputValues);
 
-  if (!memberDetail.success) return toSlackErrors(memberDetail.issues);
+  if (!memberDetail.success) {
+    return {
+      success: false,
+      errors: toSlackErrors(memberDetail.issues),
+    };
+  }
 
   try {
   // TODO: ユーザ詳細情報を作成する API を呼び出す
-    return null;
+    return {
+      success: true,
+      data: memberDetail.output,
+    };
   } catch (error) {
     console.error('Failed to create member detail:', error);
     return {
-      warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+      success: false,
+      errors: {
+        warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+      },
     };
   }
 };

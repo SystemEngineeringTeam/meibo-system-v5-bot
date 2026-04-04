@@ -11,7 +11,7 @@ export default antfu({
       'comma-dangle': ['error', 'always-multiline'],
       'jsonc/comma-dangle': ['error', 'always-multiline'],
       'arrow-body-style': ['error', 'as-needed'],
-      'no-restricted-imports': ['error', { patterns: ['../*'] }],
+      'no-restricted-imports': ['error', { patterns: ['../../*'] }],
       'unused-imports/no-unused-imports': 'warn',
       'ts/consistent-type-definitions': ['error', 'interface'],
       'ts/explicit-function-return-type': 'off',

@@ -47,7 +47,8 @@
         "commands",
         "users:read",
         "im:write",
-        "im:history"
+        "im:history",
+        "reactions:write"
       ]
     }
   },
