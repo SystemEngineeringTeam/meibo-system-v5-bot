@@ -13,7 +13,6 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
 
   try {
     await Promise.all([
-
       // 承認・拒否の結果をスレッドで送信
       await context.client.chat.postMessage({
         channel: env.NOTIFY_CHANNEL_ID,

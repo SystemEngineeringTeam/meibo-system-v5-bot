@@ -22,15 +22,17 @@ export const startRegistrationStep = async (userId: string, context: SlackAppCon
     const channelId = im.channel?.id;
     if (!channelId) throw new Error('No channel ID');
 
-    // KV にユーザーIDとチャンネルIDを保存
-    await kv.put<ChannelData>(env.CHANNEL_KV, userId, { channelId });
+    await Promise.all([
+      // KV にユーザーIDとチャンネルIDを保存
+      kv.put<ChannelData>(env.CHANNEL_KV, userId, { channelId }),
 
-    // メッセージを送信
-    await context.client.chat.postMessage({
-      channel: channelId,
-      text: generateText(loginUrl),
-      mrkdwn: true,
-    });
+      // メッセージを送信
+      context.client.chat.postMessage({
+        channel: channelId,
+        text: generateText(loginUrl),
+        mrkdwn: true,
+      }),
+    ]);
   } catch (error) {
     console.error('Failed to send welcome DM:', error);
   }
