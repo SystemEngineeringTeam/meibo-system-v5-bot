@@ -45,7 +45,15 @@ export const startRegistrationStep = async (slackUserId: string, context: SlackA
 function generateText(loginUrl: URL, expiration: Dayjs): string {
   return `*【重要】部員登録をしてください* – 名簿管理システム
 
-*STEP 1: 下記リンクより Gmail アカウントを紐づけてください
+[部員登録の流れ]
+  STEP 1: Emailアドレスの紐づけ（このステップ）
+  STEP 2: 部員種別の選択(内部生/外部生)
+  STEP 3: 部員情報の入力
+  STEP 4: 部費の支払い相手の選択
+    ↓ 承認待ち
+  部員登録完了 :tada:
+
+*STEP 1: 下記リンクより Email アカウントを紐づけてください
 ログインURL: ${loginUrl.toString()}
 有効期限: 10分 (${expiration.format('MM/DD HH:mm')})
 
