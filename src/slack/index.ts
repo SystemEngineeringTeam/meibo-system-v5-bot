@@ -5,6 +5,7 @@ import { memberApprovalActionHandler } from './handlers/actions/member-approval'
 import { selectFeePayeeActionHandler } from './handlers/actions/select-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
+import { recoveryNewcommerCommandHandler } from './handlers/commands/recovery-newcommer';
 import { removePayeeNicknameCommandHandler } from './handlers/commands/remove-payee-nickname';
 import { setNotifyChannelCommandHandler } from './handlers/commands/set-notify-channel';
 import { setPayeeNicknameCommandHandler } from './handlers/commands/set-payee-nickname';
@@ -30,6 +31,9 @@ slackApp.all('/', async (c) => {
   app.command('/remove-payee-nickname', notifyChannelOnlyCommand(removePayeeNicknameCommandHandler));
 
   // ===== [new-commer-flow] =====
+  // リカバリーコマンド
+  app.command('/recovery-newcommer', recoveryNewcommerCommandHandler);
+
   // STEP 1
   app.event('team_join', teamJoinEventHandler);
 

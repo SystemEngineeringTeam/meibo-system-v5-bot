@@ -5,7 +5,7 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
 import { kv } from '@/utils/kv';
 
-export const selectFeePayeeStep = async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema>, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const selectFeePayeeStep = async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
   if (!channelData) {
@@ -20,10 +20,12 @@ export const selectFeePayeeStep = async (slackUserId: string, requestData: Infer
     channel: channelData.channelId,
     text: generateText(),
     blocks: generateBlocks(payeeList),
-    metadata: {
-      event_type: 'request_fee_payee',
-      event_payload: requestData,
-    },
+    metadata: requestData
+      ? {
+          event_type: 'request_fee_payee',
+          event_payload: requestData,
+        }
+      : undefined,
   });
 };
 

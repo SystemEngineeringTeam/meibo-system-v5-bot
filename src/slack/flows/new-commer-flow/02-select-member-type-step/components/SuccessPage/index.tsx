@@ -23,6 +23,7 @@ export function SuccessPage({ teamId, appId }: Props) {
     <PageLayout>
       <h1>Gmail の紐付けが完了しました</h1>
       <p>SlackのDMより，引き続き登録を行ってください。</p>
+      <p>このページは閉じて構いません。</p>
 
       <div class={buttonWrapperStyle}>
         <a class={buttonStyle} href={`slack://app?team=${teamId}&id=${appId}&tab=message`}>Slackを開く</a>

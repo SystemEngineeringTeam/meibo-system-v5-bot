@@ -4,10 +4,10 @@ import type { ChannelData, LinkData } from '@/types/kv';
 import { v4 as uuidv4 } from 'uuid';
 import { kv } from '@/utils/kv';
 
-export const startRegistrationStep = async (userId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const startRegistrationStep = async (slackUserId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザIDと紐づく一意なキー
   const key = uuidv4();
-  await kv.put<LinkData>(env.LINK_KV, key, { slackUserId: userId });
+  await kv.put<LinkData>(env.LINK_KV, key, { slackUserId });
 
   // ログインURLを生成
   const loginUrl = new URL('/login', env.SLACK_BOT_BASE_URL!);
@@ -16,7 +16,7 @@ export const startRegistrationStep = async (userId: string, context: SlackAppCon
   try {
     // DM を開く
     const im = await context.client.conversations.open({
-      users: userId,
+      users: slackUserId,
     });
 
     const channelId = im.channel?.id;
@@ -24,7 +24,7 @@ export const startRegistrationStep = async (userId: string, context: SlackAppCon
 
     await Promise.all([
       // KV にユーザーIDとチャンネルIDを保存
-      kv.put<ChannelData>(env.CHANNEL_KV, userId, { channelId }),
+      kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
 
       // メッセージを送信
       context.client.chat.postMessage({
