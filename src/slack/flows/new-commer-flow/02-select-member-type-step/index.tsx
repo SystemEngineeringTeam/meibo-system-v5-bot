@@ -1,7 +1,7 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
-import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import type { HonoContext } from '@/types/hono';
 import type { LinkData } from '@/types/kv';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
 import PageLayout from '@/components/layouts/PageLayout';
@@ -12,7 +12,17 @@ import { SuccessPage } from './components/SuccessPage';
 export const selectMemberTypeStep = async (c: HonoContext) => {
   // セッションの取得
   const session = await c.var.auth0Client?.getSession();
-  if (!session) return c.text('Not logged in', 401);
+  if (!session) {
+    c.status(400);
+    return c.render(
+      <PageLayout>
+        <>
+          <h1>400: Not authenticated</h1>
+          <p>認証されていません。再度ログインしてください。</p>
+        </>
+      </PageLayout>,
+    );
+  }
 
   // slackUserIdと紐づけるキーをクッキーから取得
   const key = getCookie(c, 'link_key');
