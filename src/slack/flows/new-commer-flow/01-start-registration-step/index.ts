@@ -4,9 +4,11 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData, LinkData } from '@/types/kv';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const startRegistrationStep = async (slackUserId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
   // ユーザIDと紐づく一意なキー
   const key = uuidv4();
 
@@ -18,14 +20,6 @@ export const startRegistrationStep = async (slackUserId: string, context: SlackA
   loginUrl.searchParams.set('key', key);
 
   try {
-    // DM を開く
-    const im = await context.client.conversations.open({
-      users: slackUserId,
-    });
-
-    const channelId = im.channel?.id;
-    if (!channelId) throw new Error('No channel ID');
-
     await Promise.all([
       // KV にユーザーIDとチャンネルIDを保存
       kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),

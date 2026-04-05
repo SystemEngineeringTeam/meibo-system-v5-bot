@@ -1,22 +1,11 @@
 import type { ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData } from '@/types/kv';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
-import { kv } from '@/utils/kv';
 
 export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
-
-  // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, payerSlackUserId);
-  if (!channelData) {
-    await context.client.chat.postEphemeral({
-      channel: payload.channel.id,
-      user: payerSlackUserId,
-      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
-    });
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(payerSlackUserId, context.client, env);
 
   // TODO: API を叩いてユーザのステータスを更新する
 
@@ -44,7 +33,7 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
 
       // 承認・拒否の結果をユーザに送信
       context.client.chat.postMessage({
-        channel: channelData.channelId,
+        channel: channelId,
         text: generateTextForMember(approverSlackUserId, approve),
         mrkdwn: true,
       }),

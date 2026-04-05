@@ -2,22 +2,17 @@ import type { AnyMessageBlock, SlackAppContext } from 'slack-cloudflare-workers'
 import type { InferInput } from 'valibot';
 import type { memberDetailSchema } from '@/slack/schemas/member';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData } from '@/types/kv';
-import { kv } from '@/utils/kv';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 
 export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
-  if (!channelData) {
-    console.error(`No channel data found for user ${slackUserId}`);
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
 
   const payeeKeyList = await env.PAYEE_KV.list();
   const payeeList = payeeKeyList.keys.map(({ name }) => name);
 
   await context.client.chat.postMessage({
-    channel: channelData.channelId,
+    channel: channelId,
     text: generateText(stepNumber),
     blocks: generateBlocks(stepNumber, payeeList, actionId),
     metadata: requestData
@@ -31,14 +26,10 @@ export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => 
 
 export const baseCloseSelectFeePayeeMessage = (stepNumber: number) => async (slackUserId: string, payeeName: string, timestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
-  if (!channelData) {
-    console.error(`No channel data found for user ${slackUserId}`);
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
 
   await context.client.chat.update({
-    channel: channelData.channelId,
+    channel: channelId,
     ts: timestamp,
     text: generateText(stepNumber),
     blocks: generateBlocks(stepNumber, [], undefined, payeeName),

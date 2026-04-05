@@ -1,9 +1,10 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { HonoContext, HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData, LinkData } from '@/types/kv';
+import type { LinkData } from '@/types/kv';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
 import PageLayout from '@/components/layouts/PageLayout';
+import { getDMChannelId, getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 import { SuccessPage } from './components/SuccessPage';
 
@@ -39,8 +40,8 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
   }
 
   // ログインユーザのDMのチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(c.env.CHANNEL_KV, linkData.slackUserId);
-  if (!channelData) {
+  const channelId = await getDMChannelId(linkData.slackUserId, c.env);
+  if (!channelId) {
     c.status(500);
     return c.render(
       <PageLayout>
@@ -71,7 +72,7 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });
-  await sendSelectMemberTypeMessage(slackApp.client, channelData.channelId);
+  await sendSelectMemberTypeMessage(slackApp.client, channelId);
 
   return c.render(<SuccessPage teamId={c.env.SLACK_BOT_TEAM_ID} appId={c.env.SLACK_BOT_APP_ID} />);
 };
@@ -85,14 +86,10 @@ export async function sendSelectMemberTypeMessage(client: SlackAPIClient, channe
 };
 
 export async function closeSelectMemberTypeMessage(client: SlackAPIClient, slackUserId: string, timestamp: string, env: HonoSlackAppEnv) {
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
-  if (!channelData) {
-    console.error(`No channel data found for user ${slackUserId}`);
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   return client.chat.update({
-    channel: channelData.channelId,
+    channel: channelId,
     ts: timestamp,
     text: generateText(),
     blocks: generateBlocks(true),

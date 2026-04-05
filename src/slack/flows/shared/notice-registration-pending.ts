@@ -1,26 +1,19 @@
 import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { ConfirmRegistrationApprovalStepResult } from './confirm-registration-approval';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData, PayeeData } from '@/types/kv';
+import type { PayeeData } from '@/types/kv';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
-  if (!channelData) {
-    await context.client.chat.postEphemeral({
-      channel: slackUserId,
-      user: slackUserId,
-      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
-    });
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 
   try {
     await context.client.chat.postMessage({
-      channel: channelData.channelId,
+      channel: channelId,
       text: generateText(result, payeeName, payeeData?.slackUserId),
       mrkdwn: true,
     });

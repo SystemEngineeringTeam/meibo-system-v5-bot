@@ -1,6 +1,7 @@
 import type { AnyMessageBlock, SlackAPIClient, SlackAppContext } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData, UserData } from '@/types/kv';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const startContinuationStep = async (slackUserId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
@@ -47,14 +48,10 @@ async function sendContinuationMessage(channelId: string, client: SlackAPIClient
 }
 
 export const closeContinuationMessage = async (client: SlackAPIClient, slackUserId: string, timestamp: string, env: HonoSlackAppEnv) => {
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
-  if (!channelData) {
-    console.error(`No channel data found for user ${slackUserId}`);
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   await client.chat.update({
-    channel: channelData.channelId,
+    channel: channelId,
     ts: timestamp,
     text: generateText(),
     blocks: generateBlocks(true),

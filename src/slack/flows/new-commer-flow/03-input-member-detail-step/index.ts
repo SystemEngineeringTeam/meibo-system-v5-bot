@@ -1,29 +1,19 @@
 import type { ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
 import type { InferInput } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData } from '@/types/kv';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { sendInputMemberDetailModal } from '@slack/flows/shared/send-input-member-detail-modal';
 import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
+import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
-import { kv } from '@/utils/kv';
 
 export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
-  // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, userId);
-  if (!channelData) {
-    await context.client.chat.postEphemeral({
-      channel: payload.channel.id,
-      user: userId,
-      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
-    });
-    return;
-  }
+  const channelId = await getOrOpenDMChannelId(userId, context.client, env);
 
   if (!context.triggerId) {
     await context.client.chat.postMessage({
-      channel: channelData.channelId,
+      channel: channelId,
       text: ':warning: 部員情報モーダルの表示に失敗しました。管理者に連絡してください。',
     });
     return;
