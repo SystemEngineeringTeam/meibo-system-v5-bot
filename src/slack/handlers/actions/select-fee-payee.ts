@@ -1,13 +1,18 @@
-import type { BlockActionAckHandler } from 'slack-cloudflare-workers';
+import type { BlockActionAckHandler, MessageBlockAction, StaticSelectAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
+import { closeSelectFeePayeeMessage } from '@/slack/flows/new-commer-flow/04-select-fee-payee-step';
 import { confirmRegistrationApprovalStep } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
 import { noticeRegistrationPendingStep } from '@/slack/flows/new-commer-flow/05-2-notice-registration-pending-step';
 
-export const selectFeePayeeActionHandler: BlockActionAckHandler<'static_select', HonoSlackAppEnv> = async ({ context, payload, env }) => {
+export const selectFeePayeeActionHandler: BlockActionAckHandler<'static_select', HonoSlackAppEnv, MessageBlockAction<StaticSelectAction>> = async ({ context, payload, env }) => {
   const payerSlackUserId = payload.user.id;
   const payeeName = payload.actions[0].selected_option.value;
   const teamId = payload.team?.id;
+  const timestamp = payload.message.ts;
 
   const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, teamId, context, env);
-  await noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, context, env);
+  await Promise.all([
+    noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, context, env),
+    closeSelectFeePayeeMessage(payerSlackUserId, payeeName, timestamp, context, env),
+  ]);
 };

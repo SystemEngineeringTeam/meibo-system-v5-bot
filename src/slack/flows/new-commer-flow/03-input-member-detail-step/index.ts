@@ -8,7 +8,7 @@ import { safeParse } from 'valibot';
 import { kv } from '@/utils/kv';
 import { memberDetailSchema } from './validation';
 
-export const inputMemberDetailStep = async (userId: string, selectedValue: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, userId);
   if (!channelData) {
@@ -43,6 +43,7 @@ export const inputMemberDetailStep = async (userId: string, selectedValue: strin
         text: 'キャンセル',
       },
       blocks: generateBlocks(selectedValue),
+      private_metadata: selectMemberTypeTimestamp, // 部員種別選択肢メッセージの更新のため
     },
   });
 };

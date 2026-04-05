@@ -36,6 +36,25 @@ export const confirmRegistrationApprovalStep = async (payerSlackUserId: string, 
   return { success: true };
 };
 
+export const clickedApproveOrRejectButton = async (approve: boolean, channelId: string, timestamp: string, blocks: AnyMessageBlock[] | undefined, context: SlackAppContext) => {
+  const activeActionId = approve ? 'member_reject' : 'member_approve';
+
+  await context.client.chat.update({
+    channel: channelId,
+    ts: timestamp,
+    text: approve ? '承認しました' : '拒否しました',
+    blocks: blocks && [blocks[0], {
+      type: 'actions',
+      elements: blocks[1].type !== 'actions'
+        ? []
+        : blocks[1].elements.map((element) => ({
+            ...element,
+            style: element.action_id === activeActionId ? (approve ? 'danger' : 'primary') : undefined,
+          })),
+    }],
+  });
+};
+
 function generateText(payerSlackUserId: string, payeeSlackUserId?: string): string {
   // ユーザIDがあればメンション、なければ @channel
   const mention = payeeSlackUserId ? `<@${payeeSlackUserId}>` : '<!channel>';

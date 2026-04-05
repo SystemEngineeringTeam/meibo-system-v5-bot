@@ -1,5 +1,5 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
-import type { HonoContext } from '@/types/hono';
+import type { HonoContext, HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData, LinkData } from '@/types/kv';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
@@ -76,11 +76,26 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
   return c.render(<SuccessPage teamId={c.env.SLACK_BOT_TEAM_ID} appId={c.env.SLACK_BOT_APP_ID} />);
 };
 
-export function sendSelectMemberTypeMessage(client: SlackAPIClient, channelId: string) {
+export async function sendSelectMemberTypeMessage(client: SlackAPIClient, channelId: string) {
   return client.chat.postMessage({
     channel: channelId,
     text: generateText(),
-    blocks: generateBlocks(),
+    blocks: generateBlocks(false),
+  });
+};
+
+export async function closeSelectMemberTypeMessage(client: SlackAPIClient, slackUserId: string, timestamp: string, env: HonoSlackAppEnv) {
+  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
+  if (!channelData) {
+    console.error(`No channel data found for user ${slackUserId}`);
+    return;
+  }
+
+  return client.chat.update({
+    channel: channelData.channelId,
+    ts: timestamp,
+    text: generateText(),
+    blocks: generateBlocks(true),
   });
 };
 
@@ -88,16 +103,26 @@ function generateText(): string {
   return '部員種別を選択してください – 名簿管理システム';
 }
 
-function generateBlocks(): AnyMessageBlock[] {
-  return [
-    {
+function generateBlocks(selected: boolean): AnyMessageBlock[] {
+  const blocks: AnyMessageBlock[] = [];
+  blocks.push({
+    type: 'section',
+    text: {
+      type: 'mrkdwn',
+      text: '*STEP 2*: 部員種別を選択してください',
+    },
+  });
+
+  if (selected) {
+    blocks.push({
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '*STEP 2*: 部員種別を選択してください',
+        text: '*STEP 3*: 部員情報が入力されました',
       },
-    },
-    {
+    });
+  } else {
+    blocks.push({
       type: 'actions',
       elements: [
         {
@@ -119,6 +144,8 @@ function generateBlocks(): AnyMessageBlock[] {
           action_id: 'select_member_type_external',
         },
       ],
-    },
-  ];
+    });
+  }
+
+  return blocks;
 }

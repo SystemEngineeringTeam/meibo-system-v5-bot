@@ -17,29 +17,29 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
   // TODO: API を叩いてユーザのステータスを更新する
 
   try {
-    await Promise.all([
+    await Promise.allSettled([
       // 承認・拒否の結果をスレッドで送信
-      await context.client.chat.postMessage({
+      context.client.chat.postMessage({
         channel: notifyChannelId,
         thread_ts: timestamp,
         text: generateTextForApprover(approverSlackUserId, approve),
       }),
 
       // 承認・拒否のリアクションを追加
-      await context.client.reactions.add({
+      context.client.reactions.add({
         channel: notifyChannelId,
         timestamp,
         name: approve ? 'white_check_mark' : 'no_entry_sign',
       }),
       // 既存のリアクションを削除
-      await context.client.reactions.remove({
+      context.client.reactions.remove({
         channel: notifyChannelId,
         timestamp,
         name: approve ? 'no_entry_sign' : 'white_check_mark',
       }),
 
       // 承認・拒否の結果をユーザに送信
-      await context.client.chat.postMessage({
+      context.client.chat.postMessage({
         channel: channelData.channelId,
         text: generateTextForMember(approverSlackUserId, approve),
         mrkdwn: true,

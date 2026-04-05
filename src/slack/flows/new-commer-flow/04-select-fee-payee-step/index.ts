@@ -18,7 +18,7 @@ export const selectFeePayeeStep = async (slackUserId: string, requestData: Infer
 
   await context.client.chat.postMessage({
     channel: channelData.channelId,
-    text: `*STEP 4*: 部費の支払い相手を選択してください`,
+    text: generateText(),
     blocks: generateBlocks(payeeList),
     metadata: {
       event_type: 'request_fee_payee',
@@ -27,8 +27,28 @@ export const selectFeePayeeStep = async (slackUserId: string, requestData: Infer
   });
 };
 
-function generateBlocks(payeeList: string[]): AnyMessageBlock[] {
-  return [
+export async function closeSelectFeePayeeMessage(slackUserId: string, payeeName: string, timestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) {
+  // ユーザのDMチャンネルIDを取得
+  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
+  if (!channelData) {
+    console.error(`No channel data found for user ${slackUserId}`);
+    return;
+  }
+
+  await context.client.chat.update({
+    channel: channelData.channelId,
+    ts: timestamp,
+    text: generateText(),
+    blocks: generateBlocks([], payeeName),
+  });
+}
+
+function generateText(): string {
+  return `*STEP 4*: 部費の支払い相手を選択してください`;
+}
+
+function generateBlocks(payeeList: string[], selectedPayeeName?: string): AnyMessageBlock[] {
+  const blocks: AnyMessageBlock[] = [
     {
       type: 'section',
       text: {
@@ -36,7 +56,18 @@ function generateBlocks(payeeList: string[]): AnyMessageBlock[] {
         text: '*STEP 4*: 部費の支払い相手を選択してください\n支払い相手は近くの役員に聞いてください',
       },
     },
-    {
+  ];
+
+  if (selectedPayeeName) {
+    blocks.push({
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `選択済み`,
+      },
+    });
+  } else {
+    blocks.push({
       type: 'actions',
       elements: [
         {
@@ -51,6 +82,8 @@ function generateBlocks(payeeList: string[]): AnyMessageBlock[] {
           action_id: 'select_fee_payee',
         },
       ],
-    },
-  ];
+    });
+  }
+
+  return blocks;
 }
