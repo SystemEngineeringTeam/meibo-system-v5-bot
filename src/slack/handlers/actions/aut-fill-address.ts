@@ -2,6 +2,7 @@ import type { AnyModalBlock, BlockActionAckHandler, ButtonAction, SlackAPIClient
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { safeParse } from 'valibot';
 import { zipCodeSchema } from '@/slack/flows/new-commer-flow/03-input-member-detail-step/validation';
+import { getViewValue } from '@/slack/lib/get-view-value';
 import { replaceModalBlock } from '@/slack/lib/replace-modak-block';
 import { searchAddressByZipcode } from '@/slack/lib/search-addres-by-zipcode';
 
@@ -17,7 +18,7 @@ export const autoFillAddressActionHandler: BlockActionAckHandler<'button', HonoS
     };
   }
 
-  const zipCode = payload.view.state.values?.[zipCodeBlockId]?.[zipCodeBlockId]?.value;
+  const zipCode = getViewValue(payload.view, zipCodeBlockId);
   if (zipCode === undefined) {
     return {
       status: 500,
@@ -42,14 +43,14 @@ export const autoFillAddressActionHandler: BlockActionAckHandler<'button', HonoS
   try {
     const address = await searchAddressByZipcode(validatedZipCodeRes.output);
 
-    const clearedErrorMessageBlocks = replaceModalBlock<ViewInputBlock>(payload.view.blocks, zipCodeBlockId, (block) => ({
+    let blocks = replaceModalBlock<ViewInputBlock>(payload.view.blocks, zipCodeBlockId, (block) => ({
       ...block,
       label: {
         type: 'plain_text',
         text: isCurrentAddress ? '現住所の郵便番号: 例) 123-4567' : '実家の住所の郵便番号: 例) 123-4567',
       },
     }));
-    const blocks = replaceModalBlock<ViewInputBlock>(clearedErrorMessageBlocks, addressBlockId, (block) => ({
+    blocks = replaceModalBlock<ViewInputBlock>(blocks, addressBlockId, (block) => ({
       ...block,
       element: {
         type: 'plain_text_input',

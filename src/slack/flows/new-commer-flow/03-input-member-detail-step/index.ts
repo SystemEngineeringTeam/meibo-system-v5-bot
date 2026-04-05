@@ -231,6 +231,9 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
       },
     },
     {
+      type: 'divider',
+    },
+    {
       type: 'input',
       block_id: 'currentZipCode',
       label: {
