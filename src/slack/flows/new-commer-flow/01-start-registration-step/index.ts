@@ -18,21 +18,17 @@ export const startRegistrationStep = async (slackUserId: string, { client, env }
   const loginUrl = new URL('/login', env.SLACK_BOT_BASE_URL!);
   loginUrl.searchParams.set('key', key);
 
-  try {
-    await Promise.all([
-      // KV にユーザーIDとチャンネルIDを保存
-      kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
+  await Promise.allSettled([
+    // KV にユーザーIDとチャンネルIDを保存
+    kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
 
-      // メッセージを送信
-      client.chat.postMessage({
-        channel: channelId,
-        text: generateText(loginUrl, expiration),
-        mrkdwn: true,
-      }),
-    ]);
-  } catch (error) {
-    console.error('Failed to send welcome DM:', error);
-  }
+    // メッセージを送信
+    client.chat.postMessage({
+      channel: channelId,
+      text: generateText(loginUrl, expiration),
+      mrkdwn: true,
+    }),
+  ]);
 };
 
 function generateText(loginUrl: URL, expiration: Dayjs): string {

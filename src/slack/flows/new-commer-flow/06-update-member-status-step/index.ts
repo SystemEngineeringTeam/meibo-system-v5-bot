@@ -10,38 +10,34 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
 
   // TODO: API を叩いてユーザのステータスを更新する
 
-  try {
-    await Promise.allSettled([
-      // 承認・拒否の結果をスレッドで送信
-      client.chat.postMessage({
-        channel: notifyChannelId,
-        thread_ts: timestamp,
-        text: generateTextForApprover(approverSlackUserId, approve),
-      }),
+  await Promise.allSettled([
+    // 承認・拒否の結果をスレッドで送信
+    client.chat.postMessage({
+      channel: notifyChannelId,
+      thread_ts: timestamp,
+      text: generateTextForApprover(approverSlackUserId, approve),
+    }),
 
-      // 承認・拒否のリアクションを追加
-      client.reactions.add({
-        channel: notifyChannelId,
-        timestamp,
-        name: approve ? 'white_check_mark' : 'no_entry_sign',
-      }),
-      // 既存のリアクションを削除
-      client.reactions.remove({
-        channel: notifyChannelId,
-        timestamp,
-        name: approve ? 'no_entry_sign' : 'white_check_mark',
-      }),
+    // 承認・拒否のリアクションを追加
+    client.reactions.add({
+      channel: notifyChannelId,
+      timestamp,
+      name: approve ? 'white_check_mark' : 'no_entry_sign',
+    }),
+    // 既存のリアクションを削除
+    client.reactions.remove({
+      channel: notifyChannelId,
+      timestamp,
+      name: approve ? 'no_entry_sign' : 'white_check_mark',
+    }),
 
-      // 承認・拒否の結果をユーザに送信
-      client.chat.postMessage({
-        channel: channelId,
-        text: generateTextForMember(approverSlackUserId, approve),
-        mrkdwn: true,
-      }),
-    ]);
-  } catch (error) {
-    console.error('Failed to send confirmation message:', error);
-  }
+    // 承認・拒否の結果をユーザに送信
+    client.chat.postMessage({
+      channel: channelId,
+      text: generateTextForMember(approverSlackUserId, approve),
+      mrkdwn: true,
+    }),
+  ]);
 };
 
 function generateTextForApprover(approverSlackUserId: string, approve: boolean): string {

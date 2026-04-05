@@ -16,7 +16,7 @@ export const inputNewCommerMemberDetailViewHandler: ViewAckHandler<HonoSlackAppE
   }
 
   const selectMemberTypeTimestamp = payload.view.private_metadata;
-  await Promise.all([
+  await Promise.allSettled([
     selectFeePayeeStep(payload.user.id, res.data, { client: context.client, env }),
     closeSelectMemberTypeMessage(payload.user.id, selectMemberTypeTimestamp, { client: context.client, env }),
   ]);

@@ -36,6 +36,11 @@
         "command": "/recovery-newcommer",
         "description": "新入部員登録フローの途中でエラーが発生したユーザーを復旧する",
         "url": "https://meibo-bot-dev.sysken.net/slack"
+      },
+      {
+        "command": "/start-continuation",
+        "description": "継続手続きを開始する",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
       }
     ],
     "app_home": {

@@ -4,5 +4,10 @@ import { startContinuationStep } from '@/slack/flows/continuing-member-flow/01-s
 
 export const startContinuationCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = async ({ payload, context, env }) => {
   const slackUserId = payload.user_id;
-  await startContinuationStep(slackUserId, { client: context.client, env });
+
+  try {
+    await startContinuationStep(slackUserId, { client: context.client, env });
+  } catch (error) {
+    console.error('継続手続きの開始に失敗:', error);
+  };
 };

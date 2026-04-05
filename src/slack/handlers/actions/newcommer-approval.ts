@@ -11,7 +11,7 @@ export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAck
   const channelId = payload.channel?.id;
   const blocks = payload.message.blocks;
 
-  await Promise.all([
+  await Promise.allSettled([
     updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, { client: context.client, env }),
     clickedApproveOrRejectButton(approve, channelId, timestamp, blocks, { client: context.client }),
   ]);

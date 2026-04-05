@@ -11,6 +11,7 @@ export const getUserId = async (slackUserId: string, client: SlackAPIClient, env
       user: slackUserId,
       text: 'ユーザーID が見つかりませんでした。管理者に連絡してください',
     });
+    throw new Error('ユーザーID が見つかりませんでした');
   }
   return userId;
 };

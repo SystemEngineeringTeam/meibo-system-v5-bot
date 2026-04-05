@@ -17,6 +17,6 @@ export const messageHandler: EventLazyHandler<'message', SlackEdgeAppEnv>
         text: `You said: ${payload.text} ${payload.user}`,
       });
     } catch (error) {
-      console.error('Failed to echo message:', error);
+      console.error('Error handling message event:', error);
     }
   };

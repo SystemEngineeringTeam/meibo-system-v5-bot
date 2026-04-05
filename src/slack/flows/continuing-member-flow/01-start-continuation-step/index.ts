@@ -47,7 +47,17 @@ function generateBlocks(selected: boolean): AnyMessageBlock[] {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: '*STEP 1*: 継続ボタンを押して，登録情報を確認してください\n継続しない場合は何もしなくて大丈夫です',
+        text: `*【重要】継続手続きをしてください* – 名簿管理システム
+※ 継続手続きをしなかった場合は，自動的に退部扱いとなります
+
+[継続手続きの流れ]
+  STEP 1: 継続手続きを開始
+  STEP 2: 登録内容の確認
+  STEP 3: 部費の支払い相手の選択
+    ↓ 承認待ち
+  部員登録完了 :tada:
+
+*STEP 1*: 継続ボタンを押して，登録情報を確認してください`,
       },
     },
   ];

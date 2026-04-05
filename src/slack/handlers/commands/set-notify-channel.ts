@@ -8,8 +8,12 @@ export const setNotifyChannelCommandHandler: SlashCommandAckHandler<HonoSlackApp
     notifyChannelId: payload.channel_id,
   });
 
-  await context.client.chat.postMessage({
-    channel: payload.channel_id,
-    text: `<#${payload.channel_id}> が名簿管理BOTの通知チャンネルに設定されました！`,
-  });
+  try {
+    await context.client.chat.postMessage({
+      channel: payload.channel_id,
+      text: `<#${payload.channel_id}> が名簿管理BOTの通知チャンネルに設定されました！`,
+    });
+  } catch (error) {
+    console.error('Failed to send confirmation message:', error);
+  }
 };
