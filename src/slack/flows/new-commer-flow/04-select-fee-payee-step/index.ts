@@ -19,7 +19,7 @@ export const selectFeePayeeStep = async (slackUserId: string, requestData: Infer
   await context.client.chat.postMessage({
     channel: channelData.channelId,
     text: `*STEP 4*: 部費の支払い相手を選択してください`,
-    blocks: generateBlocks([...payeeList, 'ぺんぎん :penguin:', 'あざらし', 'えびふらい']), // TODO: テスト用のダミーデータ
+    blocks: generateBlocks(payeeList),
     metadata: {
       event_type: 'request_fee_payee',
       event_payload: requestData,
