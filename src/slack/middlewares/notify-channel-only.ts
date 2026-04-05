@@ -15,6 +15,7 @@ export const notifyChannelOnlyCommand = (handler: (req: SlackRequestWithRespond<
         user: payload.user_id,
         text: `:x: このコマンドは通知チャンネル (<#${notifyChannelId}>) でのみ実行できます`,
       });
+      return;
     }
 
     // OKなら本処理へ
