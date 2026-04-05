@@ -1,9 +1,10 @@
 import type { MessageAckResponse, SlackRequestWithRespond, SlashCommand } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 
-export const adminOnlySlashCommand = (handler: (req: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => Promise<MessageAckResponse>) =>
-  async (args: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => {
-    const { context, payload } = args;
+/** 管理者のみ実行可能 */
+export const adminOnlyCommand = (handler: (req: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => Promise<MessageAckResponse>) =>
+  async (req: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => {
+    const { context, payload } = req;
 
     const userId = payload.user_id;
 
@@ -23,11 +24,11 @@ export const adminOnlySlashCommand = (handler: (req: SlackRequestWithRespond<Hon
       await context.client.chat.postEphemeral({
         channel: payload.channel_id,
         user: userId,
-        text: ':no_entry: このコマンドは管理者のみ実行できます',
+        text: ':x: このコマンドは管理者のみ実行できます',
       });
       return;
     }
 
     // OKなら本処理へ
-    return handler(args);
+    return handler(req);
   };

@@ -23,6 +23,16 @@
         "url": "https://meibo-bot-dev.sysken.net/slack"
       },
       {
+        "command": "/set-payee-nickname",
+        "description": "自分を支払い先として追加し，ニックネームを設定する",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
+      },
+      {
+        "command": "/remove-payee-nickname",
+        "description": "支払い先のニックネームを削除する",
+        "url": "https://meibo-bot-dev.sysken.net/slack"
+      },
+      {
         "command": "/test-team-join",
         "description": "チーム参加テスト",
         "url": "https://meibo-bot-dev.sysken.net/slack"

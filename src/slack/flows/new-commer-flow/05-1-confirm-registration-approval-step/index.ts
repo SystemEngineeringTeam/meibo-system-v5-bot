@@ -11,13 +11,13 @@ export interface ConfirmRegistrationApprovalStepResult {
 }
 
 export const confirmRegistrationApprovalStep = async (payerSlackUserId: string, payeeName: string, teamId: string | undefined, context: SlackAppContext, env: HonoSlackAppEnv): Promise<ConfirmRegistrationApprovalStepResult> => {
-  const channelId = await getNotifyChannelId(teamId, env);
+  const notifyChannelId = await getNotifyChannelId(teamId, env);
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 
   try {
     await context.client.chat.postMessage({
-      channel: channelId,
+      channel: notifyChannelId,
       text: generateText(payerSlackUserId, payeeData?.slackUserId),
       blocks: generateBlocks(payerSlackUserId, payeeData?.slackUserId),
       mrkdwn: true,
