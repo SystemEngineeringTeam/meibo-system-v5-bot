@@ -2,16 +2,37 @@ import type { HonoHandler } from '@/types/hono';
 import type { LinkData } from '@/types/kv';
 import { login } from '@auth0/auth0-hono';
 import { setCookie } from 'hono/cookie';
+import PageLayout from '@/components/layouts/PageLayout';
 import { selectMemberTypeStep } from '@/slack/flows/new-commer-flow/02-select-member-type-step';
 
 export const loginHandler: HonoHandler<'/login'> = async (c) => {
   // slackUserId と紐づけるキーを取得
   const key = c.req.query('key');
-  if (!key) return c.text('Missing key', 400);
+  if (!key) {
+    c.status(400);
+    return c.render(
+      <PageLayout>
+        <>
+          <h1>400: Invalid key</h1>
+          <p>無効なキーです</p>
+        </>
+      </PageLayout>,
+    );
+  }
 
   // キーに対応するデータ(slackUserId等)が存在するか確認
   const data = await c.env.LINK_KV.get<LinkData>(key);
-  if (!data) return c.text('Invalid or expired key', 400);
+  if (!data) {
+    c.status(400);
+    return c.render(
+      <PageLayout>
+        <>
+          <h1>400: Invalid key</h1>
+          <p>無効なキーです</p>
+        </>
+      </PageLayout>,
+    );
+  }
 
   // クッキーにキーを保存
   setCookie(c, 'link_key', key, {
