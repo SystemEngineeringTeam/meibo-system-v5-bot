@@ -1,0 +1,49 @@
+import type { SlackAppContext } from 'slack-cloudflare-workers';
+import type { ConfirmRegistrationApprovalStepResult } from './confirm-registration-approval';
+import type { HonoSlackAppEnv } from '@/types/hono';
+import type { ChannelData, PayeeData } from '@/types/kv';
+import { kv } from '@/utils/kv';
+
+export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, context: SlackAppContext, env: HonoSlackAppEnv) => {
+  // ユーザのDMチャンネルIDを取得
+  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
+  if (!channelData) {
+    await context.client.chat.postEphemeral({
+      channel: slackUserId,
+      user: slackUserId,
+      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
+    });
+    return;
+  }
+
+  const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
+
+  try {
+    await context.client.chat.postMessage({
+      channel: channelData.channelId,
+      text: generateText(result, payeeName, payeeData?.slackUserId),
+      mrkdwn: true,
+    });
+  } catch (error) {
+    console.error('Failed to send confirmation message:', error);
+    return false;
+  }
+
+  return true;
+};
+
+function generateText(result: ConfirmRegistrationApprovalStepResult, payeeName: string, payeeSlackUserId?: string): string {
+  if (result.success) {
+    return `:hourglass_flowing_sand: *承認申請を送信しました*
+しばらく経っても承認されない場合は役員に確認してください
+
+支払い相手: ${payeeName}(${payeeSlackUserId ? `<@${payeeSlackUserId}>` : '不明'})`;
+  }
+
+  if (result.reason === 'no_request_data') {
+    return `:warning: *申請内容がありません*`;
+  }
+
+  return `:hourglass_flowing_sand: *承認申請が送信できませんでした*
+再度お試しください`;
+}

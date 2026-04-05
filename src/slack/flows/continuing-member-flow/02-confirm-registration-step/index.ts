@@ -1,4 +1,4 @@
-import type { ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
+import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { InferInput } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
@@ -9,13 +9,12 @@ import { safeParse } from 'valibot';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
 import { kv } from '@/utils/kv';
 
-export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
-  // ユーザのDMチャンネルIDを取得
-  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, userId);
+export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+  const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
   if (!channelData) {
     await context.client.chat.postEphemeral({
-      channel: payload.channel.id,
-      user: userId,
+      channel: slackUserId,
+      user: slackUserId,
       text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
     });
     return;
@@ -29,7 +28,10 @@ export const inputMemberDetailStep = async (userId: string, selectedValue: strin
     return;
   }
 
-  await sendInputMemberDetailModal(selectedValue, 'input_newcomer_member_detail', context.triggerId, selectMemberTypeTimestamp, context.client);
+  // TODO: API からユーザ情報を取得して表示する
+  const memberType = 'internal'; // 仮
+
+  await sendInputMemberDetailModal(memberType, 'input_continuing_member_detail', context.triggerId, selectMemberTypeTimestamp, context.client);
 };
 
 interface CreateMemberDetailResultSuccess {
@@ -43,7 +45,7 @@ interface CreateMemberDetailResultFailure {
   errors: Record<string, string>;
 }
 
-export const createMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
+export const updateMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
   const memberDetail = safeParse(memberDetailSchema, inputValues);
 
   if (!memberDetail.success) {
@@ -64,7 +66,7 @@ export const createMemberDetail = async (inputValues: NormalizedViewState): Prom
     return {
       success: false,
       errors: {
-        warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+        warning_divider: '部員情報の更新に失敗しました。時間をおいて再度お試しください。',
       },
     };
   }

@@ -1,7 +1,7 @@
 import type { AnyModalBlock, BlockActionAckHandler, ButtonAction, SlackAPIClient, ViewBlockAction, ViewInputBlock } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { safeParse } from 'valibot';
-import { zipCodeSchema } from '@/slack/flows/new-commer-flow/03-input-member-detail-step/validation';
+import { zipCodeSchema } from '@/slack/schemas/member';
 import { getViewValue } from '@/slack/lib/get-view-value';
 import { replaceModalBlock } from '@/slack/lib/replace-modak-block';
 import { searchAddressByZipcode } from '@/slack/lib/search-addres-by-zipcode';
