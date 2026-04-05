@@ -1,28 +1,21 @@
-import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { InferInput } from 'valibot';
-import type { HonoSlackAppEnv } from '@/types/hono';
+import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { sendInputMemberDetailModal } from '@slack/flows/shared/send-input-member-detail-modal';
 import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { getTriggerId } from '@/slack/lib/get-trigger-id';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
 
-export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
-  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
-
-  if (!context.triggerId) {
-    await context.client.chat.postMessage({
-      channel: channelId,
-      text: ':warning: 部員情報モーダルの表示に失敗しました。管理者に連絡してください。',
-    });
-    return;
-  }
+export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
   // TODO: API からユーザ情報を取得して表示する
   const memberType = 'internal'; // 仮
 
-  await sendInputMemberDetailModal(memberType, 'input_continuing_member_detail', context.triggerId, selectMemberTypeTimestamp, context.client);
+  await sendInputMemberDetailModal(memberType, 'input_continuing_member_detail', validatedTriggerId, selectMemberTypeTimestamp, client);
 };
 
 interface CreateMemberDetailResultSuccess {

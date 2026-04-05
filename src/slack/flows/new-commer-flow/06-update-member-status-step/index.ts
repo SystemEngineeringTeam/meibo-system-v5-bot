@@ -1,40 +1,39 @@
-import type { ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
-import type { HonoSlackAppEnv } from '@/types/hono';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
 
-export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
+export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, { client, env }: SlackHandlerOptions) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
 
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(payerSlackUserId, context.client, env);
+  const channelId = await getOrOpenDMChannelId(payerSlackUserId, client, env);
 
   // TODO: API を叩いてユーザのステータスを更新する
 
   try {
     await Promise.allSettled([
       // 承認・拒否の結果をスレッドで送信
-      context.client.chat.postMessage({
+      client.chat.postMessage({
         channel: notifyChannelId,
         thread_ts: timestamp,
         text: generateTextForApprover(approverSlackUserId, approve),
       }),
 
       // 承認・拒否のリアクションを追加
-      context.client.reactions.add({
+      client.reactions.add({
         channel: notifyChannelId,
         timestamp,
         name: approve ? 'white_check_mark' : 'no_entry_sign',
       }),
       // 既存のリアクションを削除
-      context.client.reactions.remove({
+      client.reactions.remove({
         channel: notifyChannelId,
         timestamp,
         name: approve ? 'no_entry_sign' : 'white_check_mark',
       }),
 
       // 承認・拒否の結果をユーザに送信
-      context.client.chat.postMessage({
+      client.chat.postMessage({
         channel: channelId,
         text: generateTextForMember(approverSlackUserId, approve),
         mrkdwn: true,

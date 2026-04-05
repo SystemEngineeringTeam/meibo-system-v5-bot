@@ -4,5 +4,5 @@ import { startContinuationStep } from '@/slack/flows/continuing-member-flow/01-s
 
 export const startContinuationCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = async ({ payload, context, env }) => {
   const slackUserId = payload.user_id;
-  await startContinuationStep(slackUserId, context, env);
+  await startContinuationStep(slackUserId, { client: context.client, env });
 };

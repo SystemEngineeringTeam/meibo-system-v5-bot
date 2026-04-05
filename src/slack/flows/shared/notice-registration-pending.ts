@@ -1,18 +1,17 @@
-import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { ConfirmRegistrationApprovalStepResult } from './confirm-registration-approval';
-import type { HonoSlackAppEnv } from '@/types/hono';
 import type { PayeeData } from '@/types/kv';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
-export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 
   try {
-    await context.client.chat.postMessage({
+    await client.chat.postMessage({
       channel: channelId,
       text: generateText(result, payeeName, payeeData?.slackUserId),
       mrkdwn: true,

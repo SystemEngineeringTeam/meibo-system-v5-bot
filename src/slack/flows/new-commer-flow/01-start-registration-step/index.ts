@@ -1,14 +1,13 @@
 import type { Dayjs } from 'dayjs';
-import type { SlackAppContext } from 'slack-cloudflare-workers';
-import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData, LinkData } from '@/types/kv';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
-export const startRegistrationStep = async (slackUserId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
-  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
+export const startRegistrationStep = async (slackUserId: string, { client, env }: SlackHandlerOptions) => {
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
   // ユーザIDと紐づく一意なキー
   const key = uuidv4();
 
@@ -25,7 +24,7 @@ export const startRegistrationStep = async (slackUserId: string, context: SlackA
       kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
 
       // メッセージを送信
-      context.client.chat.postMessage({
+      client.chat.postMessage({
         channel: channelId,
         text: generateText(loginUrl, expiration),
         mrkdwn: true,

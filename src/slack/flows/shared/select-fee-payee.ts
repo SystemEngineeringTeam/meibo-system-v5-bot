@@ -1,17 +1,17 @@
-import type { AnyMessageBlock, SlackAppContext } from 'slack-cloudflare-workers';
+import type { AnyMessageBlock } from 'slack-cloudflare-workers';
 import type { InferInput } from 'valibot';
 import type { memberDetailSchema } from '@/slack/schemas/member';
-import type { HonoSlackAppEnv } from '@/types/hono';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 
-export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   const payeeKeyList = await env.PAYEE_KV.list();
   const payeeList = payeeKeyList.keys.map(({ name }) => name);
 
-  await context.client.chat.postMessage({
+  await client.chat.postMessage({
     channel: channelId,
     text: generateText(stepNumber),
     blocks: generateBlocks(stepNumber, payeeList, actionId),
@@ -24,11 +24,11 @@ export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => 
   });
 };
 
-export const baseCloseSelectFeePayeeMessage = (stepNumber: number) => async (slackUserId: string, payeeName: string, timestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const baseCloseSelectFeePayeeMessage = (stepNumber: number) => async (slackUserId: string, payeeName: string, timestamp: string, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, context.client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
-  await context.client.chat.update({
+  await client.chat.update({
     channel: channelId,
     ts: timestamp,
     text: generateText(stepNumber),

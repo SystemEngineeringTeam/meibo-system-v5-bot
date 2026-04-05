@@ -1,5 +1,6 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
-import type { HonoContext, HonoSlackAppEnv } from '@/types/hono';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
+import type { HonoContext } from '@/types/hono';
 import type { LinkData } from '@/types/kv';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
@@ -85,7 +86,7 @@ export async function sendSelectMemberTypeMessage(client: SlackAPIClient, channe
   });
 };
 
-export async function closeSelectMemberTypeMessage(client: SlackAPIClient, slackUserId: string, timestamp: string, env: HonoSlackAppEnv) {
+export async function closeSelectMemberTypeMessage(slackUserId: string, timestamp: string, { client, env }: SlackHandlerOptions) {
   const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   return client.chat.update({

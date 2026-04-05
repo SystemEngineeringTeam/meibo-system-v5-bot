@@ -10,9 +10,9 @@ export const selectNewcommerFeePayeeActionHandler: BlockActionAckHandler<'static
   const teamId = payload.team?.id;
   const timestamp = payload.message.ts;
 
-  const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, teamId, context, env);
+  const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, teamId, { client: context.client, env });
   await Promise.all([
-    noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, context, env),
-    closeSelectFeePayeeMessage(payerSlackUserId, payeeName, timestamp, context, env),
+    noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, { client: context.client, env }),
+    closeSelectFeePayeeMessage(payerSlackUserId, payeeName, timestamp, { client: context.client, env }),
   ]);
 };

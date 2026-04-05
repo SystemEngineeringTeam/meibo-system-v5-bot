@@ -24,7 +24,7 @@ export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentCh
     ]);
 
     // STEP1 を再度実行
-    await startRegistrationStep(targetSlackUserId, context, env);
+    await startRegistrationStep(targetSlackUserId, { client: context.client, env });
 
     return;
   }
@@ -72,7 +72,7 @@ export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentCh
       text: '部費の支払い相手選択メッセージを再送します',
     });
 
-    await selectFeePayeeStep(targetSlackUserId, undefined, context, env);
+    await selectFeePayeeStep(targetSlackUserId, undefined, { client: context.client, env });
   }
 
   // 完了済み

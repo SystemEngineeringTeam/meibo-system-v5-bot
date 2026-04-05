@@ -1,6 +1,6 @@
-import type { AnyMessageBlock, SlackAppContext } from 'slack-cloudflare-workers';
-import type { HonoSlackAppEnv } from '@/types/hono';
+import type { AnyMessageBlock } from 'slack-cloudflare-workers';
 import type { PayeeData } from '@/types/kv';
+import type { SlackHandlerOptions, SlackHandlerSlackHandlerClientOption } from '@/types/slack-handler-options';
 import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
 import { kv } from '@/utils/kv';
 
@@ -12,13 +12,13 @@ export interface ConfirmRegistrationApprovalStepResult {
   reason?: 'no_request_data' | 'error';
 }
 
-export const baseConfirmRegistrationApprovalStep = (approveActionId: string, rejectActionId: string, memberType: MemberType) => async (payerSlackUserId: string, payeeName: string, teamId: string | undefined, context: SlackAppContext, env: HonoSlackAppEnv): Promise<ConfirmRegistrationApprovalStepResult> => {
+export const baseConfirmRegistrationApprovalStep = (approveActionId: string, rejectActionId: string, memberType: MemberType) => async (payerSlackUserId: string, payeeName: string, teamId: string | undefined, { client, env }: SlackHandlerOptions): Promise<ConfirmRegistrationApprovalStepResult> => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 
   try {
-    await context.client.chat.postMessage({
+    await client.chat.postMessage({
       channel: notifyChannelId,
       text: generateText(memberType, payerSlackUserId, payeeData?.slackUserId),
       blocks: generateBlocks(approveActionId, rejectActionId, memberType, payerSlackUserId, payeeData?.slackUserId),
@@ -38,10 +38,10 @@ export const baseConfirmRegistrationApprovalStep = (approveActionId: string, rej
   return { success: true };
 };
 
-export const baseClickedApproveOrRejectButton = () => async (approve: boolean, channelId: string, timestamp: string, blocks: AnyMessageBlock[] | undefined, context: SlackAppContext) => {
+export const baseClickedApproveOrRejectButton = () => async (approve: boolean, channelId: string, timestamp: string, blocks: AnyMessageBlock[] | undefined, { client }: SlackHandlerSlackHandlerClientOption) => {
   const activeActionId = approve ? 'member_reject' : 'member_approve';
 
-  await context.client.chat.update({
+  await client.chat.update({
     channel: channelId,
     ts: timestamp,
     text: approve ? '承認しました' : '拒否しました',

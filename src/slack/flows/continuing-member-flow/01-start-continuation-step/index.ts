@@ -1,41 +1,20 @@
-import type { AnyMessageBlock, SlackAPIClient, SlackAppContext } from 'slack-cloudflare-workers';
-import type { HonoSlackAppEnv } from '@/types/hono';
-import type { ChannelData, UserData } from '@/types/kv';
+import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
+import type { ChannelData } from '@/types/kv';
+import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { getUserId } from '@/slack/lib/get-user-id';
 import { kv } from '@/utils/kv';
 
-export const startContinuationStep = async (slackUserId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
-  const userId = await kv.get<UserData>(env.USER_KV, slackUserId);
-  if (!userId) {
-    await context.client.chat.postEphemeral({
-      channel: slackUserId,
-      user: slackUserId,
-      text: 'ユーザーID が見つかりませんでした。管理者に連絡してください',
-    });
-    return;
-  }
-
-  // DM を開く
-  const im = await context.client.conversations.open({
-    users: slackUserId,
-  });
-
-  const channelId = im.channel?.id;
-  if (!channelId) {
-    await context.client.chat.postEphemeral({
-      channel: slackUserId,
-      user: slackUserId,
-      text: 'DM チャンネルの作成に失敗しました。管理者に連絡してください',
-    });
-    return;
-  }
+export const startContinuationStep = async (slackUserId: string, { client, env }: SlackHandlerOptions) => {
+  const _userId = await getUserId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   // TODO: API から登録内容を取得
   // 継続可能な状態(部員登録済み/継続登録済み ではない)かを確認
 
   await Promise.allSettled([
     kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
-    sendContinuationMessage(channelId, context.client),
+    sendContinuationMessage(channelId, client),
   ]);
 };
 
@@ -47,7 +26,7 @@ async function sendContinuationMessage(channelId: string, client: SlackAPIClient
   });
 }
 
-export const closeContinuationMessage = async (client: SlackAPIClient, slackUserId: string, timestamp: string, env: HonoSlackAppEnv) => {
+export const closeContinuationMessage = async (slackUserId: string, timestamp: string, { client, env }: SlackHandlerOptions) => {
   const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
 
   await client.chat.update({

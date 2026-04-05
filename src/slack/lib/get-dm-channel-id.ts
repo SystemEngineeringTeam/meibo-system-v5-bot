@@ -14,7 +14,14 @@ export const getOrOpenDMChannelId = async (slackUserId: string, client: SlackAPI
   const im = await client.conversations.open({ users: slackUserId });
 
   const channelId = im.channel?.id;
-  if (!channelId) throw new Error('No channel ID');
+  if (!channelId) {
+    await client.chat.postEphemeral({
+      channel: slackUserId,
+      user: slackUserId,
+      text: 'DM チャンネルの作成に失敗しました。管理者に連絡してください',
+    });
+    throw new Error('Failed to open DM channel');
+  }
 
   // KV にユーザーIDとチャンネルIDを保存
   await kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId });
