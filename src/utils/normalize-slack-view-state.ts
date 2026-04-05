@@ -11,9 +11,9 @@ export type NormalizedViewState = Record<string, string | undefined>;
 export function normalizeViewState(input: SlackViewStateInput): NormalizedViewState {
   const result: NormalizedViewState = {};
 
-  for (const [_blockId, actions] of Object.entries(input)) {
-    for (const [actionId, value] of Object.entries(actions)) {
-      result[actionId] = value.value ?? value.selected_date ?? value.selected_option?.value;
+  for (const [blockId, actions] of Object.entries(input)) {
+    for (const [_actionId, value] of Object.entries(actions)) {
+      result[blockId] = value.value ?? value.selected_date ?? value.selected_option?.value;
     }
   }
 
