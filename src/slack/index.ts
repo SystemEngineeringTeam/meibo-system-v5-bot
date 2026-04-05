@@ -1,6 +1,8 @@
 import type { HonoSlackAppBindings } from '@/types/hono';
 import { Hono } from 'hono';
 import { SlackApp } from 'slack-cloudflare-workers';
+import { autoFillAddressActionHandler } from './handlers/actions/aut-fill-address';
+import { copyCurrentAddressActionHandler } from './handlers/actions/copy-current-address';
 import { memberApprovalActionHandler } from './handlers/actions/member-approval';
 import { selectFeePayeeActionHandler } from './handlers/actions/select-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
@@ -52,6 +54,10 @@ slackApp.all('/', async (c) => {
   // STEP 6: 承認・拒否
   app.action('member_approve', memberApprovalActionHandler(true));
   app.action('member_reject', memberApprovalActionHandler(false));
+
+  // Event
+  app.action('auto_fill_address', autoFillAddressActionHandler);
+  app.action('copy_current_address', copyCurrentAddressActionHandler);
 
   return await app.run(c.req.raw, c.executionCtx);
 });

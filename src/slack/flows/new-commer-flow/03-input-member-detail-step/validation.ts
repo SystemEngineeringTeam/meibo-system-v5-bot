@@ -11,7 +11,7 @@ const phoneSchema = pipe(
   regex(/^\d{2,4}-\d{2,4}-\d{4}$/, '電話番号の形式が不正です'),
 );
 
-const zipSchema = pipe(
+export const zipCodeSchema = pipe(
   string(),
   regex(/^\d{3}-\d{4}$/, '郵便番号の形式が不正です'),
 );
@@ -43,9 +43,9 @@ const memberSensitiveSchema = object({
   birthday: dateSchema,
   gender: genderSchema,
   phoneNumber: phoneSchema,
-  currentZipCode: zipSchema,
+  currentZipCode: zipCodeSchema,
   currentAddress: nameSchema,
-  parentsZipCode: zipSchema,
+  parentsZipCode: zipCodeSchema,
   parentsAddress: nameSchema,
 });
 

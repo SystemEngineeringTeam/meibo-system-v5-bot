@@ -102,7 +102,13 @@ function generateBlocks(selectedValue: string): AnyModalBlock[] {
       block_id: 'warning_divider',
     },
     ...generateMemberBaseBlocks(),
+    {
+      type: 'divider',
+    },
     ...generateMemberSensitiveBlocks(),
+    {
+      type: 'divider',
+    },
     ...(isInternal ? generateInternalOnlyBlocks() : generateExternalOnlyBlocks()),
   ];
 }
@@ -237,6 +243,20 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
       },
     },
     {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          action_id: 'auto_fill_address',
+          text: {
+            type: 'plain_text',
+            text: '郵便番号から住所を自動入力',
+          },
+          value: 'currentAddress',
+        },
+      ],
+    },
+    {
       type: 'input',
       block_id: 'currentAddress',
       label: {
@@ -249,6 +269,31 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
       },
     },
     {
+      type: 'divider',
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: `*実家の住所を入力してください*\n実家住みの場合は現住所と同じ内容を入力してください`,
+      },
+    },
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          style: 'primary',
+          action_id: 'copy_current_address',
+          text: {
+            type: 'plain_text',
+            text: '現住所を実家の住所にコピー',
+          },
+          value: 'sameAsCurrentAddress',
+        },
+      ],
+    },
+    {
       type: 'input',
       block_id: 'parentsZipCode',
       label: {
@@ -259,6 +304,20 @@ function generateMemberSensitiveBlocks(): AnyModalBlock[] {
         type: 'plain_text_input',
         action_id: 'parentsZipCode',
       },
+    },
+    {
+      type: 'actions',
+      elements: [
+        {
+          type: 'button',
+          action_id: 'auto_fill_address',
+          text: {
+            type: 'plain_text',
+            text: '郵便番号から住所を自動入力',
+          },
+          value: 'parentsAddress',
+        },
+      ],
     },
     {
       type: 'input',
