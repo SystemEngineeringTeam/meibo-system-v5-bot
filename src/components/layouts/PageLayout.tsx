@@ -34,6 +34,7 @@ export default function PageLayout({ children }: Props) {
     <html>
       <head>
         <Style />
+        <title>名簿管理BOT</title>
       </head>
       <body className={globalStyle}>
         <Header />
