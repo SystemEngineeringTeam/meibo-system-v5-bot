@@ -12,7 +12,7 @@ export const memberApprovalActionHandler = (approve: boolean): BlockActionAckHan
   const blocks = payload.message.blocks;
 
   await Promise.all([
-    updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, context, env),
+    updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, context, payload, env),
     clickedApproveOrRejectButton(approve, channelId, timestamp, blocks, context),
   ]);
 };

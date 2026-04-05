@@ -1,4 +1,4 @@
-import type { AnyModalBlock, SlackAppContext } from 'slack-cloudflare-workers';
+import type { AnyModalBlock, ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
 import type { InferInput, InferIssue } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
@@ -8,11 +8,15 @@ import { safeParse } from 'valibot';
 import { kv } from '@/utils/kv';
 import { memberDetailSchema } from './validation';
 
-export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, userId);
   if (!channelData) {
-    console.error(`No channel data found for user ${userId}`);
+    await context.client.chat.postEphemeral({
+      channel: payload.channel.id,
+      user: userId,
+      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
+    });
     return;
   }
 

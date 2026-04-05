@@ -1,16 +1,20 @@
-import type { SlackAppContext } from 'slack-cloudflare-workers';
+import type { ButtonAction, MessageBlockAction, SlackAppContext } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
 import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
 import { kv } from '@/utils/kv';
 
-export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, context: SlackAppContext, env: HonoSlackAppEnv) => {
+export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, context: SlackAppContext, payload: MessageBlockAction<ButtonAction>, env: HonoSlackAppEnv) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
 
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, payerSlackUserId);
   if (!channelData) {
-    console.error(`No channel data found for user ${payerSlackUserId}`);
+    await context.client.chat.postEphemeral({
+      channel: payload.channel.id,
+      user: payerSlackUserId,
+      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
+    });
     return;
   }
 

@@ -8,7 +8,11 @@ export const noticeRegistrationPendingStep = async (slackUserId: string, payeeNa
   // ユーザのDMチャンネルIDを取得
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
   if (!channelData) {
-    console.error(`No channel data found for user ${slackUserId}`);
+    await context.client.chat.postEphemeral({
+      channel: slackUserId,
+      user: slackUserId,
+      text: ':warning: DMチャンネルIDの取得に失敗しました。管理者に連絡してください。',
+    });
     return;
   }
 
