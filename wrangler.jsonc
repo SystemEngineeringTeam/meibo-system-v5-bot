@@ -36,6 +36,9 @@
 			"id": "2d126c54f04d485b9e412226ceb83e8d"
 		}
 	],
+	"assets": {
+		"directory": "./src/assets",
+	}
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

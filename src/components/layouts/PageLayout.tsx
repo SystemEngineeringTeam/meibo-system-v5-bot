@@ -35,6 +35,7 @@ export default function PageLayout({ children }: Props) {
       <head>
         <Style />
         <title>名簿管理BOT</title>
+        <link rel="icon" type="image/x-icon" href="/favicon.png" />
       </head>
       <body className={globalStyle}>
         <Header />
