@@ -26,7 +26,7 @@ export const MeiboApiService = {
     await kv.put<TmpApiAltData>(env.TMP_API_ALT_KV, userId, { ...memberDetail, status: 'temporary' });
   },
 
-  async updateMemberStatus(slackUserId: string, status: 'temporary' | 'active' | 'inactive' | 'continuing', { env }: Options) {
+  async updateMemberStatus(slackUserId: string, status: 'temporary' | 'approved' | 'rejected', { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
     // TODO: API にユーザのステータスを更新するリクエストを送る
@@ -49,7 +49,7 @@ export const MeiboApiService = {
     const memberDetail = await kv.get<TmpApiAltData>(env.TMP_API_ALT_KV, userData.userId);
     if (!memberDetail) return 'CREATED';
 
-    if (memberDetail.status !== 'approved') return 'DETAIL_SAVED';
+    if (memberDetail.status === 'temporary') return 'DETAIL_SAVED';
 
     return 'APPROVED';
   },

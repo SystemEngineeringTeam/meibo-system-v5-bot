@@ -1,12 +1,13 @@
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
+import { MeiboApiService } from '@/slack/lib/meibo-api-service';
 
 export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, { client, env }: SlackHandlerOptions) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
   const channelId = await getOrOpenDMChannelId(payerSlackUserId, { client, env });
 
-  // TODO: API を叩いてユーザのステータスを更新する
+  await MeiboApiService.updateMemberStatus(payerSlackUserId, approve ? 'approved' : 'rejected', { env });
 
   await Promise.all([
     // 承認・拒否の結果をスレッドで送信

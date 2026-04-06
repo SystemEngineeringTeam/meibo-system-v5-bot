@@ -35,5 +35,5 @@ export interface SettingsData {
 // key: userId
 export type TmpApiAltData = InferInput<typeof memberDetailSchema> & {
   // 仮登録/入部/退部/継続
-  status: 'temporary' | 'active' | 'inactive' | 'continuing' | 'approved';
+  status: 'temporary' | 'approved' | 'rejected';
 };
