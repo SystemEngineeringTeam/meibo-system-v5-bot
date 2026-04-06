@@ -1,4 +1,5 @@
 import type { InferInput } from 'valibot';
+import type { HonoSlackAppEnv } from '@/types/hono';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { sendInputMemberDetailModal } from '@slack/flows/shared/send-input-member-detail-modal';
@@ -6,10 +7,11 @@ import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getTriggerId } from '@/slack/lib/get-trigger-id';
+import { MeiboApiService } from '@/slack/lib/meibo-api-service';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
 
 export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
-  const channelId = await getOrOpenDMChannelId(userId, client, env);
+  const channelId = await getOrOpenDMChannelId(userId, { client, env });
   const validTriggerId = await getTriggerId(triggerId, channelId, client);
 
   if (!triggerId) {
@@ -34,7 +36,7 @@ interface CreateMemberDetailResultFailure {
   errors: Record<string, string>;
 }
 
-export const createMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
+export const createMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, env: HonoSlackAppEnv): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
   const memberDetail = safeParse(memberDetailSchema, inputValues);
 
   if (!memberDetail.success) {
@@ -45,7 +47,7 @@ export const createMemberDetail = async (inputValues: NormalizedViewState): Prom
   }
 
   try {
-  // TODO: ユーザ詳細情報を作成する API を呼び出す
+    await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
     return {
       success: true,
       data: memberDetail.output,

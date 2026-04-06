@@ -9,7 +9,7 @@ import { getTriggerId } from '@/slack/lib/get-trigger-id';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
 
 export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
   // TODO: API からユーザ情報を取得して表示する

@@ -6,6 +6,7 @@ import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
 import PageLayout from '@/components/layouts/PageLayout';
 import { getDMChannelId, getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { MeiboApiService } from '@/slack/lib/meibo-api-service';
 import { kv } from '@/utils/kv';
 import { SuccessPage } from './components/SuccessPage';
 
@@ -78,8 +79,7 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
     );
   };
 
-  // TODO: backend に対してユーザ作成リクエストを送る
-  // await kv.put<UserData>(c.env.USER_KV, linkData.slackUserId, { userId: res.user.id });
+  await MeiboApiService.createMember(linkData.slackUserId, { env: c.env });
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });
@@ -97,7 +97,7 @@ export async function sendSelectMemberTypeMessage(client: SlackAPIClient, channe
 };
 
 export async function closeSelectMemberTypeMessage(slackUserId: string, timestamp: string, { client, env }: SlackHandlerOptions) {
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   return client.chat.update({
     channel: channelId,

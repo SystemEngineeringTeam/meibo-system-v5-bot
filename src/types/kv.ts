@@ -1,4 +1,8 @@
 // slackUserId と Email 紐付け時の個人特定用
+
+import type { InferInput } from 'valibot';
+import type { memberDetailSchema } from '@/slack/schemas/member';
+
 // key: slackUserId 紐付けk用 key
 export interface LinkData {
   slackUserId: string;
@@ -26,3 +30,10 @@ export interface PayeeData {
 export interface SettingsData {
   notifyChannelId: string;
 }
+
+// 仮のAPI代替用
+// key: userId
+export type TmpApiAltData = InferInput<typeof memberDetailSchema> & {
+  // 仮登録/入部/退部/継続
+  status: 'temporary' | 'active' | 'inactive' | 'continuing' | 'approved';
+};

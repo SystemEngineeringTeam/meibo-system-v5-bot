@@ -7,7 +7,7 @@ import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const startRegistrationStep = async (slackUserId: string, { client, env }: SlackHandlerOptions) => {
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
   // ユーザIDと紐づく一意なキー
   const key = uuidv4();
 

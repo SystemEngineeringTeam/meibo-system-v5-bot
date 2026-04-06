@@ -6,7 +6,7 @@ import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 
 export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   const payeeKeyList = await env.PAYEE_KV.list();
   const payeeList = payeeKeyList.keys.map(({ name }) => name);
@@ -26,7 +26,7 @@ export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => 
 
 export const baseCloseSelectFeePayeeMessage = (stepNumber: number) => async (slackUserId: string, payeeName: string, timestamp: string, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   await client.chat.update({
     channel: channelId,

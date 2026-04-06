@@ -7,7 +7,7 @@ import { normalizeViewState } from '@/utils/normalize-slack-view-state';
 
 export const inputNewCommerMemberDetailViewHandler: ViewAckHandler<HonoSlackAppEnv> = async ({ context, payload, env }) => {
   const inputValues = normalizeViewState(payload.view.state.values);
-  const res = await createMemberDetail(inputValues);
+  const res = await createMemberDetail(payload.user.id, inputValues, env);
   if (!res.success) {
     return {
       response_action: 'errors',

@@ -4,7 +4,7 @@ import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
 
 export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, { client, env }: SlackHandlerOptions) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);
-  const channelId = await getOrOpenDMChannelId(payerSlackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(payerSlackUserId, { client, env });
 
   // TODO: API を叩いてユーザのステータスを更新する
 

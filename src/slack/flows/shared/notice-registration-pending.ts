@@ -6,7 +6,7 @@ import { kv } from '@/utils/kv';
 
 export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
-  const channelId = await getOrOpenDMChannelId(slackUserId, client, env);
+  const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   const payeeData = await kv.get<PayeeData>(env.PAYEE_KV, payeeName);
 

@@ -34,6 +34,10 @@
 		{
 			"binding": "SETTINGS_KV",
 			"id": "2d126c54f04d485b9e412226ceb83e8d"
+		},
+		{
+			"binding": "TMP_API_ALT_KV",
+			"id": "e49f4986f49a41328443c820f80cf6d6"
 		}
 	],
 	"assets": {

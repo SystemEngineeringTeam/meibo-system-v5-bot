@@ -1,14 +1,18 @@
-import type { SlackAPIClient } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
+import type { OptionalClientSlackHandlerOptions } from '@/types/slack-handler-options';
 import { kv } from '@/utils/kv';
 
 /**
  * DMチャンネルのIDを取得する．なければ新規にDMチャンネルを作成し，そのIDを返す
  */
-export const getOrOpenDMChannelId = async (slackUserId: string, client: SlackAPIClient, env: HonoSlackAppEnv): Promise<string> => {
+export const getOrOpenDMChannelId = async (slackUserId: string, { client, env }: OptionalClientSlackHandlerOptions): Promise<string> => {
   const channelData = await kv.get<ChannelData>(env.CHANNEL_KV, slackUserId);
   if (channelData) return channelData.channelId;
+
+  if (!client) {
+    throw new Error('Failed to get channel ID');
+  }
 
   // DM を開く
   const im = await client.conversations.open({ users: slackUserId });
