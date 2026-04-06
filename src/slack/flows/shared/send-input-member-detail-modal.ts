@@ -149,12 +149,14 @@ function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): 
           text: '性別を選択',
         },
         // TODO: 初期値の設定を要確認
-        initial_option: {
-          text: {
-            type: 'plain_text',
-            text: defaultValues?.gender ?? '',
-          },
-        },
+        initial_option: defaultValues?.gender
+          ? {
+              text: {
+                type: 'plain_text',
+                text: defaultValues.gender ?? '',
+              },
+            }
+          : undefined,
         options: [
           {
             text: { type: 'plain_text', text: '男性' },
