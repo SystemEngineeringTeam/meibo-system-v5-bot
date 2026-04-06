@@ -12,7 +12,7 @@ export const startContinuationStep = async (slackUserId: string, { client, env }
   // TODO: API から登録内容を取得
   // 継続可能な状態(部員登録済み/継続登録済み ではない)かを確認
 
-  await Promise.allSettled([
+  await Promise.all([
     kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
     sendContinuationMessage(channelId, client),
   ]);

@@ -11,7 +11,7 @@ export const selectContinuingMemberFeePayeeActionHandler: BlockActionAckHandler<
   const timestamp = payload.message.ts;
 
   const result = await confirmRegistrationApprovalStep(payerSlackUserId, payeeName, teamId, { client: context.client, env });
-  await Promise.allSettled([
+  await Promise.all([
     noticeRegistrationPendingStep(payerSlackUserId, payeeName, result, { client: context.client, env }),
     closeSelectFeePayeeMessage(payerSlackUserId, payeeName, timestamp, { client: context.client, env }),
   ]);

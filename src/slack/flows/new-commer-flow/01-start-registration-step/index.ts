@@ -18,7 +18,7 @@ export const startRegistrationStep = async (slackUserId: string, { client, env }
   const loginUrl = new URL('/login', env.SLACK_BOT_BASE_URL!);
   loginUrl.searchParams.set('key', key);
 
-  await Promise.allSettled([
+  await Promise.all([
     // KV にユーザーIDとチャンネルIDを保存
     kv.put<ChannelData>(env.CHANNEL_KV, slackUserId, { channelId }),
 
