@@ -79,7 +79,18 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
     );
   };
 
-  await MeiboApiService.createMember(linkData.slackUserId, { env: c.env });
+  const user = session.user;
+  if (!user) {
+    c.status(500);
+    return c.render(
+      <PageLayout>
+        <h1>500: Failed to get user info</h1>
+        <p>管理者に連絡してください。</p>
+      </PageLayout>,
+    );
+  }
+
+  await MeiboApiService.createMember(linkData.slackUserId, user, { env: c.env });
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });

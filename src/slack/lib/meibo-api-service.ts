@@ -1,5 +1,6 @@
 import type { InferInput } from 'valibot';
 import type { memberDetailSchema } from '../schemas/member';
+import type { UserClaims } from '@/types/auth';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { TmpApiAltData, UserData } from '@/types/kv';
 import { v4 } from 'uuid';
@@ -11,12 +12,12 @@ interface Options {
 }
 
 export const MeiboApiService = {
-  async createMember(slackUserId: string, { env }: Options) {
+  async createMember(slackUserId: string, user: UserClaims, { env }: Options) {
     // TODO: API にユーザ作成リクエストを送る
     // API から帰ってくる userId を想定
     const uuid = v4();
 
-    await kv.put<UserData>(env.USER_KV, slackUserId, { userId: uuid });
+    await kv.put<UserData>(env.USER_KV, slackUserId, { userId: uuid, ...user });
   },
 
   async putMemberDetail(slackUserId: string, memberDetail: InferInput<typeof memberDetailSchema>, { env }: Options) {

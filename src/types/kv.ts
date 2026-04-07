@@ -1,6 +1,7 @@
 // slackUserId と Email 紐付け時の個人特定用
 
 import type { InferInput } from 'valibot';
+import type { UserClaims } from './auth';
 import type { memberDetailSchema } from '@/slack/schemas/member';
 
 // key: slackUserId 紐付けk用 key
@@ -16,7 +17,7 @@ export interface ChannelData {
 
 // backend のユーザIDと slackUserId の紐付け用
 // key: slackUserId
-export interface UserData {
+export interface UserData extends UserClaims {
   userId: string;
 }
 
