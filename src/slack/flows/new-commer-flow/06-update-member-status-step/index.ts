@@ -11,7 +11,7 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
 
   await MeiboApiService.updateMemberStatus(payerSlackUserId, approve ? 'approved' : 'rejected', { env });
 
-  await Promise.all([
+  await Promise.allSettled([
     // 承認・拒否の結果をスレッドで送信
     client.chat.postMessage({
       channel: notifyChannelId,

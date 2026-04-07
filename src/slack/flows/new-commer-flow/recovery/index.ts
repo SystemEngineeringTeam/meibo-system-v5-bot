@@ -51,7 +51,7 @@ export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentCh
   }
 
   // STEP3 (POST /member/:id/detail) 後
-  if (step === 'DETAIL_SAVED') {
+  if (step === 'DETAIL_SAVED' || true) {
     await context.client.chat.postEphemeral({
       channel: currentChannelId,
       user: targetSlackUserId,
