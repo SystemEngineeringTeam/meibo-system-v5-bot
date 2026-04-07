@@ -3,7 +3,7 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { TmpApiAltData, UserData } from '@/types/kv';
 import { clickedApproveOrRejectButton } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
 import { updateMemberStatusStep } from '@/slack/flows/new-commer-flow/06-update-member-status-step';
-import { SpreadSheetsApi } from '@/slack/lib/spread-sheets-api';
+import { SpreadSheetsApiService } from '@/slack/lib/spread-sheets-api-service';
 import { kv } from '@/utils/kv';
 
 export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
@@ -14,14 +14,18 @@ export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAck
   const channelId = payload.channel?.id;
   const blocks = payload.message.blocks;
 
+  try {
+    await Promise.all([
+      updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, { client: context.client, env }),
+      clickedApproveOrRejectButton(approve, channelId, timestamp, blocks, { client: context.client }),
+    ]);
+  } catch (error) {
+    console.error('Error in newcommerApprovalActionHandler:', error);
+  }
+
   if (approve) {
     const userData = await kv.get<UserData>(env.USER_KV, payerSlackUserId);
     const tmpUserData = userData && await kv.get<TmpApiAltData>(env.TMP_API_ALT_KV, userData.userId);
-    await SpreadSheetsApi.postMemberInfo(tmpUserData, payload.user.name, teamId, { env, client: context.client });
+    await SpreadSheetsApiService.postMemberInfo(tmpUserData, payload.user.id, teamId, { env, client: context.client });
   }
-
-  await Promise.all([
-    updateMemberStatusStep(payerSlackUserId, approverSlackUserId, timestamp, approve, teamId, { client: context.client, env }),
-    clickedApproveOrRejectButton(approve, channelId, timestamp, blocks, { client: context.client }),
-  ]);
 };
