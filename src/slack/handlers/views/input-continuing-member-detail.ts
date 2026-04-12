@@ -1,8 +1,8 @@
 import type { ViewAckHandler } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { closeContinuationMessage } from '@/slack/flows/continuing-member-flow/01-start-continuation-step';
-import { updateMemberDetail } from '@/slack/flows/continuing-member-flow/02-confirm-registration-step';
-import { selectFeePayeeStep } from '@/slack/flows/continuing-member-flow/03-select-fee-payee-step';
+import { closeContinuationMessage } from '@/slack/flows/renewal-flow/01-start-renewal-step';
+import { updateMemberDetail } from '@/slack/flows/renewal-flow/02-input-member-profile-step';
+import { selectFeePayeeStep } from '@/slack/flows/renewal-flow/03-select-fee-payee-step';
 import { normalizeViewState } from '@/utils/normalize-slack-view-state';
 
 export const inputContinuingMemberDetailViewHandler: ViewAckHandler<HonoSlackAppEnv> = async ({ context, payload, env }) => {

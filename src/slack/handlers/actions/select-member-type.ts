@@ -1,13 +1,13 @@
 import type { BlockActionAckHandler, ButtonAction, MessageBlockAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { inputMemberDetailStep } from '@/slack/flows/new-commer-flow/03-input-member-detail-step';
+import { inputMemberProfileStep } from '@/slack/flows/new-commer-flow/03-input-member-profile-step';
 
 export const selectMemberTypeActionHandler = (selectMemberType: string): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
   const userId = payload.user.id;
   const selectMemberTypeTimestamp = payload.message.ts;
 
   try {
-    await inputMemberDetailStep(userId, selectMemberType, selectMemberTypeTimestamp, { client: context.client, env, triggerId: payload.trigger_id });
+    await inputMemberProfileStep(userId, selectMemberType, selectMemberTypeTimestamp, { client: context.client, env, triggerId: payload.trigger_id });
   } catch (error) {
     console.error('Error in selectMemberTypeActionHandler:', error);
   }

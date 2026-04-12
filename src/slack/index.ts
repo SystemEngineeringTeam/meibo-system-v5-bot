@@ -68,7 +68,7 @@ slackApp.all('/', async (c) => {
   app.action('start_continuation', startContinuationActionHandler);
 
   // STEP 2 → 3: 入力情報のチェック・支払い相手の選択肢の表示
-  app.view('input_continuing_member_detail', inputContinuingMemberDetailViewHandler);
+  app.view('input_continuing_member_profile', inputContinuingMemberDetailViewHandler);
 
   // STEP 4: 承認依頼の送信
   app.action('select_continuing_member_fee_payee', selectContinuingMemberFeePayeeActionHandler);

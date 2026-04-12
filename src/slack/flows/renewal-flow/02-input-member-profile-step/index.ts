@@ -1,9 +1,9 @@
 import type { InferInput } from 'valibot';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
-import { sendInputMemberDetailModal } from '@slack/flows/shared/send-input-member-detail-modal';
 import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
+import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getTriggerId } from '@/slack/lib/get-trigger-id';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
@@ -15,7 +15,7 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   // TODO: API からユーザ情報を取得して表示する
   const memberType = 'internal'; // 仮
 
-  await sendInputMemberDetailModal(memberType, 'input_continuing_member_detail', validatedTriggerId, selectMemberTypeTimestamp, client);
+  await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client);
 };
 
 interface CreateMemberDetailResultSuccess {

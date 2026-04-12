@@ -1,8 +1,8 @@
 import type { BlockActionAckHandler, MessageBlockAction, StaticSelectAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { closeSelectFeePayeeMessage } from '@/slack/flows/continuing-member-flow/03-select-fee-payee-step';
-import { confirmRegistrationApprovalStep } from '@/slack/flows/continuing-member-flow/04-1-confirm-registration-approval-step';
-import { noticeRegistrationPendingStep } from '@/slack/flows/continuing-member-flow/04-2-notice-registration-pending-step';
+import { closeSelectFeePayeeMessage } from '@/slack/flows/renewal-flow/03-select-fee-payee-step';
+import { confirmRegistrationApprovalStep } from '@/slack/flows/renewal-flow/04-1-confirm-registration-approval-step';
+import { noticeRegistrationPendingStep } from '@/slack/flows/renewal-flow/04-2-notice-registration-pending-step';
 
 export const selectContinuingMemberFeePayeeActionHandler: BlockActionAckHandler<'static_select', HonoSlackAppEnv, MessageBlockAction<StaticSelectAction>> = async ({ context, payload, env }) => {
   const payerSlackUserId = payload.user.id;

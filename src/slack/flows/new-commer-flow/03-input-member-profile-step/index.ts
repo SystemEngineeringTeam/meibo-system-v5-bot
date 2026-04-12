@@ -2,15 +2,15 @@ import type { InferInput } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
-import { sendInputMemberDetailModal } from '@slack/flows/shared/send-input-member-detail-modal';
 import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
+import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
 import { getTriggerId } from '@/slack/lib/get-trigger-id';
 import { MeiboApiService } from '@/slack/lib/meibo-api-service';
 import { toSlackErrors } from '@/slack/lib/to-slack-error';
 
-export const inputMemberDetailStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
+export const inputMemberProfileStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(userId, { client, env });
   const validTriggerId = await getTriggerId(triggerId, channelId, client);
 
@@ -22,7 +22,7 @@ export const inputMemberDetailStep = async (userId: string, selectedValue: strin
     return;
   }
 
-  await sendInputMemberDetailModal(selectedValue, 'input_newcomer_member_detail', validTriggerId, selectMemberTypeTimestamp, client);
+  await sendInputMemberProfileModal(selectedValue, 'input_newcomer_member_detail', validTriggerId, selectMemberTypeTimestamp, client);
 };
 
 interface CreateMemberDetailResultSuccess {

@@ -1,7 +1,7 @@
 import type { ViewAckHandler } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { closeSelectMemberTypeMessage } from '@/slack/flows/new-commer-flow/02-select-member-type-step';
-import { createMemberDetail } from '@/slack/flows/new-commer-flow/03-input-member-detail-step';
+import { createMemberDetail } from '@/slack/flows/new-commer-flow/03-input-member-profile-step';
 import { selectFeePayeeStep } from '@/slack/flows/new-commer-flow/04-select-fee-payee-step';
 import { normalizeViewState } from '@/utils/normalize-slack-view-state';
 
