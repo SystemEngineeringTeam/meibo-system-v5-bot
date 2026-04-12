@@ -1,14 +1,14 @@
-import type { InferInput } from 'valibot';
 import type { HonoSlackAppEnv } from '@/types/hono';
+import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
-import { memberDetailSchema } from '@slack/schemas/member';
+import { memberSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
-import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
 import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
+import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 
 export const inputMemberProfileStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(userId, { client, env });
@@ -27,8 +27,7 @@ export const inputMemberProfileStep = async (userId: string, selectedValue: stri
 
 interface CreateMemberDetailResultSuccess {
   success: true;
-  // TODO: API から取得したユーザ情報を返す
-  data: InferInput<typeof memberDetailSchema>;
+  data: InferResponseType<'/members/_rpc/submit-info', 'post'>;
 }
 
 interface CreateMemberDetailResultFailure {
@@ -37,7 +36,7 @@ interface CreateMemberDetailResultFailure {
 }
 
 export const createMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, env: HonoSlackAppEnv): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
-  const memberDetail = safeParse(memberDetailSchema, inputValues);
+  const memberDetail = safeParse(memberSchema, inputValues);
 
   if (!memberDetail.success) {
     return {
@@ -47,10 +46,14 @@ export const createMemberDetail = async (slackUserId: string, inputValues: Norma
   }
 
   try {
-    await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
+    const res = await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
+    if (res.data) return { success: true, data: res.data };
+
     return {
-      success: true,
-      data: memberDetail.output,
+      success: false,
+      errors: {
+        warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+      },
     };
   } catch (error) {
     console.error('Failed to create member detail:', error);

@@ -36,6 +36,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/members/_rpc/submit-info": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description 部員情報 (基本 + 機密 + 詳細) を提出します.  このエンドポイントの副作用として, 対象部員の状態ログに `ACTIVE_PENDING` が追加されます. */
+        post: operations["postMembersRpcSubmitInfo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/members": {
         parameters: {
             query?: never;
@@ -45,7 +62,7 @@ export interface paths {
         };
         get: operations["getMembers"];
         put?: never;
-        post?: never;
+        post: operations["postMembers"];
         delete?: never;
         options?: never;
         head?: never;
@@ -84,6 +101,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/members/{publicId}/profile/base": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMembersByPublicIdProfileBase"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/members/{publicId}/profile/sensitive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMembersByPublicIdProfileSensitive"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/members/{publicId}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMembersByPublicIdProfile"];
+        put: operations["putMembersByPublicIdProfile"];
+        post: operations["postMembersByPublicIdProfile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/members/{publicId}/detail": {
         parameters: {
             query?: never;
@@ -109,7 +174,7 @@ export interface paths {
         };
         get: operations["getMembersByPublicIdStatus"];
         put?: never;
-        post?: never;
+        post: operations["postMembersByPublicIdStatus"];
         delete?: never;
         options?: never;
         head?: never;
@@ -284,6 +349,493 @@ export interface operations {
             };
         };
     };
+    postMembersRpcSubmitInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    detail: {
+                        active: {
+                            detail: {
+                                /** @description 所属 */
+                                organization: string | null;
+                                /** @description 学科 */
+                                schoolMajor: string;
+                                /** @description 学校名 */
+                                schoolName: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt?: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt?: string;
+                            };
+                            /** @constant */
+                            type: "EXTERNAL";
+                        };
+                        detail: {
+                            /** @description 学年 */
+                            grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
+                        };
+                        /** @constant */
+                        type: "ACTIVE";
+                    } | {
+                        active: {
+                            detail: {
+                                /** @description 役職 */
+                                role: string | null;
+                                /** @description 学籍番号 */
+                                studentId: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt?: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt?: string;
+                            };
+                            /** @constant */
+                            type: "INTERNAL";
+                        };
+                        detail: {
+                            /** @description 学年 */
+                            grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
+                        };
+                        /** @constant */
+                        type: "ACTIVE";
+                    } | {
+                        detail: {
+                            /** @description 卒業年 */
+                            graduatedYear: number;
+                            /** @description 旧役職 */
+                            oldRole: string | null;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
+                        };
+                        /** @constant */
+                        type: "ALUMNI";
+                    };
+                    /** @description 部員のプロフィール (基本 + 機密) の入力スキーマ */
+                    profile: {
+                        base: {
+                            /** @description 名前（名） */
+                            firstName: string;
+                            /** @description フリガナ（名） */
+                            firstNameKana: string;
+                            /** @description 名前（姓） */
+                            lastName: string;
+                            /** @description フリガナ（姓） */
+                            lastNameKana: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
+                        };
+                        sensitive: {
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            birthday: string;
+                            /** @description 現住所 */
+                            currentAddress: string;
+                            /** @description 現住所の郵便番号 */
+                            currentZipCode: string;
+                            /** @description 実家の住所 */
+                            parentsAddress: string;
+                            /** @description 実家の郵便番号 */
+                            parentsZipCode: string;
+                            /** @description 電話番号 */
+                            phoneNumber: string;
+                            /**
+                             * @description 性別 (ISO-5218)
+                             * @enum {unknown}
+                             */
+                            sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
+                        };
+                    };
+                    /**
+                     * @description 公開用 ID
+                     * @example muzrux3ve6jbadecs9rbimmh
+                     */
+                    publicId: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        value: {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                            detail: {
+                                _referenced: Record<string, never>;
+                                active: {
+                                    /** @description 部員の情報 (正規部員・外部生) */
+                                    detail: {
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /** @description 所属 */
+                                        organization: string | null;
+                                        /** @description 学科 */
+                                        schoolMajor: string;
+                                        /** @description 学校名 */
+                                        schoolName: string;
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                    };
+                                    /** @constant */
+                                    type: "EXTERNAL";
+                                };
+                                /** @description 部員の情報 (正規部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 学年 */
+                                    grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ACTIVE";
+                            } | {
+                                _referenced: Record<string, never>;
+                                active: {
+                                    /** @description 部員の情報 (正規部員・内部生) */
+                                    detail: {
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /** @description 役職 */
+                                        role: string | null;
+                                        /** @description 学籍番号 */
+                                        studentId: string;
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                    };
+                                    /** @constant */
+                                    type: "INTERNAL";
+                                };
+                                /** @description 部員の情報 (正規部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 学年 */
+                                    grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ACTIVE";
+                            } | {
+                                _referenced: Record<string, never>;
+                                /** @description 部員の情報 (卒業部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 卒業年 */
+                                    graduatedYear: number;
+                                    /** @description 旧役職 */
+                                    oldRole: string | null;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ALUMNI";
+                            };
+                            profile: {
+                                _referenced: Record<string, never>;
+                                /** @description 部員の基本情報 */
+                                base: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 名前（名） */
+                                    firstName: string;
+                                    /** @description フリガナ（名） */
+                                    firstNameKana: string;
+                                    /** @description 名前（姓） */
+                                    lastName: string;
+                                    /** @description フリガナ（姓） */
+                                    lastNameKana: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @description 部員の機密情報 */
+                                sensitive: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    birthday: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 現住所 */
+                                    currentAddress: string;
+                                    /** @description 現住所の郵便番号 */
+                                    currentZipCode: string;
+                                    /** @description 実家の住所 */
+                                    parentsAddress: string;
+                                    /** @description 実家の郵便番号 */
+                                    parentsZipCode: string;
+                                    /** @description 電話番号 */
+                                    phoneNumber: string;
+                                    /**
+                                     * @description 性別 (ISO-5218)
+                                     * @enum {unknown}
+                                     */
+                                    sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_DETAIL_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_DETAIL_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
     getMembers: {
         parameters: {
             query?: {
@@ -353,6 +905,107 @@ export interface operations {
                             detail: never;
                             /** @constant */
                             type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    postMembers: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @example U0524H34CDS */
+                    slackId: string;
+                    /** @description Auth0 の subject */
+                    subject: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        /** @description 部員 ID */
+                        value: {
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt: string;
+                            /**
+                             * @description 公開用 ID
+                             * @example muzrux3ve6jbadecs9rbimmh
+                             */
+                            publicId: string;
+                            /** @example U0524H34CDS */
+                            slackId: string;
+                            /** @description Auth0 の subject */
+                            subject: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
                         };
                         /** @constant */
                         type: "Failure";
@@ -554,59 +1207,167 @@ export interface operations {
                                     updatedAt: string;
                                 };
                             };
-                            /** @description 部員の基本情報 */
-                            base: {
-                                /**
-                                 * @description ISO 8601 形式の日付文字列
-                                 * @example 2024-05-19T06:55:41.603Z
-                                 */
-                                createdAt: string;
-                                /** @description 名前（名） */
-                                firstName: string;
-                                /** @description フリガナ（名） */
-                                firstNameKana: string;
-                                /** @description 名前（姓） */
-                                lastName: string;
-                                /** @description フリガナ（姓） */
-                                lastNameKana: string;
-                                /**
-                                 * @description ISO 8601 形式の日付文字列
-                                 * @example 2024-05-19T06:55:41.603Z
-                                 */
-                                updatedAt: string;
+                            detail: {
+                                _referenced: Record<string, never>;
+                                active: {
+                                    /** @description 部員の情報 (正規部員・外部生) */
+                                    detail: {
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /** @description 所属 */
+                                        organization: string | null;
+                                        /** @description 学科 */
+                                        schoolMajor: string;
+                                        /** @description 学校名 */
+                                        schoolName: string;
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                    };
+                                    /** @constant */
+                                    type: "EXTERNAL";
+                                };
+                                /** @description 部員の情報 (正規部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 学年 */
+                                    grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ACTIVE";
+                            } | {
+                                _referenced: Record<string, never>;
+                                active: {
+                                    /** @description 部員の情報 (正規部員・内部生) */
+                                    detail: {
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /** @description 役職 */
+                                        role: string | null;
+                                        /** @description 学籍番号 */
+                                        studentId: string;
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                    };
+                                    /** @constant */
+                                    type: "INTERNAL";
+                                };
+                                /** @description 部員の情報 (正規部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 学年 */
+                                    grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ACTIVE";
+                            } | {
+                                _referenced: Record<string, never>;
+                                /** @description 部員の情報 (卒業部員) */
+                                detail: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 卒業年 */
+                                    graduatedYear: number;
+                                    /** @description 旧役職 */
+                                    oldRole: string | null;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @constant */
+                                type: "ALUMNI";
                             };
-                            sensitive: {
-                                /**
-                                 * @description ISO 8601 形式の日付文字列
-                                 * @example 2024-05-19T06:55:41.603Z
-                                 */
-                                birthday: string;
-                                /**
-                                 * @description ISO 8601 形式の日付文字列
-                                 * @example 2024-05-19T06:55:41.603Z
-                                 */
-                                createdAt: string;
-                                /** @description 現住所 */
-                                currentAddress: string;
-                                /** @description 現住所の郵便番号 */
-                                currentZipCode: string;
-                                /** @description 実家の住所 */
-                                parentsAddress: string;
-                                /** @description 実家の郵便番号 */
-                                parentsZipCode: string;
-                                /** @description 電話番号 */
-                                phoneNumber: string;
-                                /**
-                                 * @description 性別 (ISO-5218)
-                                 * @enum {unknown}
-                                 */
-                                sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
-                                /**
-                                 * @description ISO 8601 形式の日付文字列
-                                 * @example 2024-05-19T06:55:41.603Z
-                                 */
-                                updatedAt: string;
-                            } | null;
+                            profile: {
+                                _referenced: Record<string, never>;
+                                /** @description 部員の基本情報 */
+                                base: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 名前（名） */
+                                    firstName: string;
+                                    /** @description フリガナ（名） */
+                                    firstNameKana: string;
+                                    /** @description 名前（姓） */
+                                    lastName: string;
+                                    /** @description フリガナ（姓） */
+                                    lastNameKana: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                                /** @description 部員の機密情報 */
+                                sensitive: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    birthday: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /** @description 現住所 */
+                                    currentAddress: string;
+                                    /** @description 現住所の郵便番号 */
+                                    currentZipCode: string;
+                                    /** @description 実家の住所 */
+                                    parentsAddress: string;
+                                    /** @description 実家の郵便番号 */
+                                    parentsZipCode: string;
+                                    /** @description 電話番号 */
+                                    phoneNumber: string;
+                                    /**
+                                     * @description 性別 (ISO-5218)
+                                     * @enum {unknown}
+                                     */
+                                    sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
                         };
                     };
                 };
@@ -674,7 +1435,12 @@ export interface operations {
                             /** @enum {unknown} */
                             detail: never;
                             /** @constant */
-                            type: "MEMBER_INFO_ERROR";
+                            type: "MEMBER_DETAIL_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
                         };
                         /** @constant */
                         type: "Failure";
@@ -710,7 +1476,1080 @@ export interface operations {
                             /** @enum {unknown} */
                             detail: never;
                             /** @constant */
-                            type: "MEMBER_INFO_ERROR";
+                            type: "MEMBER_DETAIL_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    getMembersByPublicIdProfileBase: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        /** @description 部員の基本情報 */
+                        value: {
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt: string;
+                            /** @description 名前（名） */
+                            firstName: string;
+                            /** @description フリガナ（名） */
+                            firstNameKana: string;
+                            /** @description 名前（姓） */
+                            lastName: string;
+                            /** @description フリガナ（姓） */
+                            lastNameKana: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    getMembersByPublicIdProfileSensitive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        /** @description 部員の機密情報 */
+                        value: {
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            birthday: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt: string;
+                            /** @description 現住所 */
+                            currentAddress: string;
+                            /** @description 現住所の郵便番号 */
+                            currentZipCode: string;
+                            /** @description 実家の住所 */
+                            parentsAddress: string;
+                            /** @description 実家の郵便番号 */
+                            parentsZipCode: string;
+                            /** @description 電話番号 */
+                            phoneNumber: string;
+                            /**
+                             * @description 性別 (ISO-5218)
+                             * @enum {unknown}
+                             */
+                            sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    getMembersByPublicIdProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        value: {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                            /** @description 部員の基本情報 */
+                            base: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 名前（名） */
+                                firstName: string;
+                                /** @description フリガナ（名） */
+                                firstNameKana: string;
+                                /** @description 名前（姓） */
+                                lastName: string;
+                                /** @description フリガナ（姓） */
+                                lastNameKana: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                            /** @description 部員の機密情報 */
+                            sensitive: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                birthday: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 現住所 */
+                                currentAddress: string;
+                                /** @description 現住所の郵便番号 */
+                                currentZipCode: string;
+                                /** @description 実家の住所 */
+                                parentsAddress: string;
+                                /** @description 実家の郵便番号 */
+                                parentsZipCode: string;
+                                /** @description 電話番号 */
+                                phoneNumber: string;
+                                /**
+                                 * @description 性別 (ISO-5218)
+                                 * @enum {unknown}
+                                 */
+                                sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    putMembersByPublicIdProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    base: {
+                        /** @description 名前（名） */
+                        firstName: string;
+                        /** @description フリガナ（名） */
+                        firstNameKana: string;
+                        /** @description 名前（姓） */
+                        lastName: string;
+                        /** @description フリガナ（姓） */
+                        lastNameKana: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
+                    };
+                    sensitive: {
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        birthday: string;
+                        /** @description 現住所 */
+                        currentAddress: string;
+                        /** @description 現住所の郵便番号 */
+                        currentZipCode: string;
+                        /** @description 実家の住所 */
+                        parentsAddress: string;
+                        /** @description 実家の郵便番号 */
+                        parentsZipCode: string;
+                        /** @description 電話番号 */
+                        phoneNumber: string;
+                        /**
+                         * @description 性別 (ISO-5218)
+                         * @enum {unknown}
+                         */
+                        sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        value: {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                            /** @description 部員の基本情報 */
+                            base: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 名前（名） */
+                                firstName: string;
+                                /** @description フリガナ（名） */
+                                firstNameKana: string;
+                                /** @description 名前（姓） */
+                                lastName: string;
+                                /** @description フリガナ（姓） */
+                                lastNameKana: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                            /** @description 部員の機密情報 */
+                            sensitive: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                birthday: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 現住所 */
+                                currentAddress: string;
+                                /** @description 現住所の郵便番号 */
+                                currentZipCode: string;
+                                /** @description 実家の住所 */
+                                parentsAddress: string;
+                                /** @description 実家の郵便番号 */
+                                parentsZipCode: string;
+                                /** @description 電話番号 */
+                                phoneNumber: string;
+                                /**
+                                 * @description 性別 (ISO-5218)
+                                 * @enum {unknown}
+                                 */
+                                sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    postMembersByPublicIdProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    base: {
+                        /** @description 名前（名） */
+                        firstName: string;
+                        /** @description フリガナ（名） */
+                        firstNameKana: string;
+                        /** @description 名前（姓） */
+                        lastName: string;
+                        /** @description フリガナ（姓） */
+                        lastNameKana: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
+                    };
+                    sensitive: {
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        birthday: string;
+                        /** @description 現住所 */
+                        currentAddress: string;
+                        /** @description 現住所の郵便番号 */
+                        currentZipCode: string;
+                        /** @description 実家の住所 */
+                        parentsAddress: string;
+                        /** @description 実家の郵便番号 */
+                        parentsZipCode: string;
+                        /** @description 電話番号 */
+                        phoneNumber: string;
+                        /**
+                         * @description 性別 (ISO-5218)
+                         * @enum {unknown}
+                         */
+                        sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
+                    };
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        value: {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                            /** @description 部員の基本情報 */
+                            base: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 名前（名） */
+                                firstName: string;
+                                /** @description フリガナ（名） */
+                                firstNameKana: string;
+                                /** @description 名前（姓） */
+                                lastName: string;
+                                /** @description フリガナ（姓） */
+                                lastNameKana: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                            /** @description 部員の機密情報 */
+                            sensitive: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                birthday: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /** @description 現住所 */
+                                currentAddress: string;
+                                /** @description 現住所の郵便番号 */
+                                currentZipCode: string;
+                                /** @description 実家の住所 */
+                                parentsAddress: string;
+                                /** @description 実家の郵便番号 */
+                                parentsZipCode: string;
+                                /** @description 電話番号 */
+                                phoneNumber: string;
+                                /**
+                                 * @description 性別 (ISO-5218)
+                                 * @enum {unknown}
+                                 */
+                                sex: "FEMALE" | "MALE" | "NOT_APPLICABLE" | "NOT_KNOWN";
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Precondition Failed */
+            412: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "MEMBER_PROFILE_ERROR";
                         };
                         /** @constant */
                         type: "Failure";
@@ -774,7 +2613,7 @@ export interface operations {
                                      */
                                     createdAt: string;
                                     /** @description 所属 */
-                                    organization: string;
+                                    organization: string | null;
                                     /** @description 学科 */
                                     schoolMajor: string;
                                     /** @description 学校名 */
@@ -796,7 +2635,7 @@ export interface operations {
                                  */
                                 createdAt: string;
                                 /** @description 学年 */
-                                grade: "B1" | "B2" | "B3" | "M1" | "M2";
+                                grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
                                 /**
                                  * @description ISO 8601 形式の日付文字列
                                  * @example 2024-05-19T06:55:41.603Z
@@ -859,7 +2698,7 @@ export interface operations {
                                  */
                                 createdAt: string;
                                 /** @description 学年 */
-                                grade: "B1" | "B2" | "B3" | "M1" | "M2";
+                                grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
                                 /**
                                  * @description ISO 8601 形式の日付文字列
                                  * @example 2024-05-19T06:55:41.603Z
@@ -1038,71 +2877,96 @@ export interface operations {
             content: {
                 "application/json": {
                     active: {
-                        /** @description 部員の情報 (正規部員・外部生) */
                         detail: {
-                            /** @description an integer representing a safe Unix timestamp */
-                            createdAt: number;
                             /** @description 所属 */
-                            organization: string;
+                            organization: string | null;
                             /** @description 学科 */
                             schoolMajor: string;
                             /** @description 学校名 */
                             schoolName: string;
-                            /** @description an integer representing a safe Unix timestamp */
-                            updatedAt: number;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
                         };
                         /** @constant */
                         type: "EXTERNAL";
                     };
-                    /** @description 部員の情報 (正規部員) */
                     detail: {
-                        /** @description an integer representing a safe Unix timestamp */
-                        createdAt: number;
                         /** @description 学年 */
-                        grade: "B1" | "B2" | "B3" | "M1" | "M2";
-                        /** @description an integer representing a safe Unix timestamp */
-                        updatedAt: number;
+                        grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
                     };
                     /** @constant */
                     type: "ACTIVE";
                 } | {
                     active: {
-                        /** @description 部員の情報 (正規部員・内部生) */
                         detail: {
-                            /** @description an integer representing a safe Unix timestamp */
-                            createdAt: number;
                             /** @description 役職 */
                             role: string | null;
                             /** @description 学籍番号 */
                             studentId: string;
-                            /** @description an integer representing a safe Unix timestamp */
-                            updatedAt: number;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt?: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt?: string;
                         };
                         /** @constant */
                         type: "INTERNAL";
                     };
-                    /** @description 部員の情報 (正規部員) */
                     detail: {
-                        /** @description an integer representing a safe Unix timestamp */
-                        createdAt: number;
                         /** @description 学年 */
-                        grade: "B1" | "B2" | "B3" | "M1" | "M2";
-                        /** @description an integer representing a safe Unix timestamp */
-                        updatedAt: number;
+                        grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
                     };
                     /** @constant */
                     type: "ACTIVE";
                 } | {
-                    /** @description 部員の情報 (卒業部員) */
                     detail: {
-                        /** @description an integer representing a safe Unix timestamp */
-                        createdAt: number;
                         /** @description 卒業年 */
                         graduatedYear: number;
                         /** @description 旧役職 */
                         oldRole: string | null;
-                        /** @description an integer representing a safe Unix timestamp */
-                        updatedAt: number;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        createdAt?: string;
+                        /**
+                         * @description ISO 8601 形式の日付文字列
+                         * @example 2024-05-19T06:55:41.603Z
+                         */
+                        updatedAt?: string;
                     };
                     /** @constant */
                     type: "ALUMNI";
@@ -1120,72 +2984,174 @@ export interface operations {
                         /** @constant */
                         type: "Success";
                         value: {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
                             active: {
                                 /** @description 部員の情報 (正規部員・外部生) */
                                 detail: {
-                                    /** @description an integer representing a safe Unix timestamp */
-                                    createdAt: number;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
                                     /** @description 所属 */
-                                    organization: string;
+                                    organization: string | null;
                                     /** @description 学科 */
                                     schoolMajor: string;
                                     /** @description 学校名 */
                                     schoolName: string;
-                                    /** @description an integer representing a safe Unix timestamp */
-                                    updatedAt: number;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
                                 };
                                 /** @constant */
                                 type: "EXTERNAL";
                             };
                             /** @description 部員の情報 (正規部員) */
                             detail: {
-                                /** @description an integer representing a safe Unix timestamp */
-                                createdAt: number;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
                                 /** @description 学年 */
-                                grade: "B1" | "B2" | "B3" | "M1" | "M2";
-                                /** @description an integer representing a safe Unix timestamp */
-                                updatedAt: number;
+                                grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
                             };
                             /** @constant */
                             type: "ACTIVE";
                         } | {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
                             active: {
                                 /** @description 部員の情報 (正規部員・内部生) */
                                 detail: {
-                                    /** @description an integer representing a safe Unix timestamp */
-                                    createdAt: number;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
                                     /** @description 役職 */
                                     role: string | null;
                                     /** @description 学籍番号 */
                                     studentId: string;
-                                    /** @description an integer representing a safe Unix timestamp */
-                                    updatedAt: number;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
                                 };
                                 /** @constant */
                                 type: "INTERNAL";
                             };
                             /** @description 部員の情報 (正規部員) */
                             detail: {
-                                /** @description an integer representing a safe Unix timestamp */
-                                createdAt: number;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
                                 /** @description 学年 */
-                                grade: "B1" | "B2" | "B3" | "M1" | "M2";
-                                /** @description an integer representing a safe Unix timestamp */
-                                updatedAt: number;
+                                grade: "B1" | "B2" | "B3" | "B4" | "D1" | "D2" | "D3" | "M1" | "M2";
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
                             };
                             /** @constant */
                             type: "ACTIVE";
                         } | {
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
                             /** @description 部員の情報 (卒業部員) */
                             detail: {
-                                /** @description an integer representing a safe Unix timestamp */
-                                createdAt: number;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
                                 /** @description 卒業年 */
                                 graduatedYear: number;
                                 /** @description 旧役職 */
                                 oldRole: string | null;
-                                /** @description an integer representing a safe Unix timestamp */
-                                updatedAt: number;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
                             };
                             /** @constant */
                             type: "ALUMNI";
@@ -1332,9 +3298,211 @@ export interface operations {
                         value: {
                             count: number;
                             /** @description 部員の現在の状態 */
-                            currentStatus: "ACTIVE" | "ACTIVE_PENDING" | "BEFORE_REGISTER" | "LEAVE" | "RENEW" | "RENEW_PROCESS_PENDING";
+                            currentStatus: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "BEFORE_REGISTER" | "LEAVE";
                             /** @description 部員の現在の状態 (詳細) */
-                            currentStatusDetail: "REGISTER_REJECTED_PENDING" | null;
+                            currentStatusDetail: {
+                                affectedRejection: {
+                                    log: {
+                                        _computed: {
+                                            /** @description 拒否されたか */
+                                            hasRejected: boolean;
+                                        };
+                                        _referenced: {
+                                            /** @description 部員 ID */
+                                            member: {
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                createdAt: string;
+                                                /**
+                                                 * @description 公開用 ID
+                                                 * @example muzrux3ve6jbadecs9rbimmh
+                                                 */
+                                                publicId: string;
+                                                /** @example U0524H34CDS */
+                                                slackId: string;
+                                                /** @description Auth0 の subject */
+                                                subject: string;
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                updatedAt: string;
+                                            };
+                                        };
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /**
+                                         * @description 公開用 ID
+                                         * @example muzrux3ve6jbadecs9rbimmh
+                                         */
+                                        publicId: string;
+                                        rejectedAt: string | null;
+                                        /** @description 拒否した部員 */
+                                        rejectedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        } | null;
+                                        /** @description 部員の状態 */
+                                        status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                        /** @description 部員 ID */
+                                        updatedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        };
+                                    };
+                                    /** @description 拒否ログの対象 */
+                                    subject: "ACTIVE" | "ALUMNI" | "LEAVE" | "RENEW";
+                                } | null;
+                                renewStatus: {
+                                    log: {
+                                        _computed: {
+                                            /** @description 拒否されたか */
+                                            hasRejected: boolean;
+                                        };
+                                        _referenced: {
+                                            /** @description 部員 ID */
+                                            member: {
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                createdAt: string;
+                                                /**
+                                                 * @description 公開用 ID
+                                                 * @example muzrux3ve6jbadecs9rbimmh
+                                                 */
+                                                publicId: string;
+                                                /** @example U0524H34CDS */
+                                                slackId: string;
+                                                /** @description Auth0 の subject */
+                                                subject: string;
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                updatedAt: string;
+                                            };
+                                        };
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /**
+                                         * @description 公開用 ID
+                                         * @example muzrux3ve6jbadecs9rbimmh
+                                         */
+                                        publicId: string;
+                                        rejectedAt: string | null;
+                                        /** @description 拒否した部員 */
+                                        rejectedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        } | null;
+                                        /** @description 部員の状態 */
+                                        status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                        /** @description 部員 ID */
+                                        updatedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        };
+                                    };
+                                    /**
+                                     * @description 継続状態
+                                     * @constant
+                                     */
+                                    type: "RENEWED";
+                                } | {
+                                    /**
+                                     * @description 継続状態
+                                     * @constant
+                                     */
+                                    type: "RENEW_WAITING";
+                                } | null;
+                            };
                             val: {
                                 _computed: {
                                     /** @description 拒否されたか */
@@ -1343,50 +3511,6 @@ export interface operations {
                                 _referenced: {
                                     /** @description 部員 ID */
                                     member: {
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        createdAt: string;
-                                        /**
-                                         * @description 公開用 ID
-                                         * @example muzrux3ve6jbadecs9rbimmh
-                                         */
-                                        publicId: string;
-                                        /** @example U0524H34CDS */
-                                        slackId: string;
-                                        /** @description Auth0 の subject */
-                                        subject: string;
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        updatedAt: string;
-                                    };
-                                    /** @description 拒否した部員 */
-                                    rejectedBy: {
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        createdAt: string;
-                                        /**
-                                         * @description 公開用 ID
-                                         * @example muzrux3ve6jbadecs9rbimmh
-                                         */
-                                        publicId: string;
-                                        /** @example U0524H34CDS */
-                                        slackId: string;
-                                        /** @description Auth0 の subject */
-                                        subject: string;
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        updatedAt: string;
-                                    } | null;
-                                    /** @description 部員 ID */
-                                    updatedBy: {
                                         /**
                                          * @description ISO 8601 形式の日付文字列
                                          * @example 2024-05-19T06:55:41.603Z
@@ -1419,14 +3543,253 @@ export interface operations {
                                  */
                                 publicId: string;
                                 rejectedAt: string | null;
+                                /** @description 拒否した部員 */
+                                rejectedBy: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                } | null;
                                 /** @description 部員の状態 */
-                                status: "ACTIVE" | "ACTIVE_PENDING" | "LEAVE" | "RENEW";
+                                status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
                                 /**
                                  * @description ISO 8601 形式の日付文字列
                                  * @example 2024-05-19T06:55:41.603Z
                                  */
                                 updatedAt: string;
+                                /** @description 部員 ID */
+                                updatedBy: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
                             }[];
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+        };
+    };
+    postMembersByPublicIdStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description 公開用 ID */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description 部員の状態 */
+                    status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        value: {
+                            _computed: {
+                                /** @description 拒否されたか */
+                                hasRejected: boolean;
+                            };
+                            _referenced: {
+                                /** @description 部員 ID */
+                                member: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
+                            };
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt: string;
+                            /**
+                             * @description 公開用 ID
+                             * @example muzrux3ve6jbadecs9rbimmh
+                             */
+                            publicId: string;
+                            rejectedAt: string | null;
+                            /** @description 拒否した部員 */
+                            rejectedBy: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /**
+                                 * @description 公開用 ID
+                                 * @example muzrux3ve6jbadecs9rbimmh
+                                 */
+                                publicId: string;
+                                /** @example U0524H34CDS */
+                                slackId: string;
+                                /** @description Auth0 の subject */
+                                subject: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            } | null;
+                            /** @description 部員の状態 */
+                            status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt: string;
+                            /** @description 部員 ID */
+                            updatedBy: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /**
+                                 * @description 公開用 ID
+                                 * @example muzrux3ve6jbadecs9rbimmh
+                                 */
+                                publicId: string;
+                                /** @example U0524H34CDS */
+                                slackId: string;
+                                /** @description Auth0 の subject */
+                                subject: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
                         };
                     };
                 };
@@ -1531,9 +3894,211 @@ export interface operations {
                         value: {
                             count: number;
                             /** @description 部員の現在の状態 */
-                            currentStatus: "ACTIVE" | "ACTIVE_PENDING" | "BEFORE_REGISTER" | "LEAVE" | "RENEW" | "RENEW_PROCESS_PENDING";
+                            currentStatus: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "BEFORE_REGISTER" | "LEAVE";
                             /** @description 部員の現在の状態 (詳細) */
-                            currentStatusDetail: "REGISTER_REJECTED_PENDING" | null;
+                            currentStatusDetail: {
+                                affectedRejection: {
+                                    log: {
+                                        _computed: {
+                                            /** @description 拒否されたか */
+                                            hasRejected: boolean;
+                                        };
+                                        _referenced: {
+                                            /** @description 部員 ID */
+                                            member: {
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                createdAt: string;
+                                                /**
+                                                 * @description 公開用 ID
+                                                 * @example muzrux3ve6jbadecs9rbimmh
+                                                 */
+                                                publicId: string;
+                                                /** @example U0524H34CDS */
+                                                slackId: string;
+                                                /** @description Auth0 の subject */
+                                                subject: string;
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                updatedAt: string;
+                                            };
+                                        };
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /**
+                                         * @description 公開用 ID
+                                         * @example muzrux3ve6jbadecs9rbimmh
+                                         */
+                                        publicId: string;
+                                        rejectedAt: string | null;
+                                        /** @description 拒否した部員 */
+                                        rejectedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        } | null;
+                                        /** @description 部員の状態 */
+                                        status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                        /** @description 部員 ID */
+                                        updatedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        };
+                                    };
+                                    /** @description 拒否ログの対象 */
+                                    subject: "ACTIVE" | "ALUMNI" | "LEAVE" | "RENEW";
+                                } | null;
+                                renewStatus: {
+                                    log: {
+                                        _computed: {
+                                            /** @description 拒否されたか */
+                                            hasRejected: boolean;
+                                        };
+                                        _referenced: {
+                                            /** @description 部員 ID */
+                                            member: {
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                createdAt: string;
+                                                /**
+                                                 * @description 公開用 ID
+                                                 * @example muzrux3ve6jbadecs9rbimmh
+                                                 */
+                                                publicId: string;
+                                                /** @example U0524H34CDS */
+                                                slackId: string;
+                                                /** @description Auth0 の subject */
+                                                subject: string;
+                                                /**
+                                                 * @description ISO 8601 形式の日付文字列
+                                                 * @example 2024-05-19T06:55:41.603Z
+                                                 */
+                                                updatedAt: string;
+                                            };
+                                        };
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        createdAt: string;
+                                        /**
+                                         * @description 公開用 ID
+                                         * @example muzrux3ve6jbadecs9rbimmh
+                                         */
+                                        publicId: string;
+                                        rejectedAt: string | null;
+                                        /** @description 拒否した部員 */
+                                        rejectedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        } | null;
+                                        /** @description 部員の状態 */
+                                        status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                                        /**
+                                         * @description ISO 8601 形式の日付文字列
+                                         * @example 2024-05-19T06:55:41.603Z
+                                         */
+                                        updatedAt: string;
+                                        /** @description 部員 ID */
+                                        updatedBy: {
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            createdAt: string;
+                                            /**
+                                             * @description 公開用 ID
+                                             * @example muzrux3ve6jbadecs9rbimmh
+                                             */
+                                            publicId: string;
+                                            /** @example U0524H34CDS */
+                                            slackId: string;
+                                            /** @description Auth0 の subject */
+                                            subject: string;
+                                            /**
+                                             * @description ISO 8601 形式の日付文字列
+                                             * @example 2024-05-19T06:55:41.603Z
+                                             */
+                                            updatedAt: string;
+                                        };
+                                    };
+                                    /**
+                                     * @description 継続状態
+                                     * @constant
+                                     */
+                                    type: "RENEWED";
+                                } | {
+                                    /**
+                                     * @description 継続状態
+                                     * @constant
+                                     */
+                                    type: "RENEW_WAITING";
+                                } | null;
+                            };
                             val: {
                                 _computed: {
                                     /** @description 拒否されたか */
@@ -1542,50 +4107,6 @@ export interface operations {
                                 _referenced: {
                                     /** @description 部員 ID */
                                     member: {
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        createdAt: string;
-                                        /**
-                                         * @description 公開用 ID
-                                         * @example muzrux3ve6jbadecs9rbimmh
-                                         */
-                                        publicId: string;
-                                        /** @example U0524H34CDS */
-                                        slackId: string;
-                                        /** @description Auth0 の subject */
-                                        subject: string;
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        updatedAt: string;
-                                    };
-                                    /** @description 拒否した部員 */
-                                    rejectedBy: {
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        createdAt: string;
-                                        /**
-                                         * @description 公開用 ID
-                                         * @example muzrux3ve6jbadecs9rbimmh
-                                         */
-                                        publicId: string;
-                                        /** @example U0524H34CDS */
-                                        slackId: string;
-                                        /** @description Auth0 の subject */
-                                        subject: string;
-                                        /**
-                                         * @description ISO 8601 形式の日付文字列
-                                         * @example 2024-05-19T06:55:41.603Z
-                                         */
-                                        updatedAt: string;
-                                    } | null;
-                                    /** @description 部員 ID */
-                                    updatedBy: {
                                         /**
                                          * @description ISO 8601 形式の日付文字列
                                          * @example 2024-05-19T06:55:41.603Z
@@ -1618,13 +4139,57 @@ export interface operations {
                                  */
                                 publicId: string;
                                 rejectedAt: string | null;
+                                /** @description 拒否した部員 */
+                                rejectedBy: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                } | null;
                                 /** @description 部員の状態 */
-                                status: "ACTIVE" | "ACTIVE_PENDING" | "LEAVE" | "RENEW";
+                                status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
                                 /**
                                  * @description ISO 8601 形式の日付文字列
                                  * @example 2024-05-19T06:55:41.603Z
                                  */
                                 updatedAt: string;
+                                /** @description 部員 ID */
+                                updatedBy: {
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    createdAt: string;
+                                    /**
+                                     * @description 公開用 ID
+                                     * @example muzrux3ve6jbadecs9rbimmh
+                                     */
+                                    publicId: string;
+                                    /** @example U0524H34CDS */
+                                    slackId: string;
+                                    /** @description Auth0 の subject */
+                                    subject: string;
+                                    /**
+                                     * @description ISO 8601 形式の日付文字列
+                                     * @example 2024-05-19T06:55:41.603Z
+                                     */
+                                    updatedAt: string;
+                                };
                             }[];
                         };
                     };
@@ -1699,50 +4264,6 @@ export interface operations {
                                      */
                                     updatedAt: string;
                                 };
-                                /** @description 拒否した部員 */
-                                rejectedBy: {
-                                    /**
-                                     * @description ISO 8601 形式の日付文字列
-                                     * @example 2024-05-19T06:55:41.603Z
-                                     */
-                                    createdAt: string;
-                                    /**
-                                     * @description 公開用 ID
-                                     * @example muzrux3ve6jbadecs9rbimmh
-                                     */
-                                    publicId: string;
-                                    /** @example U0524H34CDS */
-                                    slackId: string;
-                                    /** @description Auth0 の subject */
-                                    subject: string;
-                                    /**
-                                     * @description ISO 8601 形式の日付文字列
-                                     * @example 2024-05-19T06:55:41.603Z
-                                     */
-                                    updatedAt: string;
-                                } | null;
-                                /** @description 部員 ID */
-                                updatedBy: {
-                                    /**
-                                     * @description ISO 8601 形式の日付文字列
-                                     * @example 2024-05-19T06:55:41.603Z
-                                     */
-                                    createdAt: string;
-                                    /**
-                                     * @description 公開用 ID
-                                     * @example muzrux3ve6jbadecs9rbimmh
-                                     */
-                                    publicId: string;
-                                    /** @example U0524H34CDS */
-                                    slackId: string;
-                                    /** @description Auth0 の subject */
-                                    subject: string;
-                                    /**
-                                     * @description ISO 8601 形式の日付文字列
-                                     * @example 2024-05-19T06:55:41.603Z
-                                     */
-                                    updatedAt: string;
-                                };
                             };
                             /**
                              * @description ISO 8601 形式の日付文字列
@@ -1755,13 +4276,57 @@ export interface operations {
                              */
                             publicId: string;
                             rejectedAt: string | null;
+                            /** @description 拒否した部員 */
+                            rejectedBy: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /**
+                                 * @description 公開用 ID
+                                 * @example muzrux3ve6jbadecs9rbimmh
+                                 */
+                                publicId: string;
+                                /** @example U0524H34CDS */
+                                slackId: string;
+                                /** @description Auth0 の subject */
+                                subject: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            } | null;
                             /** @description 部員の状態 */
-                            status: "ACTIVE" | "ACTIVE_PENDING" | "LEAVE" | "RENEW";
+                            status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
                             /**
                              * @description ISO 8601 形式の日付文字列
                              * @example 2024-05-19T06:55:41.603Z
                              */
                             updatedAt: string;
+                            /** @description 部員 ID */
+                            updatedBy: {
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                createdAt: string;
+                                /**
+                                 * @description 公開用 ID
+                                 * @example muzrux3ve6jbadecs9rbimmh
+                                 */
+                                publicId: string;
+                                /** @example U0524H34CDS */
+                                slackId: string;
+                                /** @description Auth0 の subject */
+                                subject: string;
+                                /**
+                                 * @description ISO 8601 形式の日付文字列
+                                 * @example 2024-05-19T06:55:41.603Z
+                                 */
+                                updatedAt: string;
+                            };
                         };
                     };
                 };

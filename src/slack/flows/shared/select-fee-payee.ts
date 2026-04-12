@@ -1,10 +1,9 @@
 import type { AnyMessageBlock } from 'slack-cloudflare-workers';
-import type { InferInput } from 'valibot';
-import type { memberDetailSchema } from '@/slack/schemas/member';
+import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 
-export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, { client, env }: SlackHandlerOptions) => {
+export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferResponseType<'/members/_rpc/submit-info', 'post'>, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
@@ -15,12 +14,10 @@ export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => 
     channel: channelId,
     text: generateText(stepNumber),
     blocks: generateBlocks(stepNumber, payeeList, actionId),
-    metadata: requestData
-      ? {
-          event_type: 'request_fee_payee',
-          event_payload: requestData,
-        }
-      : undefined,
+    metadata: {
+      event_type: 'request_fee_payee',
+      event_payload: { data: JSON.stringify(requestData) },
+    },
   });
 };
 

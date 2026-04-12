@@ -1,10 +1,10 @@
-import type { memberDetailSchema } from '@slack/schemas/member';
-import type { InferInput } from 'valibot';
+import type { ValiedMemberInfo } from '@/slack/schemas/member';
 import type { UserClaims } from '@/types/auth';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { TmpApiAltData, UserData } from '@/types/kv';
 import { v4 } from 'uuid';
 import { kv } from '@/utils/kv';
+import { client } from './fetche-client';
 import { getUserId } from './get-user-id';
 
 interface Options {
@@ -20,11 +20,15 @@ export const MeiboApiService = {
     await kv.put<UserData>(env.USER_KV, slackUserId, { userId: uuid, ...user });
   },
 
-  async putMemberDetail(slackUserId: string, memberDetail: InferInput<typeof memberDetailSchema>, { env }: Options) {
+  async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
-    // TODO: API にユーザの詳細情報を保存するリクエストを送る
-    await kv.put<TmpApiAltData>(env.TMP_API_ALT_KV, userId, { ...memberDetail, status: 'temporary' });
+    return await client.POST('/members/_rpc/submit-info', {
+      body: {
+        publicId: userId,
+        ...memberInfo,
+      },
+    });
   },
 
   async updateMemberStatus(slackUserId: string, status: 'temporary' | 'approved' | 'rejected', { env }: Options) {

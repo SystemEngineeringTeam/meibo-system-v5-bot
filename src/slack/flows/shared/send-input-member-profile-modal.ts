@@ -50,6 +50,7 @@ function generateBlocks(selectedValue: string, defaultValues?: Record<string, st
     {
       type: 'divider',
     },
+    ...generateActiveOnlyBlocks(defaultValues),
     ...(isInternal ? generateInternalOnlyBlocks() : generateExternalOnlyBlocks()),
   ];
 }
@@ -136,39 +137,39 @@ function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): 
     },
     {
       type: 'input',
-      block_id: 'gender',
+      block_id: 'sex',
       label: {
         type: 'plain_text',
         text: '性別',
       },
       element: {
         type: 'static_select',
-        action_id: 'gender',
+        action_id: 'sex',
         placeholder: {
           type: 'plain_text',
           text: '性別を選択',
         },
         // TODO: 初期値の設定を要確認
-        initial_option: defaultValues?.gender
+        initial_option: defaultValues?.sex
           ? {
               text: {
                 type: 'plain_text',
-                text: defaultValues.gender ?? '',
+                text: defaultValues.sex ?? '',
               },
             }
           : undefined,
         options: [
           {
             text: { type: 'plain_text', text: '男性' },
-            value: 'male',
+            value: 'MALE',
           },
           {
             text: { type: 'plain_text', text: '女性' },
-            value: 'female',
+            value: 'FEMALE',
           },
           {
             text: { type: 'plain_text', text: 'その他' },
-            value: 'other',
+            value: 'NOT_KNOWN',
           },
         ],
       },
@@ -292,6 +293,74 @@ function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): 
         type: 'plain_text_input',
         action_id: 'parentsAddress',
         initial_value: defaultValues?.parentsAddress || '',
+      },
+    },
+  ];
+}
+
+function generateActiveOnlyBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+  return [
+    {
+      type: 'input',
+      block_id: 'grade',
+      label: {
+        type: 'plain_text',
+        text: '学年',
+      },
+      element: {
+        type: 'static_select',
+        action_id: 'grade',
+        placeholder: {
+          type: 'plain_text',
+          text: '学年を選択',
+        },
+        // TODO: 初期値の設定を要確認
+        initial_option: defaultValues?.grade
+          ? {
+              text: {
+                type: 'plain_text',
+                text: defaultValues.grade ?? '',
+              },
+            }
+          : undefined,
+        options: [
+          {
+            text: { type: 'plain_text', text: '学部1年 (B1)' },
+            value: 'B1',
+          },
+          {
+            text: { type: 'plain_text', text: '学部2年 (B2)' },
+            value: 'B2',
+          },
+          {
+            text: { type: 'plain_text', text: '学部3年 (B3)' },
+            value: 'B3',
+          },
+          {
+            text: { type: 'plain_text', text: '学部4年 (B4)' },
+            value: 'B4',
+          },
+          {
+            text: { type: 'plain_text', text: '修士1年 (M1)' },
+            value: 'M1',
+          },
+          {
+            text: { type: 'plain_text', text: '修士2年 (M2)' },
+            value: 'M2',
+          },
+          {
+            text: { type: 'plain_text', text: '博士1年 (D1)' },
+            value: 'D1',
+          },
+          {
+            text: { type: 'plain_text', text: '博士2年 (D2)' },
+            value: 'D2',
+          },
+          {
+            text: { type: 'plain_text', text: '博士3年 (D3)' },
+            value: 'D3',
+          },
+        ],
       },
     },
   ];

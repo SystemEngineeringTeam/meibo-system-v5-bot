@@ -1,7 +1,7 @@
 import type { InferInput } from 'valibot';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
-import { memberDetailSchema } from '@slack/schemas/member';
+import { inputMemberInfoSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
@@ -21,7 +21,7 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
 interface CreateMemberDetailResultSuccess {
   success: true;
   // TODO: API から取得したユーザ情報を返す
-  data: InferInput<typeof memberDetailSchema>;
+  data: InferInput<typeof inputMemberInfoSchema>;
 }
 
 interface CreateMemberDetailResultFailure {
@@ -30,7 +30,7 @@ interface CreateMemberDetailResultFailure {
 }
 
 export const updateMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
-  const memberDetail = safeParse(memberDetailSchema, inputValues);
+  const memberDetail = safeParse(inputMemberInfoSchema, inputValues);
 
   if (!memberDetail.success) {
     return {

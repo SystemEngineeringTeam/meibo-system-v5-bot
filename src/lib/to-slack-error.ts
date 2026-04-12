@@ -1,7 +1,7 @@
-import type { memberDetailSchema } from '@slack/schemas/member';
+import type { inputMemberInfoSchema } from '@slack/schemas/member';
 import type { InferIssue } from 'valibot';
 
-export function toSlackErrors(issues: Array<InferIssue<typeof memberDetailSchema>>): Record<string, string> {
+export function toSlackErrors(issues: Array<InferIssue<typeof inputMemberInfoSchema>>): Record<string, string> {
   const errors: Record<string, string> = {};
 
   for (const issue of issues) {

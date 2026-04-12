@@ -1,9 +1,11 @@
-import { literal, minLength, object, optional, pipe, regex, string, union } from 'valibot';
+import type { InferInput } from 'valibot';
+import type { InferRequestBodyType } from '@/types/openapi';
+import { literal, minLength, object, optional, pipe, regex, string, transform, union } from 'valibot';
 
 const nameSchema = pipe(string(), minLength(1));
 const kanaSchema = pipe(
   string(),
-  regex(/^[ァ-ヶー]+$/, 'カタカナで入力してください'),
+  regex(/^[ァ-ヴー]+$/, 'カタカナで入力してください'),
 );
 
 const phoneSchema = pipe(
@@ -21,10 +23,10 @@ const dateSchema = pipe(
   regex(/^\d{4}-\d{2}-\d{2}$/, '日付形式が不正です'),
 );
 
-const genderSchema = union([
-  literal('male'),
-  literal('female'),
-  literal('other'),
+const sexSchema = union([
+  literal('MALE'),
+  literal('FEMALE'),
+  literal('NOT_KNOWN'),
 ]);
 
 const studentIdSchema = pipe(
@@ -41,7 +43,7 @@ const memberBaseSchema = object({
 
 const memberSensitiveSchema = object({
   birthday: dateSchema,
-  gender: genderSchema,
+  sex: sexSchema,
   phoneNumber: phoneSchema,
   currentZipCode: zipCodeSchema,
   currentAddress: nameSchema,
@@ -49,26 +51,118 @@ const memberSensitiveSchema = object({
   parentsAddress: nameSchema,
 });
 
+export const memberProfileSchema = object({
+  ...memberBaseSchema.entries,
+  ...memberSensitiveSchema.entries,
+});
+
+const memberActiveSchema = object({
+  grade: union([
+    literal('B1'),
+    literal('B2'),
+    literal('B3'),
+    literal('B4'),
+    literal('M1'),
+    literal('M2'),
+    literal('D1'),
+    literal('D2'),
+    literal('D3'),
+  ]),
+});
+
 const memberInternalSchema = object({
+  type: literal('INTERNAL'),
   studentId: studentIdSchema,
+  ...memberActiveSchema.entries,
 });
 
 const memberExternalSchema = object({
+  type: literal('EXTERNAL'),
   schoolName: nameSchema,
-  schoolMajor: optional(string()),
+  schoolMajor: string(),
   organization: optional(string()),
+  ...memberActiveSchema.entries,
 });
 
 export const internalMemberSchema = object({
-  ...memberBaseSchema.entries,
-  ...memberSensitiveSchema.entries,
+  ...memberProfileSchema.entries,
   ...memberInternalSchema.entries,
 });
 
 export const externalMemberSchema = object({
-  ...memberBaseSchema.entries,
-  ...memberSensitiveSchema.entries,
+  ...memberProfileSchema.entries,
   ...memberExternalSchema.entries,
 });
 
-export const memberDetailSchema = union([internalMemberSchema, externalMemberSchema]);
+export const inputMemberInfoSchema = union([internalMemberSchema, externalMemberSchema]);
+export type InputMemberInfo = InferInput<typeof inputMemberInfoSchema>;
+
+export type ValiedMemberInfo = Omit<InferRequestBodyType<'/members/_rpc/submit-info', 'post'>, 'publicId'>;
+export const memberSchema = pipe(
+  inputMemberInfoSchema,
+  transform<InputMemberInfo, ValiedMemberInfo>((input) => {
+    const base: ValiedMemberInfo['profile']['base'] = {
+      firstName: input.firstName,
+      lastName: input.lastName,
+      firstNameKana: input.firstNameKana,
+      lastNameKana: input.lastNameKana,
+    };
+
+    const sensitive: ValiedMemberInfo['profile']['sensitive'] = {
+      birthday: input.birthday,
+      sex: input.sex,
+      phoneNumber: input.phoneNumber,
+      currentZipCode: input.currentZipCode,
+      currentAddress: input.currentAddress,
+      parentsZipCode: input.parentsZipCode,
+      parentsAddress: input.parentsAddress,
+    };
+
+    if (input.type === 'INTERNAL') {
+      const active: ValiedMemberInfo['detail'] = {
+        type: 'ACTIVE',
+        detail: {
+          grade: input.grade,
+        },
+        active: {
+          type: 'INTERNAL',
+          detail: {
+            studentId: input.studentId,
+            role: null, // 登録時は一律で役職なし
+          },
+        },
+      };
+
+      return {
+        profile: {
+          base,
+          sensitive,
+        },
+        detail: active,
+      };
+    };
+
+    const active: ValiedMemberInfo['detail'] = {
+      type: 'ACTIVE',
+      detail: {
+        grade: input.grade,
+      },
+      active: {
+        type: 'EXTERNAL',
+        detail: {
+          schoolName: input.schoolName,
+          schoolMajor: input.schoolMajor,
+          organization: input.organization ?? null,
+        },
+      },
+    };
+
+    return {
+      profile: {
+        base,
+        sensitive,
+      },
+      detail: active,
+    };
+  }),
+);
