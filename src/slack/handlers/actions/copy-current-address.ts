@@ -1,7 +1,7 @@
 import type { AnyModalBlock, BlockActionAckHandler, ButtonAction, SlackAPIClient, ViewBlockAction, ViewInputBlock } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { getViewValue } from '@/slack/lib/get-view-value';
-import { replaceModalBlock } from '@/slack/lib/replace-modal-block';
+import { getViewValue } from '@/lib/get-view-value';
+import { replaceModalBlock } from '@/lib/replace-modal-block';
 
 export const copyCurrentAddressActionHandler: BlockActionAckHandler<'button', HonoSlackAppEnv, ViewBlockAction<ButtonAction>> = async ({ payload, context }) => {
   if (payload.view.type !== 'modal') {

@@ -1,8 +1,8 @@
 import type { SlackAppContext } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { ChannelData } from '@/types/kv';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
-import { MeiboApiService } from '@/slack/lib/meibo-api-service';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
+import { MeiboApiService } from '@/lib/meibo-api-service';
 import { kv } from '@/utils/kv';
 import { startRegistrationStep } from '../01-start-registration-step';
 import { sendSelectMemberTypeMessage } from '../02-select-member-type-step';

@@ -5,8 +5,8 @@ import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { deleteCookie, getCookie } from 'hono/cookie';
 import { SlackApp } from 'slack-cloudflare-workers';
 import PageLayout from '@/components/layouts/PageLayout';
-import { getDMChannelId, getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
-import { MeiboApiService } from '@/slack/lib/meibo-api-service';
+import { getDMChannelId, getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
+import { MeiboApiService } from '@/lib/meibo-api-service';
 import { kv } from '@/utils/kv';
 import { SuccessPage } from './components/SuccessPage';
 

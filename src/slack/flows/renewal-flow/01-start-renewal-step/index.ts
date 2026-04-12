@@ -1,8 +1,8 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { ChannelData } from '@/types/kv';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
-import { getUserId } from '@/slack/lib/get-user-id';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
+import { getUserId } from '@/lib/get-user-id';
 import { kv } from '@/utils/kv';
 
 export const startContinuationStep = async (slackUserId: string, { client, env }: SlackHandlerOptions) => {

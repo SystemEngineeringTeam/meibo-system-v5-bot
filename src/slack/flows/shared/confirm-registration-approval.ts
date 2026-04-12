@@ -1,7 +1,7 @@
 import type { AnyMessageBlock } from 'slack-cloudflare-workers';
 import type { PayeeData } from '@/types/kv';
 import type { SlackHandlerOptions, SlackHandlerSlackHandlerClientOption } from '@/types/slack-handler-options';
-import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
+import { getNotifyChannelId } from '@/lib/get-notify-channel-id';
 import { kv } from '@/utils/kv';
 
 type MemberType = '新入部員' | '継続部員';

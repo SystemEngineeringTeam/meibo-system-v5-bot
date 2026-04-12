@@ -1,9 +1,9 @@
 import type { AnyModalBlock, BlockActionAckHandler, ButtonAction, SlackAPIClient, ViewBlockAction, ViewInputBlock } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { safeParse } from 'valibot';
-import { getViewValue } from '@/slack/lib/get-view-value';
-import { replaceModalBlock } from '@/slack/lib/replace-modal-block';
-import { searchAddressByZipcode } from '@/slack/lib/search-address-by-zipcode';
+import { getViewValue } from '@/lib/get-view-value';
+import { replaceModalBlock } from '@/lib/replace-modal-block';
+import { searchAddressByZipcode } from '@/lib/search-address-by-zipcode';
 import { zipCodeSchema } from '@/slack/schemas/member';
 
 export const autoFillAddressActionHandler: BlockActionAckHandler<'button', HonoSlackAppEnv, ViewBlockAction<ButtonAction>> = async ({ context, payload }) => {

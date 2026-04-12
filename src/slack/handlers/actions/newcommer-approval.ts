@@ -3,7 +3,7 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { TmpApiAltData, UserData } from '@/types/kv';
 import { clickedApproveOrRejectButton } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
 import { updateMemberStatusStep } from '@/slack/flows/new-commer-flow/06-update-member-status-step';
-import { SpreadSheetsApiService } from '@/slack/lib/spread-sheets-api-service';
+import { SpreadSheetsApiService } from '@/lib/spread-sheets-api-service';
 import { kv } from '@/utils/kv';
 
 export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {

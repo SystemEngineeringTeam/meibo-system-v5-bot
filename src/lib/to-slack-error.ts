@@ -1,5 +1,5 @@
+import type { memberDetailSchema } from '@slack/schemas/member';
 import type { InferIssue } from 'valibot';
-import type { memberDetailSchema } from '../schemas/member';
 
 export function toSlackErrors(issues: Array<InferIssue<typeof memberDetailSchema>>): Record<string, string> {
   const errors: Record<string, string> = {};

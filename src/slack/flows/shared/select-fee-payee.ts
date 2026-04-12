@@ -2,7 +2,7 @@ import type { AnyMessageBlock } from 'slack-cloudflare-workers';
 import type { InferInput } from 'valibot';
 import type { memberDetailSchema } from '@/slack/schemas/member';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 
 export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferInput<typeof memberDetailSchema> | undefined, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得

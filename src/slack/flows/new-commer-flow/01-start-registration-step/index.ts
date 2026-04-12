@@ -3,7 +3,7 @@ import type { ChannelData, LinkData } from '@/types/kv';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const startRegistrationStep = async (slackUserId: string, { client, env }: SlackHandlerOptions) => {

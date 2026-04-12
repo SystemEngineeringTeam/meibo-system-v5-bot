@@ -5,10 +5,10 @@ import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { memberDetailSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
-import { getTriggerId } from '@/slack/lib/get-trigger-id';
-import { MeiboApiService } from '@/slack/lib/meibo-api-service';
-import { toSlackErrors } from '@/slack/lib/to-slack-error';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
+import { getTriggerId } from '@/lib/get-trigger-id';
+import { MeiboApiService } from '@/lib/meibo-api-service';
+import { toSlackErrors } from '@/lib/to-slack-error';
 
 export const inputMemberProfileStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(userId, { client, env });

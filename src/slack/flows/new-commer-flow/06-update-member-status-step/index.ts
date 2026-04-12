@@ -1,7 +1,7 @@
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
-import { getNotifyChannelId } from '@/slack/lib/get-notify-channel-id';
-import { MeiboApiService } from '@/slack/lib/meibo-api-service';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
+import { getNotifyChannelId } from '@/lib/get-notify-channel-id';
+import { MeiboApiService } from '@/lib/meibo-api-service';
 
 export const updateMemberStatusStep = async (payerSlackUserId: string, approverSlackUserId: string, timestamp: string, approve: boolean, teamId: string | undefined, { client, env }: SlackHandlerOptions) => {
   const notifyChannelId = await getNotifyChannelId(teamId, env);

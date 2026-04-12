@@ -1,6 +1,6 @@
 import type { MessageAckResponse, SlackRequestWithRespond, SlashCommand } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { getNotifyChannelId } from '../lib/get-notify-channel-id';
+import { getNotifyChannelId } from '@/lib/get-notify-channel-id';
 
 /** 通知チャンネルでのみ実行可能 */
 export const notifyChannelOnlyCommand = (handler: (req: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => Promise<MessageAckResponse>) =>

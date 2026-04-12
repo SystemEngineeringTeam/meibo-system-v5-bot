@@ -1,7 +1,7 @@
 import type { ConfirmRegistrationApprovalStepResult } from './confirm-registration-approval';
 import type { PayeeData } from '@/types/kv';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { getOrOpenDMChannelId } from '@/slack/lib/get-dm-channel-id';
+import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { kv } from '@/utils/kv';
 
 export const baseNoticeRegistrationPendingStep = () => async (slackUserId: string, payeeName: string, result: ConfirmRegistrationApprovalStepResult, { client, env }: SlackHandlerOptions) => {

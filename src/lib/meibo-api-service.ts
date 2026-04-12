@@ -1,5 +1,5 @@
+import type { memberDetailSchema } from '@slack/schemas/member';
 import type { InferInput } from 'valibot';
-import type { memberDetailSchema } from '../schemas/member';
 import type { UserClaims } from '@/types/auth';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { TmpApiAltData, UserData } from '@/types/kv';
