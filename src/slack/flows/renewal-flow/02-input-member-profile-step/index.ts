@@ -4,19 +4,21 @@ import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-opt
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { memberSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
-import { client as apiClient } from '@/lib/fetche-client';
+import { authClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
+import { getUserId } from '@/lib/get-user-id';
 import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 
 export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
+  const userId = await getUserId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
-  const memberDetailRes = await apiClient.GET('/members/{publicId}/detail', {
-    params: { path: { publicId: slackUserId } },
+  const memberDetailRes = await authClient(slackUserId, env).GET('/members/{publicId}/detail', {
+    params: { path: { publicId: userId } },
   });
   if (!memberDetailRes.data) {
     await client.chat.postMessage({
