@@ -9,7 +9,8 @@ export const updateMemberStatusStep = async (payerSlackUserId: string, approverS
   // ユーザのDMチャンネルIDを取得
   const channelId = await getOrOpenDMChannelId(payerSlackUserId, { client, env });
 
-  await MeiboApiService.updateMemberStatus(payerSlackUserId, approve ? 'approved' : 'rejected', { env });
+  // TODO: 拒否の場合どうすればいいのか
+  await MeiboApiService.updateMemberStatus(payerSlackUserId, 'ACTIVE', { env });
 
   await Promise.allSettled([
     // 承認・拒否の結果をスレッドで送信

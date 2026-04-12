@@ -1,10 +1,10 @@
 import type { BlockActionAckHandler, ButtonAction, MessageBlockAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { TmpApiAltData, UserData } from '@/types/kv';
+import { client as apiClient } from '@/lib/fetche-client';
+import { getUserId } from '@/lib/get-user-id';
+import { SpreadSheetsApiService } from '@/lib/spread-sheets-api-service';
 import { clickedApproveOrRejectButton } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
 import { updateMemberStatusStep } from '@/slack/flows/new-commer-flow/06-update-member-status-step';
-import { SpreadSheetsApiService } from '@/lib/spread-sheets-api-service';
-import { kv } from '@/utils/kv';
 
 export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
   const approverSlackUserId = payload.user.id;
@@ -24,8 +24,9 @@ export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAck
   }
 
   if (approve) {
-    const userData = await kv.get<UserData>(env.USER_KV, payerSlackUserId);
-    const tmpUserData = userData && await kv.get<TmpApiAltData>(env.TMP_API_ALT_KV, userData.userId);
-    await SpreadSheetsApiService.postMemberInfo(tmpUserData, payload.user.id, teamId, { env, client: context.client });
+    const userId = await getUserId(payerSlackUserId, { client: context.client, env });
+    // TODO: middleware
+    const userRes = await apiClient.GET('/members/{publicId}/info', { params: { path: { publicId: userId } } });
+    await SpreadSheetsApiService.postMemberInfo(userRes.data, payload.user.id, teamId, { env, client: context.client });
   }
 };

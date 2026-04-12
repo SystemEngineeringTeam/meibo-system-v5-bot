@@ -2,7 +2,7 @@ import type { BlockActionAckHandler, ButtonAction, MessageBlockAction } from 'sl
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { inputMemberProfileStep } from '@/slack/flows/new-commer-flow/03-input-member-profile-step';
 
-export const selectMemberTypeActionHandler = (selectMemberType: string): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
+export const selectMemberTypeActionHandler = (selectMemberType: 'INTERNAL' | 'EXTERNAL'): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
   const userId = payload.user.id;
   const selectMemberTypeTimestamp = payload.message.ts;
 

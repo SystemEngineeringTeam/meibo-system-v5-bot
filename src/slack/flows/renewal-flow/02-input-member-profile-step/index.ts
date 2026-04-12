@@ -1,10 +1,13 @@
-import type { InferInput } from 'valibot';
+import type { HonoSlackAppEnv } from '@/types/hono';
+import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
-import { inputMemberInfoSchema } from '@slack/schemas/member';
+import { memberSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
+import { client as apiClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
+import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 
@@ -12,16 +15,32 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
-  // TODO: API からユーザ情報を取得して表示する
-  const memberType = 'internal'; // 仮
+  // TODO: middleware
+  const memberDetailRes = await apiClient.GET('/members/{publicId}/detail', {
+    params: { path: { publicId: slackUserId } },
+  });
+  if (!memberDetailRes.data) {
+    await client.chat.postMessage({
+      channel: channelId,
+      text: ':warning: 部員情報の取得に失敗しました。管理者に連絡してください。',
+    });
+    return;
+  }
+  const memberType = memberDetailRes.data.value.type === 'ACTIVE' ? memberDetailRes.data.value.active.type : undefined;
+  if (!memberType) {
+    await client.chat.postMessage({
+      channel: channelId,
+      text: ':warning: 継続手続きは現役部員のみが操作可能です。誤りだと思われる場合は役員に連絡してください。',
+    });
+    return;
+  }
 
   await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client);
 };
 
 interface CreateMemberDetailResultSuccess {
   success: true;
-  // TODO: API から取得したユーザ情報を返す
-  data: InferInput<typeof inputMemberInfoSchema>;
+  data: InferResponseType<'/members/_rpc/submit-info', 'post'>;
 }
 
 interface CreateMemberDetailResultFailure {
@@ -29,8 +48,8 @@ interface CreateMemberDetailResultFailure {
   errors: Record<string, string>;
 }
 
-export const updateMemberDetail = async (inputValues: NormalizedViewState): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
-  const memberDetail = safeParse(inputMemberInfoSchema, inputValues);
+export const updateMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, { env }: { env: HonoSlackAppEnv }): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
+  const memberDetail = safeParse(memberSchema, inputValues);
 
   if (!memberDetail.success) {
     return {
@@ -40,10 +59,14 @@ export const updateMemberDetail = async (inputValues: NormalizedViewState): Prom
   }
 
   try {
-  // TODO: ユーザ詳細情報を作成する API を呼び出す
+    const res = await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
+    if (res.data) return { success: true, data: res.data };
+
     return {
-      success: true,
-      data: memberDetail.output,
+      success: false,
+      errors: {
+        warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
+      },
     };
   } catch (error) {
     console.error('Failed to create member detail:', error);

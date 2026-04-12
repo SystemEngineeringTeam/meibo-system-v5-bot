@@ -1,8 +1,7 @@
 import type { ValiedMemberInfo } from '@/slack/schemas/member';
-import type { UserClaims } from '@/types/auth';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { TmpApiAltData, UserData } from '@/types/kv';
-import { v4 } from 'uuid';
+import type { UserData } from '@/types/kv';
+import type { InferRequestBodyType, InferResponseType } from '@/types/openapi';
 import { kv } from '@/utils/kv';
 import { client } from './fetche-client';
 import { getUserId } from './get-user-id';
@@ -11,13 +10,18 @@ interface Options {
   env: HonoSlackAppEnv;
 }
 
-export const MeiboApiService = {
-  async createMember(slackUserId: string, user: UserClaims, { env }: Options) {
-    // TODO: API にユーザ作成リクエストを送る
-    // API から帰ってくる userId を想定
-    const uuid = v4();
+type Status = InferRequestBodyType<'/members/{publicId}/status', 'post'>['status'];
+type CurrentStatus = InferResponseType<'/members/{publicId}/status', 'get'>['value']['currentStatus'];
 
-    await kv.put<UserData>(env.USER_KV, slackUserId, { userId: uuid, ...user });
+export const MeiboApiService = {
+  async createMember(slackUserId: string, sub: string) {
+    // TODO: accessToken 周りを middleware 化する
+    const res = await client.POST('/members', {
+      body: { slackId: slackUserId, subject: sub },
+    });
+    if (res.data) return res.data.value.publicId;
+
+    throw new Error('Failed to create member');
   },
 
   async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
@@ -31,31 +35,28 @@ export const MeiboApiService = {
     });
   },
 
-  async updateMemberStatus(slackUserId: string, status: 'temporary' | 'approved' | 'rejected', { env }: Options) {
+  async updateMemberStatus(slackUserId: string, status: Status, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
-    // TODO: API にユーザのステータスを更新するリクエストを送る
-    const memberDetail = await kv.get<TmpApiAltData>(env.TMP_API_ALT_KV, userId);
-    if (!memberDetail) throw new Error('Member detail not found');
-    await kv.put<TmpApiAltData>(env.TMP_API_ALT_KV, userId, { ...memberDetail, status });
+    // TODO: accessToken 周りを middleware 化する
+    return await client.POST('/members/{publicId}/status', {
+      body: { status },
+      params: { path: { publicId: userId } },
+    });
   },
 
   /**
-   * TODO: 作成し直す
-   * 'BEFORE_CREATE': ユーザ作成前
-   * 'CREATED': ユーザ作成後、詳細情報保存前
-   * 'DETAIL_SAVED': 詳細情報保存後
-   * 'APPROVED': 承認後
+   * 'NOT_FOUND': 名簿BOT上にもユーザが存在しない状態
+   * 'BEFORE_SUBMIT': 名簿API にユーザが存在しない状態
    */
-  async getMemberNewcommerStep(slackUserId: string, { env }: Options): Promise<'BEFORE_CREATE' | 'CREATED' | 'DETAIL_SAVED' | 'APPROVED' | ''> {
+  async getMemberNewcommerStep(slackUserId: string, { env }: Options): Promise<'NOT_FOUND' | 'BEFORE_SUBMIT' | CurrentStatus> {
     const userData = await kv.get<UserData>(env.USER_KV, slackUserId);
-    if (!userData) return 'BEFORE_CREATE';
+    if (!userData) return 'NOT_FOUND';
 
-    const memberDetail = await kv.get<TmpApiAltData>(env.TMP_API_ALT_KV, userData.userId);
-    if (!memberDetail) return 'CREATED';
+    // TODO: accessToken 周りを middleware 化する
+    const status = await client.GET('/members/{publicId}/status', { params: { path: { publicId: userData.userId } } });
+    if (!status.data) return 'BEFORE_SUBMIT';
 
-    if (memberDetail.status === 'temporary') return 'DETAIL_SAVED';
-
-    return 'APPROVED';
+    return status.data.value.currentStatus;
   },
 };

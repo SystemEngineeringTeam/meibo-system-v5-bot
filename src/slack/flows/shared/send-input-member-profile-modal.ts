@@ -1,8 +1,8 @@
 import type { AnyModalBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import dayjs from 'dayjs';
 
-export const sendInputMemberProfileModal = async (selectedValue: string, callbackId: string, triggerId: string, selectMemberTypeTimestamp: string, client: SlackAPIClient, defaultValues?: Record<string, string>) => {
-  const memberTypeText = selectedValue === 'internal' ? '内部生' : '外部生';
+export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'EXTERNAL', callbackId: string, triggerId: string, selectMemberTypeTimestamp: string, client: SlackAPIClient, defaultValues?: Record<string, string>) => {
+  const memberTypeText = selectedValue === 'INTERNAL' ? '内部生' : '外部生';
   const titleText = defaultValues ? `部員情報の確認（${memberTypeText}）` : `部員情報の入力（${memberTypeText}）`;
   await client.views.open({
     trigger_id: triggerId,
@@ -27,8 +27,8 @@ export const sendInputMemberProfileModal = async (selectedValue: string, callbac
   });
 };
 
-function generateBlocks(selectedValue: string, defaultValues?: Record<string, string>): AnyModalBlock[] {
-  const isInternal = selectedValue === 'internal';
+function generateBlocks(selectedValue: 'INTERNAL' | 'EXTERNAL', defaultValues?: Record<string, string>): AnyModalBlock[] {
+  const isInternal = selectedValue === 'INTERNAL';
 
   return [
     {

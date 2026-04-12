@@ -11,8 +11,8 @@ import { selectFeePayeeStep } from '../04-select-fee-payee-step';
 export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentChannelId: string, context: SlackAppContext, env: HonoSlackAppEnv) => {
   const step = await MeiboApiService.getMemberNewcommerStep(targetSlackUserId, { env });
 
-  // STEP1 が完了していない場合
-  if (step === 'BEFORE_CREATE') {
+  // STEP2 が完了していない場合
+  if (step === 'NOT_FOUND' || step === 'BEFORE_SUBMIT') {
     await context.client.chat.postEphemeral({
       channel: currentChannelId,
       user: targetSlackUserId,
@@ -37,8 +37,8 @@ export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentCh
   // DMチャンネルIDを保存
   await kv.put<ChannelData>(env.CHANNEL_KV, targetSlackUserId, { channelId });
 
-  // STEP2 (POST /members) 後，
-  if (step === 'CREATED') {
+  // STEP2 が完了していない場合
+  if (step === 'BEFORE_REGISTER') {
     await context.client.chat.postEphemeral({
       channel: currentChannelId,
       user: targetSlackUserId,
@@ -50,8 +50,8 @@ export const recoveryNewCommerFlow = async (targetSlackUserId: string, currentCh
     return;
   }
 
-  // STEP3 (POST /member/:id/detail) 後
-  if (step === 'DETAIL_SAVED') {
+  // STEP4 が完了していない場合
+  if (step === 'ACTIVE_PENDING') {
     await context.client.chat.postEphemeral({
       channel: currentChannelId,
       user: targetSlackUserId,

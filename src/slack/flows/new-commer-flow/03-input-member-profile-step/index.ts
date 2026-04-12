@@ -10,7 +10,7 @@ import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 
-export const inputMemberProfileStep = async (userId: string, selectedValue: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
+export const inputMemberProfileStep = async (userId: string, selectedValue: 'INTERNAL' | 'EXTERNAL', selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(userId, { client, env });
   const validTriggerId = await getTriggerId(triggerId, channelId, client);
 

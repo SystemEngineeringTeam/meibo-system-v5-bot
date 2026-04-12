@@ -90,7 +90,7 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
     );
   }
 
-  await MeiboApiService.createMember(linkData.slackUserId, user, { env: c.env });
+  await MeiboApiService.createMember(linkData.slackUserId, user.sub);
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });
@@ -150,7 +150,7 @@ function generateBlocks(selected: boolean): AnyMessageBlock[] {
             type: 'plain_text',
             text: '内部生(愛工大生)',
           },
-          value: 'internal',
+          value: 'INTERNAL',
           action_id: 'select_member_type_internal',
         },
         {
@@ -159,7 +159,7 @@ function generateBlocks(selected: boolean): AnyMessageBlock[] {
             type: 'plain_text',
             text: '外部生(他大学生)',
           },
-          value: 'external',
+          value: 'EXTERNAL',
           action_id: 'select_member_type_external',
         },
       ],

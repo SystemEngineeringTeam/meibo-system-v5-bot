@@ -1,13 +1,13 @@
-import type { TmpApiAltData } from '@/types/kv';
+import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { ofetch } from 'ofetch';
 import { getNotifyChannelId } from './get-notify-channel-id';
 
 export const SpreadSheetsApiService = {
-  async postMemberInfo(userData: TmpApiAltData | null, approverSlackUserId: string, teamId: string | undefined, { env, client }: SlackHandlerOptions) {
+  async postMemberInfo(userData: InferResponseType<'/members/{publicId}/info', 'get'> | undefined, approverSlackUserId: string, teamId: string | undefined, { env, client }: SlackHandlerOptions) {
     const approverSlackUser = await client.users.info({ user: approverSlackUserId });
 
-    if (userData === null) {
+    if (userData === undefined) {
       await client.chat.postMessage({
         channel: await getNotifyChannelId(teamId, env),
         text: `:warning: Spread Sheets への登録に失敗しました
@@ -17,8 +17,13 @@ export const SpreadSheetsApiService = {
       return;
     }
 
-    const studentId = 'studentId' in userData ? userData.studentId : userData.organization;
-    const name = `${userData.lastName} ${userData.firstName}`;
+    if (userData.value.detail.type === 'ALUMNI') {
+      console.warn('卒業生のため Spread Sheets への登録をスキップします');
+      return;
+    }
+
+    const studentId = userData.value.detail.active.type === 'INTERNAL' ? userData.value.detail.active.detail.studentId : userData.value.detail.active.detail.organization;
+    const name = `${userData.value.profile.base.lastName} ${userData.value.profile.base.firstName}`;
     const approver = approverSlackUser.user?.profile?.display_name ?? approverSlackUser;
 
     try {

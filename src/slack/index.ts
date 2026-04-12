@@ -47,8 +47,8 @@ slackApp.all('/', async (c) => {
   // STEP 2: /logged-in エンドポイントから呼び出すためなし
 
   // STEP 3: 選択肢に応じたアクション
-  app.action('select_member_type_internal', selectMemberTypeActionHandler('internal'));
-  app.action('select_member_type_external', selectMemberTypeActionHandler('external'));
+  app.action('select_member_type_internal', selectMemberTypeActionHandler('INTERNAL'));
+  app.action('select_member_type_external', selectMemberTypeActionHandler('EXTERNAL'));
 
   // STEP 3 → 4: 入力情報のチェック・支払い相手の選択肢の表示
   app.view('input_newcomer_member_detail', inputNewCommerMemberDetailViewHandler);
