@@ -1,7 +1,7 @@
 import antfu from '@antfu/eslint-config';
 
 export default antfu({
-  ignores: ['*.md', '*.json', '.github/**/*', '.vscode/**/*', 'wrangler.jsonc', 'worker-configuration.d.ts'],
+  ignores: ['*.md', '*.json', '.github/**/*', '.vscode/**/*', 'wrangler.jsonc', 'worker-configuration.d.ts', '**/*.gen.ts'],
   include: ['src/**/*.ts', 'src/**/*.tsx'],
   formatters: true,
   stylistic: {

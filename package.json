@@ -9,6 +9,7 @@
 		"dev:https": "wrangler dev --local --local-protocol=https",
 		"start": "wrangler dev",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings ./src/worker-configuration.d.ts",
+		"gen:openapi": "openapi-typescript ./src/openapi.json -o ./src/types/openapi.gen.ts",
 		"check": "bun lint && bun typo && bun typecheck",
 		"lint": "eslint \"./**/*.{ts,json}\" --fix",
 		"lint:ci": "eslint \"./**/*.{ts,json}\" --max-warnings=0",
@@ -25,6 +26,7 @@
 		"eslint": "^10.1.0",
 		"eslint-plugin-format": "^2.0.1",
 		"jiti": "^2.6.1",
+		"openapi-typescript": "^7.13.0",
 		"tsx": "^4.21.0",
 		"typescript": "^5.5.2",
 		"vitest": "~3.2.0",
@@ -35,6 +37,7 @@
 		"dayjs": "^1.11.20",
 		"hono": "^4.12.9",
 		"ofetch": "^1.5.1",
+		"openapi-fetch": "^0.17.0",
 		"slack-cloudflare-workers": "^1.3.9",
 		"uuid": "^13.0.0",
 		"valibot": "^1.3.1"
