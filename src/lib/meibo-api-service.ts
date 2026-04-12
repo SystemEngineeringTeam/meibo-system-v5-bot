@@ -3,7 +3,7 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { UserData } from '@/types/kv';
 import type { InferRequestBodyType, InferResponseType } from '@/types/openapi';
 import { kv } from '@/utils/kv';
-import { client } from './fetche-client';
+import { authClient } from './fetche-client';
 import { getUserId } from './get-user-id';
 
 interface Options {
@@ -14,9 +14,8 @@ type Status = InferRequestBodyType<'/members/{publicId}/status', 'post'>['status
 type CurrentStatus = InferResponseType<'/members/{publicId}/status', 'get'>['value']['currentStatus'];
 
 export const MeiboApiService = {
-  async createMember(slackUserId: string, sub: string) {
-    // TODO: accessToken 周りを middleware 化する
-    const res = await client.POST('/members', {
+  async createMember(slackUserId: string, sub: string, { env }: Options) {
+    const res = await authClient(slackUserId, env).POST('/members', {
       body: { slackId: slackUserId, subject: sub },
     });
     if (res.data) return res.data.value.publicId;
@@ -27,7 +26,7 @@ export const MeiboApiService = {
   async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
-    return await client.POST('/members/_rpc/submit-info', {
+    return await authClient(slackUserId, env).POST('/members/_rpc/submit-info', {
       body: {
         publicId: userId,
         ...memberInfo,
@@ -38,8 +37,7 @@ export const MeiboApiService = {
   async updateMemberStatus(slackUserId: string, status: Status, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
-    // TODO: accessToken 周りを middleware 化する
-    return await client.POST('/members/{publicId}/status', {
+    return await authClient(slackUserId, env).POST('/members/{publicId}/status', {
       body: { status },
       params: { path: { publicId: userId } },
     });
@@ -53,8 +51,7 @@ export const MeiboApiService = {
     const userData = await kv.get<UserData>(env.USER_KV, slackUserId);
     if (!userData) return 'NOT_FOUND';
 
-    // TODO: accessToken 周りを middleware 化する
-    const status = await client.GET('/members/{publicId}/status', { params: { path: { publicId: userData.userId } } });
+    const status = await authClient(slackUserId, env).GET('/members/{publicId}/status', { params: { path: { publicId: userData.userId } } });
     if (!status.data) return 'BEFORE_SUBMIT';
 
     return status.data.value.currentStatus;

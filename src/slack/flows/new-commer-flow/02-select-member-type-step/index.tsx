@@ -7,6 +7,7 @@ import { SlackApp } from 'slack-cloudflare-workers';
 import PageLayout from '@/components/layouts/PageLayout';
 import { getDMChannelId, getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { MeiboApiService } from '@/lib/meibo-api-service';
+import { TokenService } from '@/lib/token-service';
 import { kv } from '@/utils/kv';
 import { SuccessPage } from './components/SuccessPage';
 
@@ -68,8 +69,8 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
   deleteCookie(c, 'link_key');
 
   // backend に渡すトークンを取得
-  const accessToken = await session.tokenSets.at(0)?.accessToken;
-  if (!accessToken) {
+  const tokenSet = session.tokenSets.at(0);
+  if (!tokenSet) {
     c.status(500);
     return c.render(
       <PageLayout>
@@ -90,7 +91,10 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
     );
   }
 
-  await MeiboApiService.createMember(linkData.slackUserId, user.sub);
+  // トークンを保存
+  await TokenService.save(linkData.slackUserId, tokenSet.accessToken, tokenSet.expiresAt, session.refreshToken, { env: c.env });
+
+  await MeiboApiService.createMember(linkData.slackUserId, user.sub, { env: c.env });
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });

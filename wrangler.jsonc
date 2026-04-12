@@ -38,6 +38,14 @@
 		{
 			"binding": "TMP_API_ALT_KV",
 			"id": "e49f4986f49a41328443c820f80cf6d6"
+		},
+		{
+			"binding": "ACCESS_TOKEN_KV",
+			"id": "0d1410dacd7047b3b4d70ab78c9bfe3e"
+		},
+		{
+			"binding": "REFRESH_TOKEN_KV",
+			"id": "7f71d690b43f49e39de2a9cd900cc535"
 		}
 	],
 	"assets": {

@@ -15,7 +15,6 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
-  // TODO: middleware
   const memberDetailRes = await apiClient.GET('/members/{publicId}/detail', {
     params: { path: { publicId: slackUserId } },
   });

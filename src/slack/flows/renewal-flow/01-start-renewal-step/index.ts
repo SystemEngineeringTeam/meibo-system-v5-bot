@@ -1,7 +1,7 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { ChannelData } from '@/types/kv';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { client as apiClient } from '@/lib/fetche-client';
+import { authClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getUserId } from '@/lib/get-user-id';
 import { kv } from '@/utils/kv';
@@ -11,8 +11,7 @@ export const startContinuationStep = async (slackUserId: string, { client, env }
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   // 継続可能な状態(部員登録済み/継続登録済み ではない)かを確認
-  // TODO: middleware
-  const statusRes = await apiClient.GET('/members/{publicId}/status', {
+  const statusRes = await authClient(slackUserId, env).GET('/members/{publicId}/status', {
     params: { path: { publicId: userId }, query: { limit: '100' } },
   });
   if (!statusRes.data) throw new Error('ユーザの状態が取得できませんでした');

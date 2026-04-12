@@ -18,6 +18,18 @@ export interface UserData extends UserClaims {
   userId: string;
 }
 
+// accessToken 保存用
+// key: slackUserId
+export interface AccessTokenData {
+  accessToken: string;
+}
+
+// refreshToken 保存用
+// key: slackUserId
+export interface RefreshTokenData {
+  refreshToken: string;
+}
+
 // 部費の支払い相手の選択肢保存用
 // key: name
 export interface PayeeData {
