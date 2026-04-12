@@ -31,7 +31,8 @@ const sexSchema = union([
 
 const studentIdSchema = pipe(
   string(),
-  regex(/^[a-z]\d{5}$/, '学籍番号の形式が不正です'),
+  transform((v) => v.toUpperCase()),
+  regex(/^[EVCBMPDSALTHKX]\d{5}$/, '学籍番号の形式が不正です'),
 );
 
 const memberBaseSchema = object({
@@ -71,13 +72,11 @@ const memberActiveSchema = object({
 });
 
 const memberInternalSchema = object({
-  type: literal('INTERNAL'),
   studentId: studentIdSchema,
   ...memberActiveSchema.entries,
 });
 
 const memberExternalSchema = object({
-  type: literal('EXTERNAL'),
   schoolName: nameSchema,
   schoolMajor: string(),
   organization: optional(string()),
@@ -118,7 +117,8 @@ export const memberSchema = pipe(
       parentsAddress: input.parentsAddress,
     };
 
-    if (input.type === 'INTERNAL') {
+    // studentId があれば内部部員、なければ外部部員とみなす
+    if ('studentId' in input) {
       const active: ValiedMemberInfo['detail'] = {
         type: 'ACTIVE',
         detail: {

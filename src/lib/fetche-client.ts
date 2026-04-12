@@ -9,6 +9,7 @@ export const client = createClient<paths>({ baseUrl: process.env.API_BASE_URL })
 const authMiddleware = (slackUserId: string, env: HonoSlackAppEnv): Middleware => ({
   async onRequest({ request }) {
     const accessToken = await TokenService.getAccessToken(slackUserId, { env });
+    if (!accessToken) throw new Error('No access token available');
     request.headers.set('Authorization', `Bearer ${accessToken}`);
     return request;
   },

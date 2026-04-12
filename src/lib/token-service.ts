@@ -1,5 +1,6 @@
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { AccessTokenData, RefreshTokenData } from '@/types/kv';
+import type { OptionalClientSlackHandlerOptions } from '@/types/slack-handler-options';
 import { AuthenticationClient } from 'auth0';
 import { kv } from '@/utils/kv';
 
@@ -14,9 +15,9 @@ interface Options {
 }
 
 export const TokenService = {
-  async save(slackUserId: string, accessToken: string, accessTokenExpirationMs: number, refreshToken: string | undefined, { env }: Options) {
-    // accessToken の有効期限は tokenSet.expiresAt(ミリ秒) - 30 秒 (安全マージン) とする;
-    const accessTokenKvExpiration = accessTokenExpirationMs / 1000 - 30;
+  async save(slackUserId: string, accessToken: string, accessTokenExpirationAt: number, refreshToken: string | undefined, { env }: Options) {
+    // accessToken の有効期限は accessTokenExpirationAt (秒) - 30 秒 (安全マージン) とする;
+    const accessTokenKvExpiration = accessTokenExpirationAt - 30;
     // accessToken を保存
     await kv.put<AccessTokenData>(env.ACCESS_TOKEN_KV, slackUserId, { accessToken }, { expiration: accessTokenKvExpiration });
 
@@ -27,7 +28,7 @@ export const TokenService = {
     }
   },
 
-  async getAccessToken(slackUserId: string, { env }: Options): Promise<string | null> {
+  async getAccessToken(slackUserId: string, { env, client }: OptionalClientSlackHandlerOptions): Promise<string | null> {
     // 有効な accessToken があればそれを返す
     const accessTokenData = await kv.get<AccessTokenData>(env.ACCESS_TOKEN_KV, slackUserId);
     if (accessTokenData) return accessTokenData.accessToken;
@@ -35,6 +36,10 @@ export const TokenService = {
     // 有効な refreshToken があればそれを使って新しい accessToken を取得し、返す
     const refreshedAccessToken = await this.refresh(slackUserId, { env });
     if (refreshedAccessToken) return refreshedAccessToken;
+
+    if (client) {
+      // TODO: 最ログインを促すメッセージ
+    }
 
     // 有効なトークンがない場合は null を返す
     return null;

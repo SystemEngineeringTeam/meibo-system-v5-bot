@@ -94,7 +94,8 @@ export const selectMemberTypeStep = async (c: HonoContext) => {
   // トークンを保存
   await TokenService.save(linkData.slackUserId, tokenSet.accessToken, tokenSet.expiresAt, session.refreshToken, { env: c.env });
 
-  await MeiboApiService.createMember(linkData.slackUserId, user.sub, { env: c.env });
+  const userId = await MeiboApiService.createMember(linkData.slackUserId, user.sub, { env: c.env });
+  await kv.put(c.env.USER_KV, linkData.slackUserId, { userId });
 
   // Slack Bot から連携完了のメッセージを送る
   const slackApp = new SlackApp({ env: c.env });

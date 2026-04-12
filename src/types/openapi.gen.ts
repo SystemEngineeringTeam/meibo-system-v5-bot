@@ -3686,6 +3686,8 @@ export interface operations {
                 "application/json": {
                     /** @description 部員の状態 */
                     status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
+                    /** @default false */
+                    reject?: boolean;
                 };
             };
         };

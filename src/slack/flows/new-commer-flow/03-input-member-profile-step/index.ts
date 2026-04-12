@@ -49,6 +49,7 @@ export const createMemberDetail = async (slackUserId: string, inputValues: Norma
     const res = await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
     if (res.data) return { success: true, data: res.data };
 
+    console.error('Failed to create member detail', res);
     return {
       success: false,
       errors: {

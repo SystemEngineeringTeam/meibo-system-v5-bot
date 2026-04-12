@@ -5,7 +5,7 @@ export function toSlackErrors(issues: Array<InferIssue<typeof inputMemberInfoSch
   const errors: Record<string, string> = {};
 
   for (const issue of issues) {
-    const blockId = issue.path?.[0]?.key;
+    const blockId = issue.path?.at(0)?.key;
     if (typeof blockId === 'string') {
       errors[blockId] = issue.message;
     }

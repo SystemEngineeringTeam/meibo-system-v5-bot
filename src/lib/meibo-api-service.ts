@@ -20,12 +20,13 @@ export const MeiboApiService = {
     });
     if (res.data) return res.data.value.publicId;
 
+    console.error('Failed to create member', { slackUserId, sub, response: res });
     throw new Error('Failed to create member');
   },
 
   async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
-
+    console.log(JSON.stringify(memberInfo, null, 2));
     return await authClient(slackUserId, env).POST('/members/_rpc/submit-info', {
       body: {
         publicId: userId,
@@ -34,11 +35,11 @@ export const MeiboApiService = {
     });
   },
 
-  async updateMemberStatus(slackUserId: string, status: Status, { env }: Options) {
+  async updateMemberStatus(slackUserId: string, status: Status, reject: boolean, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
 
     return await authClient(slackUserId, env).POST('/members/{publicId}/status', {
-      body: { status },
+      body: { status, reject },
       params: { path: { publicId: userId } },
     });
   },
