@@ -17,14 +17,15 @@ interface Options {
 export const TokenService = {
   async save(slackUserId: string, accessToken: string, accessTokenExpirationAt: number, refreshToken: string | undefined, { env }: Options) {
     // accessToken の有効期限は accessTokenExpirationAt (秒) - 30 秒 (安全マージン) とする;
-    const accessTokenKvExpiration = accessTokenExpirationAt - 30;
+    // TODO: accessTokenExpirationAt から計算
+    const accessTokenKvExpiration = 60 * 60;
     // accessToken を保存
-    await kv.put<AccessTokenData>(env.ACCESS_TOKEN_KV, slackUserId, { accessToken }, { expiration: accessTokenKvExpiration });
+    await kv.put<AccessTokenData>(env.ACCESS_TOKEN_KV, slackUserId, { accessToken }, { expirationTtl: accessTokenKvExpiration });
 
     // refreshToken を保存
     if (refreshToken) {
       const refreshTokenKvExpiration = 31557600 - 30; // 約1年 (Auth0の設定値) - 30秒 (安全マージン)
-      await kv.put<RefreshTokenData>(env.REFRESH_TOKEN_KV, slackUserId, { refreshToken }, { expiration: refreshTokenKvExpiration });
+      await kv.put<RefreshTokenData>(env.REFRESH_TOKEN_KV, slackUserId, { refreshToken }, { expirationTtl: refreshTokenKvExpiration });
     }
   },
 

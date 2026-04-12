@@ -26,7 +26,6 @@ export const MeiboApiService = {
 
   async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
-    console.log(JSON.stringify(memberInfo, null, 2));
     return await authClient(slackUserId, env).POST('/members/_rpc/submit-info', {
       body: {
         publicId: userId,

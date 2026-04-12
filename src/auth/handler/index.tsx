@@ -45,7 +45,9 @@ export const loginHandler: HonoHandler<'/login'> = async (c) => {
   // Auth0のログイン処理へリダイレクト
   return await login({
     authorizationParams: {
-      scope: 'openid profile email',
+      scope: 'openid profile email offline_access',
+      audience: c.env.AUTH0_AUDIENCE,
+      issuer
     },
     redirectAfterLogin: '/logged-in',
     silent: false,

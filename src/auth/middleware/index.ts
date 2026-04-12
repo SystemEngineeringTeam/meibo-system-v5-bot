@@ -14,5 +14,6 @@ export const authMiddleware = auth({
   },
   authorizationParams: {
     scope: 'openid profile email offline_access',
+    audience: process.env.AUTH0_AUDIENCE,
   },
 });
