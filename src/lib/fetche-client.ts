@@ -5,6 +5,7 @@ import createClient from 'openapi-fetch';
 import { TokenService } from './token-service';
 
 export const client = createClient<paths>({ baseUrl: process.env.API_BASE_URL });
+export const apiClient = client;
 
 const authMiddleware = (slackUserId: string, env: HonoSlackAppEnv): Middleware => ({
   async onRequest({ request }) {

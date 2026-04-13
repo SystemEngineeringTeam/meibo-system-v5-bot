@@ -3,7 +3,7 @@ import type { HonoSlackAppEnv } from '@/types/hono';
 import type { UserData } from '@/types/kv';
 import type { InferRequestBodyType, InferResponseType } from '@/types/openapi';
 import { kv } from '@/utils/kv';
-import { authClient } from './fetche-client';
+import { apiClient } from './fetche-client';
 import { getUserId } from './get-user-id';
 
 interface Options {
@@ -15,7 +15,7 @@ type CurrentStatus = InferResponseType<'/members/{publicId}/status', 'get'>['val
 
 export const MeiboApiService = {
   async createMember(slackUserId: string, sub: string, { env }: Options) {
-    const res = await authClient(slackUserId, env).POST('/members', {
+    const res = await apiClient.POST('/members', {
       body: { slackId: slackUserId, subject: sub },
     });
     if (res.data) return res.data.value.publicId;
@@ -26,7 +26,7 @@ export const MeiboApiService = {
 
   async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
-    return await authClient(slackUserId, env).POST('/members/_rpc/submit-info', {
+    return await apiClient.POST('/members/_rpc/submit-info', {
       body: {
         publicId: userId,
         ...memberInfo,
@@ -34,11 +34,11 @@ export const MeiboApiService = {
     });
   },
 
-  async updateMemberStatus(slackUserId: string, status: Status, reject: boolean, { env }: Options) {
-    const userId = await getUserId(slackUserId, { env });
+  async updateMemberStatus(payerSlackUserId: string, approverSlackUserId: string, status: Status, reject: boolean, { env }: Options) {
+    const userId = await getUserId(payerSlackUserId, { env });
 
-    return await authClient(slackUserId, env).POST('/members/{publicId}/status', {
-      body: { status, reject },
+    return await apiClient.POST('/members/{publicId}/status', {
+      body: { status, reject, __updaterSlackId: approverSlackUserId },
       params: { path: { publicId: userId } },
     });
   },
@@ -51,9 +51,14 @@ export const MeiboApiService = {
     const userData = await kv.get<UserData>(env.USER_KV, slackUserId);
     if (!userData) return 'NOT_FOUND';
 
-    const status = await authClient(slackUserId, env).GET('/members/{publicId}/status', { params: { path: { publicId: userData.userId } } });
-    if (!status.data) return 'BEFORE_SUBMIT';
+    try {
+      const status = await apiClient.GET('/members/{publicId}/status', { params: { path: { publicId: userData.userId } } });
+      if (!status.data) return 'BEFORE_SUBMIT';
 
-    return status.data.value.currentStatus;
+      return status.data.value.currentStatus;
+    } catch (error) {
+      console.error('Error fetching member status:', error);
+      return 'NOT_FOUND';
+    }
   },
 };

@@ -1,6 +1,6 @@
 import type { BlockActionAckHandler, ButtonAction, MessageBlockAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { authClient } from '@/lib/fetche-client';
+import { apiClient } from '@/lib/fetche-client';
 import { getUserId } from '@/lib/get-user-id';
 import { SpreadSheetsApiService } from '@/lib/spread-sheets-api-service';
 import { clickedApproveOrRejectButton } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
@@ -25,7 +25,7 @@ export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAck
 
   if (approve) {
     const userId = await getUserId(payerSlackUserId, { client: context.client, env });
-    const userRes = await authClient(payerSlackUserId, env).GET('/members/{publicId}/info', { params: { path: { publicId: userId } } });
+    const userRes = await apiClient.GET('/members/{publicId}/info', { params: { path: { publicId: userId } } });
     await SpreadSheetsApiService.postMemberInfo(userRes.data, payload.user.id, teamId, { env, client: context.client });
   }
 };

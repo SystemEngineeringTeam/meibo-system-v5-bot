@@ -3684,6 +3684,8 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": {
+                    /** @description 更新者の Slack ID */
+                    __updaterSlackId: string;
                     /** @description 部員の状態 */
                     status: "ACTIVE" | "ACTIVE_PENDING" | "ALUMNI" | "LEAVE" | "RENEW";
                     /** @default false */
