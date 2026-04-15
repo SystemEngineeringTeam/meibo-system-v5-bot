@@ -1,6 +1,6 @@
 import type { ViewStateValue } from 'slack-cloudflare-workers';
 
-interface SlackViewStateInput {
+export interface SlackViewStateInput {
   [blockId: string]: {
     [actionId: string]: ViewStateValue;
   };

@@ -2,6 +2,7 @@ import type { HonoEnv } from './types/hono';
 import { Hono } from 'hono';
 import { authMiddleware, loggedInHandler, loginHandler, logoutHandler } from './auth';
 import PageLayout from './components/layouts/PageLayout';
+import { queue } from './queues';
 import { slackApp } from './slack';
 
 const app = new Hono<HonoEnv>();
@@ -20,4 +21,4 @@ app.get('/login', loginHandler);
 app.get('/logged-in', loggedInHandler);
 app.get('/logout', logoutHandler);
 
-export default { fetch: app.fetch };
+export default { fetch: app.fetch, queue };

@@ -1,8 +1,8 @@
 import type { DefaultValues } from '@/slack/flows/shared/send-input-member-profile-modal';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import type { InferResponseType } from '@/types/openapi';
+import type { AfterInputMemberInfoQue } from '@/types/que';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
-import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
+import type { SlackViewStateInput } from '@/utils/normalize-slack-view-state';
 import { memberSchema } from '@slack/schemas/member';
 import dayjs from 'dayjs';
 import { safeParse } from 'valibot';
@@ -10,9 +10,10 @@ import { apiClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
 import { getUserId } from '@/lib/get-user-id';
-import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
+import { normalizeViewState } from '@/utils/normalize-slack-view-state';
+import { que } from '@/utils/que';
 
 export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string | undefined, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
@@ -71,43 +72,17 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client, defaultValues);
 };
 
-interface CreateMemberDetailResultSuccess {
-  success: true;
-  data: InferResponseType<'/members/_rpc/submit-info', 'post'>;
-}
+export const updateMemberDetail = async (slackUserId: string, values: SlackViewStateInput, { env }: { env: HonoSlackAppEnv }): Promise<Record<string, string> | null> => {
+  const normalizedValues = normalizeViewState(values);
+  const memberDetail = safeParse(memberSchema, normalizedValues);
 
-interface CreateMemberDetailResultFailure {
-  success: false;
-  errors: Record<string, string>;
-}
+  if (!memberDetail.success) return toSlackErrors(memberDetail.issues);
 
-export const updateMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, { env }: { env: HonoSlackAppEnv }): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
-  const memberDetail = safeParse(memberSchema, inputValues);
+  await que.send<AfterInputMemberInfoQue>(env.AFTER_INPUT_MEMBER_INFO_QUE, {
+    type: 'renewal',
+    slackUserId,
+    validMemberInfo: memberDetail.output,
+  });
 
-  if (!memberDetail.success) {
-    return {
-      success: false,
-      errors: toSlackErrors(memberDetail.issues),
-    };
-  }
-
-  try {
-    const res = await MeiboApiService.putMemberDetail(slackUserId, memberDetail.output, { env });
-    if (res.data) return { success: true, data: res.data };
-
-    return {
-      success: false,
-      errors: {
-        warning_divider: '部員情報の登録に失敗しました。時間をおいて再度お試しください。',
-      },
-    };
-  } catch (error) {
-    console.error('Failed to create member detail:', error);
-    return {
-      success: false,
-      errors: {
-        warning_divider: '部員情報の更新に失敗しました。時間をおいて再度お試しください。',
-      },
-    };
-  }
+  return null;
 };

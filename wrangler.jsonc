@@ -36,10 +36,6 @@
 			"id": "2d126c54f04d485b9e412226ceb83e8d"
 		},
 		{
-			"binding": "TMP_API_ALT_KV",
-			"id": "e49f4986f49a41328443c820f80cf6d6"
-		},
-		{
 			"binding": "ACCESS_TOKEN_KV",
 			"id": "0d1410dacd7047b3b4d70ab78c9bfe3e"
 		},
@@ -50,6 +46,21 @@
 	],
 	"assets": {
 		"directory": "./src/assets",
+	},
+	"queues": {
+		"producers": [
+			{
+				"queue": "meibo-bot-v5-after-input-member-info",
+				"binding": "AFTER_INPUT_MEMBER_INFO_QUE",
+			}
+		],
+		"consumers": [
+			{
+				"queue": "meibo-bot-v5-after-input-member-info",
+				"max_batch_size": 10,
+				"max_retries": 3,
+			}
+		]
 	}
 	/**
 	 * Smart Placement
