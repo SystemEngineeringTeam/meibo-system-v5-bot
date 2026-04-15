@@ -36,6 +36,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/members/_rpc/find-member": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Slack ID/Subject から部員を検索する */
+        get: operations["getMembersRpcFindMember"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/members/_rpc/submit-info": {
         parameters: {
             query?: never;
@@ -344,6 +361,124 @@ export interface operations {
                             /** @constant */
                             message: "OK";
                         };
+                    };
+                };
+            };
+        };
+    };
+    getMembersRpcFindMember: {
+        parameters: {
+            query: {
+                by: "slackId" | "subject";
+                value: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        /** @constant */
+                        type: "Success";
+                        /** @description 部員 ID */
+                        value: {
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            createdAt: string;
+                            /**
+                             * @description 公開用 ID
+                             * @example muzrux3ve6jbadecs9rbimmh
+                             */
+                            publicId: string;
+                            /** @example U0524H34CDS */
+                            slackId: string;
+                            /** @description Auth0 の subject */
+                            subject: string;
+                            /**
+                             * @description ISO 8601 形式の日付文字列
+                             * @example 2024-05-19T06:55:41.603Z
+                             */
+                            updatedAt: string;
+                        };
+                    };
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "REQUEST_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        } | {
+                            /** @description 認証・認可時のエラー */
+                            detail: {
+                                /**
+                                 * @description `Authorization` ヘッダーの欠落
+                                 * @constant
+                                 */
+                                type: "MISSING_AUTHORIZATION_HEADER";
+                            };
+                            /** @constant */
+                            type: "AUTH_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
+                    };
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        error: {
+                            /** @enum {unknown} */
+                            detail: never;
+                            /** @constant */
+                            type: "DATABASE_ERROR";
+                        };
+                        /** @constant */
+                        type: "Failure";
                     };
                 };
             };
@@ -899,41 +1034,7 @@ export interface operations {
                             /** @enum {unknown} */
                             detail: never;
                             /** @constant */
-                            type: "AUTH_ERROR";
-                        } | {
-                            /** @enum {unknown} */
-                            detail: never;
-                            /** @constant */
                             type: "REQUEST_ERROR";
-                        };
-                        /** @constant */
-                        type: "Failure";
-                    };
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        error: {
-                            /** @enum {unknown} */
-                            detail: never;
-                            /** @constant */
-                            type: "AUTH_ERROR";
-                        } | {
-                            /** @description 認証・認可時のエラー */
-                            detail: {
-                                /**
-                                 * @description `Authorization` ヘッダーの欠落
-                                 * @constant
-                                 */
-                                type: "MISSING_AUTHORIZATION_HEADER";
-                            };
-                            /** @constant */
-                            type: "AUTH_ERROR";
                         };
                         /** @constant */
                         type: "Failure";
