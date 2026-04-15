@@ -381,7 +381,7 @@ function generateInternalOnlyBlocks(defaultValues?: DefaultValues): AnyModalBloc
       block_id: 'studentId',
       label: {
         type: 'plain_text',
-        text: '学籍番号: 例) k23001',
+        text: '学籍番号: 例) K23001',
       },
       element: {
         type: 'plain_text_input',

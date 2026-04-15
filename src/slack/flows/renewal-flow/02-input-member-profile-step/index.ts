@@ -54,7 +54,8 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
     parentsZipCode: memberInfoRes.data.value.profile.sensitive.parentsZipCode,
     parentsAddress: memberInfoRes.data.value.profile.sensitive.parentsAddress,
 
-    grade: memberInfoRes.data.value.detail.detail.grade,
+    // 学年は継続時に多くの人が変更すべき項目のため，初期値にいれない
+    // grade: memberInfoRes.data.value.detail.detail.grade,
 
     ...(memberInfoRes.data.value.detail.active.type === 'INTERNAL'
       ? {
