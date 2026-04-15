@@ -39,8 +39,6 @@ export const baseConfirmRegistrationApprovalStep = (approveActionId: string, rej
 };
 
 export const baseClickedApproveOrRejectButton = () => async (approve: boolean, channelId: string, timestamp: string, blocks: AnyMessageBlock[] | undefined, { client }: SlackHandlerSlackHandlerClientOption) => {
-  const activeActionId = approve ? 'member_reject' : 'member_approve';
-
   await client.chat.update({
     channel: channelId,
     ts: timestamp,
@@ -51,7 +49,7 @@ export const baseClickedApproveOrRejectButton = () => async (approve: boolean, c
         ? []
         : blocks[1].elements.map((element) => ({
             ...element,
-            style: element.action_id === activeActionId ? (approve ? 'danger' : 'primary') : undefined,
+            style: undefined,
           })),
     }],
   });
