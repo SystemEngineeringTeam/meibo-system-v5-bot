@@ -1,6 +1,6 @@
 import type { HonoHandler } from '@/types/hono';
 import type { LinkData } from '@/types/kv';
-import { login } from '@auth0/auth0-hono';
+import { login, logout } from '@auth0/auth0-hono';
 import { setCookie } from 'hono/cookie';
 import PageLayout from '@/components/layouts/PageLayout';
 import { selectMemberTypeStep } from '@/slack/flows/new-commer-flow/02-select-member-type-step';
@@ -54,3 +54,15 @@ export const loginHandler: HonoHandler<'/login'> = async (c) => {
 };
 
 export const loggedInHandler: HonoHandler<'/logged-in'> = async (c) => await selectMemberTypeStep(c);
+
+export const logoutHandler: HonoHandler<'/logout'> = async (c) => {
+  // クッキーからキーを削除
+  setCookie(c, 'link_key', '', {
+    httpOnly: true,
+    secure: true,
+    maxAge: 0,
+    path: '/',
+  });
+  // Auth0のログアウト処理
+  return await logout()(c, async () => {});
+};

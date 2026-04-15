@@ -1,6 +1,6 @@
 import type { HonoEnv } from './types/hono';
 import { Hono } from 'hono';
-import { authMiddleware, loggedInHandler, loginHandler } from './auth';
+import { authMiddleware, loggedInHandler, loginHandler, logoutHandler } from './auth';
 import PageLayout from './components/layouts/PageLayout';
 import { slackApp } from './slack';
 
@@ -18,5 +18,6 @@ app.route('/slack', slackApp);
 app.use(authMiddleware);
 app.get('/login', loginHandler);
 app.get('/logged-in', loggedInHandler);
+app.get('/logout', logoutHandler);
 
 export default { fetch: app.fetch };
