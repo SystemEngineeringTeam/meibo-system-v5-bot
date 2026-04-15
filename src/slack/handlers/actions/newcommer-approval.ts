@@ -20,12 +20,9 @@ export const newcommerApprovalActionAckHandler = (approve: boolean): BlockAction
   } catch (error) {
     console.error('Error in newcommerApprovalActionHandler:', error);
   }
-
-  context.custom.approvalResult = approve; // Store the approval result in the context for later use
 };
 
-export const newcommerApprovalActionLazyHandler: BlockActionLazyHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> = async ({ context, payload, env }) => {
-  const approve: boolean = context.custom.approvalResult;
+export const newcommerApprovalActionLazyHandler = (approve: boolean): BlockActionLazyHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
   if (approve) {
     const payerSlackUserId = payload.message.metadata?.event_payload?.payerSlackUserId as string;
     const teamId = payload.team?.id;

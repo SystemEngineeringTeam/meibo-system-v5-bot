@@ -61,8 +61,8 @@ slackApp.all('/', async (c) => {
   app.action('select_newcommer_fee_payee', selectNewcommerFeePayeeActionHandler);
 
   // STEP 6: 承認・拒否
-  app.action('newcommer_approve', newcommerApprovalActionAckHandler(true), newcommerApprovalActionLazyHandler);
-  app.action('newcommer_reject', newcommerApprovalActionAckHandler(false));
+  app.action('newcommer_approve', newcommerApprovalActionAckHandler(true), newcommerApprovalActionLazyHandler(true));
+  app.action('newcommer_reject', newcommerApprovalActionAckHandler(false), newcommerApprovalActionLazyHandler(false));
 
   // ===== [continuing-member-flow] =====
   // STEP 1: 継続手続きの開始
@@ -78,8 +78,8 @@ slackApp.all('/', async (c) => {
   app.action('select_continuing_member_fee_payee', selectContinuingMemberFeePayeeActionHandler);
 
   // STEP 5: 承認・拒否
-  app.action('continuing_member_approve', continuingMemberApprovalActionAckHandler(true), continuingMemberApprovalActionLazyHandler);
-  app.action('continuing_member_reject', continuingMemberApprovalActionAckHandler(false));
+  app.action('continuing_member_approve', continuingMemberApprovalActionAckHandler(true), continuingMemberApprovalActionLazyHandler(true));
+  app.action('continuing_member_reject', continuingMemberApprovalActionAckHandler(false), continuingMemberApprovalActionLazyHandler(false));
 
   // ===== 共通 =====
   // 住所の自動入力
