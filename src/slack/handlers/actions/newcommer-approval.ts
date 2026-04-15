@@ -1,12 +1,10 @@
-import type { BlockActionAckHandler, ButtonAction, MessageBlockAction } from 'slack-cloudflare-workers';
+import type { BlockActionAckHandler, BlockActionLazyHandler, ButtonAction, MessageBlockAction } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { apiClient } from '@/lib/fetche-client';
-import { getUserId } from '@/lib/get-user-id';
 import { SpreadSheetsApiService } from '@/lib/spread-sheets-api-service';
 import { clickedApproveOrRejectButton } from '@/slack/flows/new-commer-flow/05-1-confirm-registration-approval-step';
 import { updateMemberStatusStep } from '@/slack/flows/new-commer-flow/06-update-member-status-step';
 
-export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
+export const newcommerApprovalActionAckHandler = (approve: boolean): BlockActionAckHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> => async ({ context, payload, env }) => {
   const approverSlackUserId = payload.user.id;
   const payerSlackUserId = payload.message.metadata?.event_payload?.payerSlackUserId as string;
   const timestamp = payload.message.ts;
@@ -23,9 +21,14 @@ export const newcommerApprovalActionHandler = (approve: boolean): BlockActionAck
     console.error('Error in newcommerApprovalActionHandler:', error);
   }
 
+  context.custom.approvalResult = approve; // Store the approval result in the context for later use
+};
+
+export const newcommerApprovalActionLazyHandler: BlockActionLazyHandler<'button', HonoSlackAppEnv, MessageBlockAction<ButtonAction>> = async ({ context, payload, env }) => {
+  const approve: boolean = context.custom.approvalResult;
   if (approve) {
-    const userId = await getUserId(payerSlackUserId, { client: context.client, env });
-    const userRes = await apiClient.GET('/members/{publicId}/info', { params: { path: { publicId: userId } } });
-    await SpreadSheetsApiService.postMemberInfo(userRes.data, payload.user.id, teamId, { env, client: context.client });
+    const payerSlackUserId = payload.message.metadata?.event_payload?.payerSlackUserId as string;
+    const teamId = payload.team?.id;
+    await SpreadSheetsApiService.postMemberInfo(payerSlackUserId, payload.user.id, teamId, { env, client: context.client });
   }
 };

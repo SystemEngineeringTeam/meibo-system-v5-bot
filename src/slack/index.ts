@@ -2,9 +2,9 @@ import type { HonoSlackAppBindings } from '@/types/hono';
 import { Hono } from 'hono';
 import { SlackApp } from 'slack-cloudflare-workers';
 import { autoFillAddressActionHandler } from './handlers/actions/aut-fill-address';
-import { continuingMemberApprovalActionHandler } from './handlers/actions/continuting-member-approval';
+import { continuingMemberApprovalActionAckHandler, continuingMemberApprovalActionLazyHandler } from './handlers/actions/continuting-member-approval';
 import { copyCurrentAddressActionHandler } from './handlers/actions/copy-current-address';
-import { newcommerApprovalActionHandler } from './handlers/actions/newcommer-approval';
+import { newcommerApprovalActionAckHandler, newcommerApprovalActionLazyHandler } from './handlers/actions/newcommer-approval';
 import { selectContinuingMemberFeePayeeActionHandler } from './handlers/actions/select-continuting-member-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { selectNewcommerFeePayeeActionHandler } from './handlers/actions/select-newcommer-fee-payee';
@@ -19,7 +19,7 @@ import { startContinuationCommandHandler } from './handlers/commands/start-conti
 import { messageHandler } from './handlers/events/message';
 import { teamJoinEventHandler } from './handlers/events/team-join';
 import { inputContinuingMemberDetailViewHandler } from './handlers/views/input-continuing-member-detail';
-import { inputNewCommerMemberDetailLazyViewHandler, inputNewCommerMemberDetailViewAckHandler } from './handlers/views/input-newcommer-member-detail';
+import { inputNewCommerMemberDetailViewHandler } from './handlers/views/input-newcommer-member-detail';
 import { adminOnlyCommand } from './middlewares/admin-only';
 import { notifyChannelOnlyCommand } from './middlewares/notify-channel-only';
 
@@ -55,14 +55,14 @@ slackApp.all('/', async (c) => {
   app.action('select_member_type_external', selectMemberTypeActionHandler('EXTERNAL'));
 
   // STEP 3 → 4: 入力情報のチェック・支払い相手の選択肢の表示
-  app.view('input_newcomer_member_detail', inputNewCommerMemberDetailViewAckHandler, inputNewCommerMemberDetailLazyViewHandler);
+  app.view('input_newcomer_member_detail', inputNewCommerMemberDetailViewHandler);
 
   // STEP 5: 承認依頼の送信
   app.action('select_newcommer_fee_payee', selectNewcommerFeePayeeActionHandler);
 
   // STEP 6: 承認・拒否
-  app.action('newcommer_approve', newcommerApprovalActionHandler(true));
-  app.action('newcommer_reject', newcommerApprovalActionHandler(false));
+  app.action('newcommer_approve', newcommerApprovalActionAckHandler(true), newcommerApprovalActionLazyHandler);
+  app.action('newcommer_reject', newcommerApprovalActionAckHandler(false));
 
   // ===== [continuing-member-flow] =====
   // STEP 1: 継続手続きの開始
@@ -78,8 +78,8 @@ slackApp.all('/', async (c) => {
   app.action('select_continuing_member_fee_payee', selectContinuingMemberFeePayeeActionHandler);
 
   // STEP 5: 承認・拒否
-  app.action('continuing_member_approve', continuingMemberApprovalActionHandler(true));
-  app.action('continuing_member_reject', continuingMemberApprovalActionHandler(false));
+  app.action('continuing_member_approve', continuingMemberApprovalActionAckHandler(true), continuingMemberApprovalActionLazyHandler);
+  app.action('continuing_member_reject', continuingMemberApprovalActionAckHandler(false));
 
   // ===== 共通 =====
   // 住所の自動入力

@@ -1,29 +1,34 @@
-import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { ofetch } from 'ofetch';
+import { apiClient } from './fetche-client';
 import { getNotifyChannelId } from './get-notify-channel-id';
+import { getUserId } from './get-user-id';
 
 export const SpreadSheetsApiService = {
-  async postMemberInfo(userData: InferResponseType<'/members/{publicId}/info', 'get'> | undefined, approverSlackUserId: string, teamId: string | undefined, { env, client }: SlackHandlerOptions) {
+  async postMemberInfo(payerSlackUserId: string, approverSlackUserId: string, teamId: string | undefined, { env, client }: SlackHandlerOptions) {
+    const userId = await getUserId(payerSlackUserId, { client, env });
+    const userRes = await apiClient.GET('/members/{publicId}/info', { params: { path: { publicId: userId } } });
+
     const approverSlackUser = await client.users.info({ user: approverSlackUserId });
     const approver = approverSlackUser.user?.profile?.display_name || approverSlackUser.user?.profile?.real_name || approverSlackUser;
 
-    if (userData === undefined) {
+    if (userRes.data === undefined) {
       await client.chat.postMessage({
         channel: await getNotifyChannelId(teamId, env),
         text: `:warning: Spread Sheets への登録に失敗しました
-- 部費受け渡し相手: ${approver}`,
+・ 部費受け渡し相手: ${approver}`,
       });
       return;
     }
 
-    if (userData.value.detail.type === 'ALUMNI') {
+    const detail = userRes.data.value.detail;
+    if (detail.type === 'ALUMNI') {
       console.warn('卒業生のため Spread Sheets への登録をスキップします');
       return;
     }
 
-    const studentId = userData.value.detail.active.type === 'INTERNAL' ? userData.value.detail.active.detail.studentId : userData.value.detail.active.detail.organization;
-    const name = `${userData.value.profile.base.lastName} ${userData.value.profile.base.firstName}`;
+    const studentId = detail.active.type === 'INTERNAL' ? detail.active.detail.studentId : detail.active.detail.organization;
+    const name = `${userRes.data.value.profile.base.lastName} ${userRes.data.value.profile.base.firstName}`;
 
     try {
       await ofetch(env.SPREAD_SHEET_API_URL, {
@@ -45,10 +50,10 @@ export const SpreadSheetsApiService = {
       await client.chat.postMessage({
         channel: channelId,
         text: `:warning: Spread Sheets への登録に失敗しました
-          登録内容:
-          - 学籍番号(団体名): ${studentId}
-          - 氏名: ${name}
-          - 部費受け渡し相手: ${approver}`,
+登録内容:
+・学籍番号(団体名): ${studentId}
+・氏名: ${name}
+・部費受け渡し相手: ${approver}`,
       });
     }
   },
