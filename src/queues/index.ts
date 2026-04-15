@@ -10,7 +10,7 @@ export const queue = async (batch: MessageBatch, env: HonoSlackAppEnv) => {
   await Promise.all(batch.messages.map(async (message) => {
     const job = message.body as string;
     const data = JSON.parse(job) as AfterInputMemberInfoQue;
-    if (data.type === 'renewal') await updateRenewalMember(data.slackUserId, data.validMemberInfo, { env, client: slackApp.client });
-    else if (data.type === 'newcommer') await createNewcomerMember(data.slackUserId, data.validMemberInfo, { env, client: slackApp.client });
+    if (data.type === 'newcommer') await createNewcomerMember(data.slackUserId, data.validMemberInfo, data.selectMemberTypeTimestamp, { env, client: slackApp.client });
+    else if (data.type === 'renewal') await updateRenewalMember(data.slackUserId, data.validMemberInfo, data.selectMemberTypeTimestamp, { env, client: slackApp.client });
   }));
 };

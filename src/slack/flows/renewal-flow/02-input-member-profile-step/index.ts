@@ -72,7 +72,7 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client, defaultValues);
 };
 
-export const updateMemberDetail = async (slackUserId: string, values: SlackViewStateInput, { env }: { env: HonoSlackAppEnv }): Promise<Record<string, string> | null> => {
+export const updateMemberDetail = async (slackUserId: string, values: SlackViewStateInput, selectMemberTypeTimestamp: string | undefined, { env }: { env: HonoSlackAppEnv }): Promise<Record<string, string> | null> => {
   const normalizedValues = normalizeViewState(values);
   const memberDetail = safeParse(memberSchema, normalizedValues);
 
@@ -82,6 +82,7 @@ export const updateMemberDetail = async (slackUserId: string, values: SlackViewS
     type: 'renewal',
     slackUserId,
     validMemberInfo: memberDetail.output,
+    selectMemberTypeTimestamp,
   });
 
   return null;

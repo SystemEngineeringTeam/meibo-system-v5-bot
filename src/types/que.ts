@@ -1,8 +1,17 @@
 import type { ValiedMemberInfo } from '@/slack/schemas/member';
 
-export interface AfterInputMemberInfoQue {
-  type: 'newcommer' | 'renewal';
+interface NewcommerAfterInputMemberInfoQue {
+  type: 'newcommer';
   slackUserId: string;
   validMemberInfo: ValiedMemberInfo;
-  selectMemberTypeTimestamp?: number;
+  selectMemberTypeTimestamp: string;
 }
+
+interface RenewalAfterInputMemberInfoQue {
+  type: 'renewal';
+  slackUserId: string;
+  validMemberInfo: ValiedMemberInfo;
+  selectMemberTypeTimestamp?: string;
+}
+
+export type AfterInputMemberInfoQue = NewcommerAfterInputMemberInfoQue | RenewalAfterInputMemberInfoQue;
