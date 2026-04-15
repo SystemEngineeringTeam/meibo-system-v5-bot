@@ -5,28 +5,29 @@ import dayjs from 'dayjs';
 import { MeiboApiService } from '@/lib/meibo-api-service';
 
 export const profileCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = async ({ payload, context, env }) => {
-  const userId = payload.user_id;
+  const slackUserId = payload.user_id;
 
-  const memberInfoRes = await MeiboApiService.getMemberInfo(userId, { env });
-  if (!memberInfoRes.data) {
-    await context.client.chat.postEphemeral({
-      channel: payload.channel_id,
-      user: payload.user_id,
-      text: ':x: 登録情報が見つかりませんでした。名簿に登録されていません',
-    });
-    return;
-  }
+  try {
+    const memberInfoRes = await MeiboApiService.getMemberInfo(slackUserId, { env });
+    if (!memberInfoRes.data) {
+      await context.client.chat.postEphemeral({
+        channel: payload.channel_id,
+        user: payload.user_id,
+        text: ':x: 登録情報が見つかりませんでした。名簿に登録されていません',
+      });
+      return;
+    }
 
-  // 卒業生
-  if (memberInfoRes.data.value.detail.type === 'ALUMNI') {
-    const base = memberInfoRes.data.value.profile.base;
-    const sensitive = memberInfoRes.data.value.profile.sensitive;
-    const detail = memberInfoRes.data.value.detail.detail;
+    // 卒業生
+    if (memberInfoRes.data.value.detail.type === 'ALUMNI') {
+      const base = memberInfoRes.data.value.profile.base;
+      const sensitive = memberInfoRes.data.value.profile.sensitive;
+      const detail = memberInfoRes.data.value.detail.detail;
 
-    await context.client.chat.postEphemeral({
-      channel: payload.channel_id,
-      user: payload.user_id,
-      text: `:white_check_mark: *卒業生* として登録されています
+      await context.client.chat.postEphemeral({
+        channel: payload.channel_id,
+        user: payload.user_id,
+        text: `:white_check_mark: *卒業生* として登録されています
 
 登録情報
 ・氏名: ${base.lastName} ${base.firstName}
@@ -40,20 +41,20 @@ export const profileCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = as
 ・実家の郵便番号: ${sensitive.parentsZipCode}
 ・実家の住所: ${sensitive.parentsAddress}
 ・旧役職: ${detail.oldRole}`,
-    });
-    return;
-  }
+      });
+      return;
+    }
 
-  // 内部現役生
-  if (memberInfoRes.data.value.detail.active.type === 'INTERNAL') {
-    const base = memberInfoRes.data.value.profile.base;
-    const sensitive = memberInfoRes.data.value.profile.sensitive;
-    const active = memberInfoRes.data.value.detail.active.detail;
+    // 内部現役生
+    if (memberInfoRes.data.value.detail.active.type === 'INTERNAL') {
+      const base = memberInfoRes.data.value.profile.base;
+      const sensitive = memberInfoRes.data.value.profile.sensitive;
+      const active = memberInfoRes.data.value.detail.active.detail;
 
-    await context.client.chat.postEphemeral({
-      channel: payload.channel_id,
-      user: payload.user_id,
-      text: `:white_check_mark: *内部現役生* として登録されています
+      await context.client.chat.postEphemeral({
+        channel: payload.channel_id,
+        user: payload.user_id,
+        text: `:white_check_mark: *内部現役生* として登録されています
 
 登録情報
 ・氏名: ${base.lastName} ${base.firstName}
@@ -67,19 +68,19 @@ export const profileCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = as
 ・実家の住所: ${sensitive.parentsAddress}
 ・学籍番号: ${active.studentId}
 ・役職: ${active.role || '-'}`,
-    });
-  }
+      });
+    }
 
-  // 外部現役生
-  if (memberInfoRes.data.value.detail.active.type === 'EXTERNAL') {
-    const base = memberInfoRes.data.value.profile.base;
-    const sensitive = memberInfoRes.data.value.profile.sensitive;
-    const active = memberInfoRes.data.value.detail.active.detail;
+    // 外部現役生
+    if (memberInfoRes.data.value.detail.active.type === 'EXTERNAL') {
+      const base = memberInfoRes.data.value.profile.base;
+      const sensitive = memberInfoRes.data.value.profile.sensitive;
+      const active = memberInfoRes.data.value.detail.active.detail;
 
-    await context.client.chat.postEphemeral({
-      channel: payload.channel_id,
-      user: payload.user_id,
-      text: `:white_check_mark: *外部現役生* として登録されています
+      await context.client.chat.postEphemeral({
+        channel: payload.channel_id,
+        user: payload.user_id,
+        text: `:white_check_mark: *外部現役生* として登録されています
 
 登録情報
 ・氏名: ${base.lastName} ${base.firstName}
@@ -94,8 +95,16 @@ export const profileCommandHandler: SlashCommandAckHandler<HonoSlackAppEnv> = as
 ・学校名: ${active.schoolName}
 ・学部・学科名: ${active.schoolMajor}
 ・所属: ${active.organization || '-'}`,
+      });
+    }
+  } catch (error) {
+    console.error('Error in profileCommandHandler:', error);
+    await context.client.chat.postEphemeral({
+      channel: payload.channel_id,
+      user: payload.user_id,
+      text: ':x: ユーザー情報が見つかりませんでした。管理者に連絡してください',
     });
-  }
+  };
 };
 
 // 性別をコードから文字列に変換
