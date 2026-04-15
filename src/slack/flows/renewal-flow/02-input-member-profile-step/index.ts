@@ -1,8 +1,10 @@
+import type { DefaultValues } from '@/slack/flows/shared/send-input-member-profile-modal';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { NormalizedViewState } from '@/utils/normalize-slack-view-state';
 import { memberSchema } from '@slack/schemas/member';
+import dayjs from 'dayjs';
 import { safeParse } from 'valibot';
 import { apiClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
@@ -17,18 +19,17 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
   const userId = await getUserId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);
 
-  const memberDetailRes = await apiClient.GET('/members/{publicId}/detail', {
+  const memberInfoRes = await apiClient.GET('/members/{publicId}/info', {
     params: { path: { publicId: userId } },
   });
-  if (!memberDetailRes.data) {
+  if (!memberInfoRes.data) {
     await client.chat.postMessage({
       channel: channelId,
       text: ':warning: 部員情報の取得に失敗しました。管理者に連絡してください。',
     });
     return;
   }
-  const memberType = memberDetailRes.data.value.type === 'ACTIVE' ? memberDetailRes.data.value.active.type : undefined;
-  if (!memberType) {
+  if (memberInfoRes.data.value.detail.type !== 'ACTIVE') {
     await client.chat.postMessage({
       channel: channelId,
       text: ':warning: 継続手続きは現役部員のみが操作可能です。誤りだと思われる場合は役員に連絡してください。',
@@ -36,7 +37,37 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
     return;
   }
 
-  await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client);
+  const defaultValues: DefaultValues = {
+    lastName: memberInfoRes.data.value.profile.base.lastName,
+    firstName: memberInfoRes.data.value.profile.base.firstName,
+    lastNameKana: memberInfoRes.data.value.profile.base.lastNameKana,
+    firstNameKana: memberInfoRes.data.value.profile.base.firstNameKana,
+
+    birthday: dayjs(memberInfoRes.data.value.profile.sensitive.birthday).format('YYYY-MM-DD'),
+    sex: memberInfoRes.data.value.profile.sensitive.sex,
+
+    phoneNumber: memberInfoRes.data.value.profile.sensitive.phoneNumber,
+
+    currentZipCode: memberInfoRes.data.value.profile.sensitive.currentZipCode,
+    currentAddress: memberInfoRes.data.value.profile.sensitive.currentAddress,
+
+    parentsZipCode: memberInfoRes.data.value.profile.sensitive.parentsZipCode,
+    parentsAddress: memberInfoRes.data.value.profile.sensitive.parentsAddress,
+
+    grade: memberInfoRes.data.value.detail.detail.grade,
+
+    ...(memberInfoRes.data.value.detail.active.type === 'INTERNAL'
+      ? {
+          studentId: memberInfoRes.data.value.detail.active.detail.studentId,
+        }
+      : {
+          schoolName: memberInfoRes.data.value.detail.active.detail.schoolName,
+          schoolMajor: memberInfoRes.data.value.detail.active.detail.schoolMajor,
+          organization: memberInfoRes.data.value.detail.active.detail.organization ?? undefined,
+        }),
+  };
+  const memberType = memberInfoRes.data.value.detail.active.type;
+  await sendInputMemberProfileModal(memberType, 'input_continuing_member_profile', validatedTriggerId, selectMemberTypeTimestamp, client, defaultValues);
 };
 
 interface CreateMemberDetailResultSuccess {

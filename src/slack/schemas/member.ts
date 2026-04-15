@@ -27,7 +27,9 @@ const sexSchema = union([
   literal('MALE'),
   literal('FEMALE'),
   literal('NOT_KNOWN'),
+  literal('NOT_APPLICABLE'),
 ]);
+export type Sex = InferInput<typeof sexSchema>;
 
 const studentIdSchema = pipe(
   string(),
@@ -57,18 +59,20 @@ export const memberProfileSchema = object({
   ...memberSensitiveSchema.entries,
 });
 
+const gradeSchema = union([
+  literal('B1'),
+  literal('B2'),
+  literal('B3'),
+  literal('B4'),
+  literal('M1'),
+  literal('M2'),
+  literal('D1'),
+  literal('D2'),
+  literal('D3'),
+]);
+export type Grade = InferInput<typeof gradeSchema>;
 const memberActiveSchema = object({
-  grade: union([
-    literal('B1'),
-    literal('B2'),
-    literal('B3'),
-    literal('B4'),
-    literal('M1'),
-    literal('M2'),
-    literal('D1'),
-    literal('D2'),
-    literal('D3'),
-  ]),
+  grade: gradeSchema,
 });
 
 const memberInternalSchema = object({

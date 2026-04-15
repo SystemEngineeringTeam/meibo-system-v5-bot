@@ -1,7 +1,34 @@
-import type { AnyModalBlock, SlackAPIClient } from 'slack-cloudflare-workers';
+import type { AnyModalBlock, PlainTextOption, SlackAPIClient } from 'slack-cloudflare-workers';
+import type { Grade, Sex } from '@/slack/schemas/member';
 import dayjs from 'dayjs';
 
-export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'EXTERNAL', callbackId: string, triggerId: string, selectMemberTypeTimestamp: string, client: SlackAPIClient, defaultValues?: Record<string, string>) => {
+export type DefaultValues = Partial<{
+  lastName: string;
+  firstName: string;
+  lastNameKana: string;
+  firstNameKana: string;
+
+  birthday: string; // YYYY-MM-DD
+  sex: Sex;
+
+  phoneNumber: string;
+
+  currentZipCode: string;
+  currentAddress: string;
+
+  parentsZipCode: string;
+  parentsAddress: string;
+
+  grade: Grade;
+
+  studentId: string;
+
+  schoolName: string;
+  schoolMajor: string;
+  organization: string;
+}>;
+
+export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'EXTERNAL', callbackId: string, triggerId: string, selectMemberTypeTimestamp: string, client: SlackAPIClient, defaultValues?: DefaultValues) => {
   const memberTypeText = selectedValue === 'INTERNAL' ? '内部生' : '外部生';
   const titleText = defaultValues ? `部員情報の確認（${memberTypeText}）` : `部員情報の入力（${memberTypeText}）`;
   await client.views.open({
@@ -27,7 +54,54 @@ export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'E
   });
 };
 
-function generateBlocks(selectedValue: 'INTERNAL' | 'EXTERNAL', defaultValues?: Record<string, string>): AnyModalBlock[] {
+const SEX_OPTIONS: PlainTextOption[] = [
+  { text: { type: 'plain_text', text: '男性' }, value: 'MALE' },
+  { text: { type: 'plain_text', text: '女性' }, value: 'FEMALE' },
+  { text: { type: 'plain_text', text: '適用不能' }, value: 'NOT_APPLICABLE' },
+];
+const GRADE_OPTIONS: PlainTextOption[] = [
+  {
+    text: { type: 'plain_text', text: '学部1年 (B1)' },
+    value: 'B1',
+  },
+  {
+    text: { type: 'plain_text', text: '学部2年 (B2)' },
+    value: 'B2',
+  },
+  {
+    text: { type: 'plain_text', text: '学部3年 (B3)' },
+    value: 'B3',
+  },
+  {
+    text: { type: 'plain_text', text: '学部4年 (B4)' },
+    value: 'B4',
+  },
+  {
+    text: { type: 'plain_text', text: '修士1年 (M1)' },
+    value: 'M1',
+  },
+  {
+    text: { type: 'plain_text', text: '修士2年 (M2)' },
+    value: 'M2',
+  },
+  {
+    text: { type: 'plain_text', text: '博士1年 (D1)' },
+    value: 'D1',
+  },
+  {
+    text: { type: 'plain_text', text: '博士2年 (D2)' },
+    value: 'D2',
+  },
+  {
+    text: { type: 'plain_text', text: '博士3年 (D3)' },
+    value: 'D3',
+  },
+];
+function findInitOption(options: PlainTextOption[], value?: string): PlainTextOption | undefined {
+  return options.find((option) => option.value === value);
+}
+
+function generateBlocks(selectedValue: 'INTERNAL' | 'EXTERNAL', defaultValues?: DefaultValues): AnyModalBlock[] {
   const isInternal = selectedValue === 'INTERNAL';
 
   return [
@@ -51,11 +125,11 @@ function generateBlocks(selectedValue: 'INTERNAL' | 'EXTERNAL', defaultValues?: 
       type: 'divider',
     },
     ...generateActiveOnlyBlocks(defaultValues),
-    ...(isInternal ? generateInternalOnlyBlocks() : generateExternalOnlyBlocks()),
+    ...(isInternal ? generateInternalOnlyBlocks(defaultValues) : generateExternalOnlyBlocks(defaultValues)),
   ];
 }
 
-function generateMemberBaseBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+function generateMemberBaseBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
   return [
     {
       type: 'input',
@@ -113,7 +187,7 @@ function generateMemberBaseBlocks(defaultValues?: Record<string, string>): AnyMo
   ];
 }
 
-function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+function generateMemberSensitiveBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
   // 今年度から見て18年前の4月1日
   const initialDate = defaultValues?.birthday ?? dayjs().subtract(19, 'year').month(3).date(1).format('YYYY-MM-DD');
 
@@ -149,29 +223,8 @@ function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): 
           type: 'plain_text',
           text: '性別を選択',
         },
-        // TODO: 初期値の設定を要確認
-        initial_option: defaultValues?.sex
-          ? {
-              text: {
-                type: 'plain_text',
-                text: defaultValues.sex ?? '',
-              },
-            }
-          : undefined,
-        options: [
-          {
-            text: { type: 'plain_text', text: '男性' },
-            value: 'MALE',
-          },
-          {
-            text: { type: 'plain_text', text: '女性' },
-            value: 'FEMALE',
-          },
-          {
-            text: { type: 'plain_text', text: 'その他' },
-            value: 'NOT_KNOWN',
-          },
-        ],
+        options: SEX_OPTIONS,
+        initial_option: findInitOption(SEX_OPTIONS, defaultValues?.sex),
       },
     },
     {
@@ -298,7 +351,7 @@ function generateMemberSensitiveBlocks(defaultValues?: Record<string, string>): 
   ];
 }
 
-function generateActiveOnlyBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+function generateActiveOnlyBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
   return [
     {
       type: 'input',
@@ -314,59 +367,14 @@ function generateActiveOnlyBlocks(defaultValues?: Record<string, string>): AnyMo
           type: 'plain_text',
           text: '学年を選択',
         },
-        // TODO: 初期値の設定を要確認
-        initial_option: defaultValues?.grade
-          ? {
-              text: {
-                type: 'plain_text',
-                text: defaultValues.grade ?? '',
-              },
-            }
-          : undefined,
-        options: [
-          {
-            text: { type: 'plain_text', text: '学部1年 (B1)' },
-            value: 'B1',
-          },
-          {
-            text: { type: 'plain_text', text: '学部2年 (B2)' },
-            value: 'B2',
-          },
-          {
-            text: { type: 'plain_text', text: '学部3年 (B3)' },
-            value: 'B3',
-          },
-          {
-            text: { type: 'plain_text', text: '学部4年 (B4)' },
-            value: 'B4',
-          },
-          {
-            text: { type: 'plain_text', text: '修士1年 (M1)' },
-            value: 'M1',
-          },
-          {
-            text: { type: 'plain_text', text: '修士2年 (M2)' },
-            value: 'M2',
-          },
-          {
-            text: { type: 'plain_text', text: '博士1年 (D1)' },
-            value: 'D1',
-          },
-          {
-            text: { type: 'plain_text', text: '博士2年 (D2)' },
-            value: 'D2',
-          },
-          {
-            text: { type: 'plain_text', text: '博士3年 (D3)' },
-            value: 'D3',
-          },
-        ],
+        options: GRADE_OPTIONS,
+        initial_option: findInitOption(GRADE_OPTIONS, defaultValues?.grade),
       },
     },
   ];
 }
 
-function generateInternalOnlyBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+function generateInternalOnlyBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
   return [
     {
       type: 'input',
@@ -384,7 +392,7 @@ function generateInternalOnlyBlocks(defaultValues?: Record<string, string>): Any
   ];
 }
 
-function generateExternalOnlyBlocks(defaultValues?: Record<string, string>): AnyModalBlock[] {
+function generateExternalOnlyBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
   return [
     {
       type: 'input',
