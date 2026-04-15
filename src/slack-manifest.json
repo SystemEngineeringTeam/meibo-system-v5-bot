@@ -28,6 +28,11 @@
         "url": "https://bot.v5.meibo.sysken.net/slack"
       },
       {
+        "command": "/profile",
+        "description": "自分の登録情報を確認する",
+        "url": "https://bot.v5.meibo.sysken.net/slack"
+      },
+      {
         "command": "/remove-payee-nickname",
         "description": "支払い先のニックネームを削除する",
         "url": "https://bot.v5.meibo.sysken.net/slack"

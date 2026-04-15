@@ -47,6 +47,13 @@ export const MeiboApiService = {
     });
   },
 
+  async getMemberInfo(slackUserId: string, { env }: Options) {
+    const userId = await getUserId(slackUserId, { env });
+    return await apiClient.GET('/members/{publicId}/info', {
+      params: { path: { publicId: userId } },
+    });
+  },
+
   /**
    * 'NOT_FOUND': 名簿BOT上にもユーザが存在しない状態
    * 'BEFORE_SUBMIT': 名簿API にユーザが存在しない状態

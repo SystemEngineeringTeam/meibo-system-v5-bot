@@ -10,6 +10,7 @@ import { selectMemberTypeActionHandler } from './handlers/actions/select-member-
 import { selectNewcommerFeePayeeActionHandler } from './handlers/actions/select-newcommer-fee-payee';
 import { startContinuationActionHandler } from './handlers/actions/start-continuation';
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
+import { profileCommandHandler } from './handlers/commands/profile';
 import { recoveryNewcommerCommandHandler } from './handlers/commands/recovery-newcommer';
 import { removePayeeNicknameCommandHandler } from './handlers/commands/remove-payee-nickname';
 import { setNotifyChannelCommandHandler } from './handlers/commands/set-notify-channel';
@@ -36,6 +37,9 @@ slackApp.all('/', async (c) => {
   // 受け取り人を設定
   app.command('/set-payee-nickname', notifyChannelOnlyCommand(setPayeeNicknameCommandHandler));
   app.command('/remove-payee-nickname', notifyChannelOnlyCommand(removePayeeNicknameCommandHandler));
+
+  // 自分の登録情報を確認
+  app.command('/profile', profileCommandHandler);
 
   // ===== [new-commer-flow] =====
   // リカバリーコマンド
