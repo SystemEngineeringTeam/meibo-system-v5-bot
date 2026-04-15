@@ -14,7 +14,14 @@ export const startContinuationStep = async (slackUserId: string, { client, env }
   const statusRes = await apiClient.GET('/members/{publicId}/status', {
     params: { path: { publicId: userId }, query: { limit: '100' } },
   });
-  if (!statusRes.data) throw new Error('ユーザの状態が取得できませんでした');
+  if (!statusRes.data) {
+    await client.chat.postEphemeral({
+      user: slackUserId,
+      channel: channelId,
+      text: 'ユーザ情報が取得できませんでした。管理者に連絡してください',
+    });
+    throw new Error('ユーザの状態が取得できませんでした');
+  }
 
   const isActiveMember = statusRes.data.value.currentStatus === 'ACTIVE';
   const isRenewalPendin = statusRes.data.value.currentStatusDetail.renewStatus?.type === 'RENEW_WAITING';
