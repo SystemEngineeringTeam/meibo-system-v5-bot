@@ -6,13 +6,13 @@ import { getNotifyChannelId } from './get-notify-channel-id';
 export const SpreadSheetsApiService = {
   async postMemberInfo(userData: InferResponseType<'/members/{publicId}/info', 'get'> | undefined, approverSlackUserId: string, teamId: string | undefined, { env, client }: SlackHandlerOptions) {
     const approverSlackUser = await client.users.info({ user: approverSlackUserId });
+    const approver = approverSlackUser.user?.profile?.display_name || approverSlackUser.user?.profile?.real_name || approverSlackUser;
 
     if (userData === undefined) {
       await client.chat.postMessage({
         channel: await getNotifyChannelId(teamId, env),
         text: `:warning: Spread Sheets への登録に失敗しました
-          userData が見つかりませんでした...
-          - 部費受け渡し相手: ${approverSlackUserId}`,
+- 部費受け渡し相手: ${approver}`,
       });
       return;
     }
@@ -24,7 +24,6 @@ export const SpreadSheetsApiService = {
 
     const studentId = userData.value.detail.active.type === 'INTERNAL' ? userData.value.detail.active.detail.studentId : userData.value.detail.active.detail.organization;
     const name = `${userData.value.profile.base.lastName} ${userData.value.profile.base.firstName}`;
-    const approver = approverSlackUser.user?.profile?.display_name ?? approverSlackUser;
 
     try {
       await ofetch(env.SPREAD_SHEET_API_URL, {
