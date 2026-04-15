@@ -28,7 +28,7 @@ export type DefaultValues = Partial<{
   organization: string;
 }>;
 
-export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'EXTERNAL', callbackId: string, triggerId: string, selectMemberTypeTimestamp: string, client: SlackAPIClient, defaultValues?: DefaultValues) => {
+export const sendInputMemberProfileModal = async (selectedValue: 'INTERNAL' | 'EXTERNAL', callbackId: string, triggerId: string, selectMemberTypeTimestamp: string | undefined, client: SlackAPIClient, defaultValues?: DefaultValues) => {
   const memberTypeText = selectedValue === 'INTERNAL' ? '内部生' : '外部生';
   const titleText = defaultValues ? `部員情報の確認（${memberTypeText}）` : `部員情報の入力（${memberTypeText}）`;
   await client.views.open({

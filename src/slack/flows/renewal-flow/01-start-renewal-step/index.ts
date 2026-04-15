@@ -24,8 +24,8 @@ export const startContinuationStep = async (slackUserId: string, { client, env }
   }
 
   const isActiveMember = statusRes.data.value.currentStatus === 'ACTIVE';
-  const isRenewalPendin = statusRes.data.value.currentStatusDetail.renewStatus?.type === 'RENEW_WAITING';
-  if (!isActiveMember || !isRenewalPendin) {
+  const isRenewalPending = statusRes.data.value.currentStatusDetail.renewStatus?.type === 'RENEW_WAITING';
+  if (!isActiveMember || !isRenewalPending) {
     await client.chat.postEphemeral({
       channel: channelId,
       user: slackUserId,

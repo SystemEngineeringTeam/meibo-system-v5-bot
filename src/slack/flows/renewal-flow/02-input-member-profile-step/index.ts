@@ -14,7 +14,7 @@ import { MeiboApiService } from '@/lib/meibo-api-service';
 import { toSlackErrors } from '@/lib/to-slack-error';
 import { sendInputMemberProfileModal } from '@/slack/flows/shared/send-input-member-profile-modal';
 
-export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
+export const confirmRegistrationStep = async (slackUserId: string, selectMemberTypeTimestamp: string | undefined, { client, env, triggerId }: SlackHandlerOptionsWithTriggerId) => {
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
   const userId = await getUserId(slackUserId, { client, env });
   const validatedTriggerId = await getTriggerId(triggerId, channelId, client);

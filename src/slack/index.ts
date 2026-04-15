@@ -8,7 +8,7 @@ import { newcommerApprovalActionAckHandler, newcommerApprovalActionLazyHandler }
 import { selectContinuingMemberFeePayeeActionHandler } from './handlers/actions/select-continuting-member-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { selectNewcommerFeePayeeActionHandler } from './handlers/actions/select-newcommer-fee-payee';
-import { startContinuationActionHandler } from './handlers/actions/start-continuation';
+import { startContinuationBlockActionHandler, startContinuationMessageBlockActionHandler } from './handlers/actions/start-continuation';
 import { healthCheckCommandHandler } from './handlers/commands/health-check';
 import { profileCommandHandler } from './handlers/commands/profile';
 import { recoveryNewcommerCommandHandler } from './handlers/commands/recovery-newcommer';
@@ -16,6 +16,7 @@ import { removePayeeNicknameCommandHandler } from './handlers/commands/remove-pa
 import { setNotifyChannelCommandHandler } from './handlers/commands/set-notify-channel';
 import { setPayeeNicknameCommandHandler } from './handlers/commands/set-payee-nickname';
 import { startContinuationCommandHandler } from './handlers/commands/start-continuation';
+import { appHomeOpenedEventHandler } from './handlers/events/app-home-opened';
 import { messageHandler } from './handlers/events/message';
 import { teamJoinEventHandler } from './handlers/events/team-join';
 import { inputContinuingMemberDetailViewHandler } from './handlers/views/input-continuing-member-detail';
@@ -40,6 +41,9 @@ slackApp.all('/', async (c) => {
 
   // 自分の登録情報を確認
   app.command('/profile', profileCommandHandler);
+
+  // App Home
+  app.event('app_home_opened', appHomeOpenedEventHandler);
 
   // ===== [new-commer-flow] =====
   // リカバリーコマンド
@@ -69,7 +73,8 @@ slackApp.all('/', async (c) => {
   app.command('/start-continuation', startContinuationCommandHandler);
 
   // STEP 2: 登録情報の確認
-  app.action('start_continuation', startContinuationActionHandler);
+  app.action('start_continuation', startContinuationMessageBlockActionHandler);
+  app.action('start_continuation_from_home', startContinuationBlockActionHandler);
 
   // STEP 2 → 3: 入力情報のチェック・支払い相手の選択肢の表示
   app.view('input_continuing_member_profile', inputContinuingMemberDetailViewHandler);
