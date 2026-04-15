@@ -18,7 +18,11 @@ export const MeiboApiService = {
     const res = await apiClient.POST('/members', {
       body: { slackId: slackUserId, subject: sub },
     });
-    if (res.data) return res.data.value.publicId;
+    if (res.data) {
+      const userId = res.data.value.publicId;
+      await kv.put(env.USER_KV, slackUserId, { userId });
+      return userId;
+    }
 
     console.error('Failed to create member', { slackUserId, sub, response: res });
     throw new Error('Failed to create member');
