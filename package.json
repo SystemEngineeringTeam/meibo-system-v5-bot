@@ -15,7 +15,7 @@
 		"lint:ci": "eslint \"./**/*.{ts,json}\" --max-warnings=0",
 		"typo": "cspell \"./src/**\" --gitignore",
 		"typecheck": "tsc --noEmit",
-		"tunnel": "cloudflared tunnel run meibo-slack-bot-dev"
+		"tunnel": "cloudflared tunnel run meibo-bot-dev"
 	},
 	"devDependencies": {
 		"@antfu/eslint-config": "^7.7.3",
