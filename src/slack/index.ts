@@ -18,7 +18,7 @@ import { startContinuationCommandHandler } from './handlers/commands/start-conti
 import { messageHandler } from './handlers/events/message';
 import { teamJoinEventHandler } from './handlers/events/team-join';
 import { inputContinuingMemberDetailViewHandler } from './handlers/views/input-continuing-member-detail';
-import { inputNewCommerMemberDetailViewHandler } from './handlers/views/input-newcommer-member-detail';
+import { inputNewCommerMemberDetailLazyViewHandler, inputNewCommerMemberDetailViewAckHandler } from './handlers/views/input-newcommer-member-detail';
 import { adminOnlyCommand } from './middlewares/admin-only';
 import { notifyChannelOnlyCommand } from './middlewares/notify-channel-only';
 
@@ -51,7 +51,7 @@ slackApp.all('/', async (c) => {
   app.action('select_member_type_external', selectMemberTypeActionHandler('EXTERNAL'));
 
   // STEP 3 → 4: 入力情報のチェック・支払い相手の選択肢の表示
-  app.view('input_newcomer_member_detail', inputNewCommerMemberDetailViewHandler);
+  app.view('input_newcomer_member_detail', inputNewCommerMemberDetailViewAckHandler, inputNewCommerMemberDetailLazyViewHandler);
 
   // STEP 5: 承認依頼の送信
   app.action('select_newcommer_fee_payee', selectNewcommerFeePayeeActionHandler);

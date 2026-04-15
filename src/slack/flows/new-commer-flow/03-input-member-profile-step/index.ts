@@ -35,7 +35,9 @@ interface CreateMemberDetailResultFailure {
   errors: Record<string, string>;
 }
 
-export const createMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, env: HonoSlackAppEnv): Promise<CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure> => {
+export type CreateMemberDetailResult = CreateMemberDetailResultSuccess | CreateMemberDetailResultFailure;
+
+export const createMemberDetail = async (slackUserId: string, inputValues: NormalizedViewState, env: HonoSlackAppEnv): Promise<CreateMemberDetailResult> => {
   const memberDetail = safeParse(memberSchema, inputValues);
 
   if (!memberDetail.success) {
