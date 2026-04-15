@@ -3,12 +3,23 @@ import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 
-export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: InferResponseType<'/members/_rpc/submit-info', 'post'> | undefined, { client, env }: SlackHandlerOptions) => {
+type RequestData = InferResponseType<'/members/_rpc/submit-info', 'post'>;
+
+export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: RequestData | undefined, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得
   const channelId = await getOrOpenDMChannelId(slackUserId, { client, env });
 
   const payeeKeyList = await env.PAYEE_KV.list();
   const payeeList = payeeKeyList.keys.map(({ name }) => name);
+
+  if (payeeList.length === 0) {
+    await client.chat.postEphemeral({
+      user: slackUserId,
+      channel: channelId,
+      text: '支払い相手の候補が設定されていません。役員に連絡してください。',
+    });
+    return;
+  }
 
   await client.chat.postMessage({
     channel: channelId,
