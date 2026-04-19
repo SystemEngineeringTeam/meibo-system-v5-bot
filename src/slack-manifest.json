@@ -43,7 +43,7 @@
         "url": "https://bot.v5.meibo.sysken.net/slack"
       },
       {
-        "command": "/start-continuation",
+        "command": "/start-renew",
         "description": "継続手続きを開始する",
         "url": "https://bot.v5.meibo.sysken.net/slack"
       }

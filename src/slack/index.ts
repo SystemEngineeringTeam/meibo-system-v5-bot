@@ -68,9 +68,9 @@ slackApp.all('/', async (c) => {
   app.action('newcommer_approve', newcommerApprovalActionAckHandler(true), newcommerApprovalActionLazyHandler(true));
   app.action('newcommer_reject', newcommerApprovalActionAckHandler(false), newcommerApprovalActionLazyHandler(false));
 
-  // ===== [continuing-member-flow] =====
+  // ===== [renewal-member-flow] =====
   // STEP 1: 継続手続きの開始
-  app.command('/start-continuation', startContinuationCommandHandler);
+  app.command('/start-renew', startContinuationCommandHandler);
 
   // STEP 2: 登録情報の確認
   app.action('start_continuation', startContinuationMessageBlockActionHandler);
