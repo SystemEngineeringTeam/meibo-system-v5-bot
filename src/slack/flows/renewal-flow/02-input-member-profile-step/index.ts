@@ -4,7 +4,6 @@ import type { AfterInputMemberInfoQue } from '@/types/que';
 import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-options';
 import type { SlackViewStateInput } from '@/utils/normalize-slack-view-state';
 import { memberSchema } from '@slack/schemas/member';
-import dayjs from 'dayjs';
 import { safeParse } from 'valibot';
 import { apiClient } from '@/lib/fetche-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
@@ -44,7 +43,8 @@ export const confirmRegistrationStep = async (slackUserId: string, selectMemberT
     lastNameKana: memberInfoRes.data.value.profile.base.lastNameKana,
     firstNameKana: memberInfoRes.data.value.profile.base.firstNameKana,
 
-    birthday: dayjs(memberInfoRes.data.value.profile.sensitive.birthday).format('YYYY-MM-DD'),
+    // 誕生日のデータが誤っている可能性があるため、初期値に入れない
+    // birthday: dayjs(memberInfoRes.data.value.profile.sensitive.birthday).format('YYYY-MM-DD'),
     sex: memberInfoRes.data.value.profile.sensitive.sex,
 
     phoneNumber: memberInfoRes.data.value.profile.sensitive.phoneNumber,
