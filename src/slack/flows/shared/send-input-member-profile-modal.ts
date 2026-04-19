@@ -1,6 +1,5 @@
 import type { AnyModalBlock, PlainTextOption, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { Grade, Sex } from '@/slack/schemas/member';
-import dayjs from 'dayjs';
 
 export type DefaultValues = Partial<{
   lastName: string;
@@ -188,9 +187,6 @@ function generateMemberBaseBlocks(defaultValues?: DefaultValues): AnyModalBlock[
 }
 
 function generateMemberSensitiveBlocks(defaultValues?: DefaultValues): AnyModalBlock[] {
-  // 今年度から見て18年前の4月1日
-  const initialDate = defaultValues?.birthday ?? dayjs().subtract(19, 'year').month(3).date(1).format('YYYY-MM-DD');
-
   return [
     {
       type: 'input',
@@ -202,7 +198,6 @@ function generateMemberSensitiveBlocks(defaultValues?: DefaultValues): AnyModalB
       element: {
         type: 'datepicker',
         action_id: 'birthday',
-        initial_date: initialDate,
         placeholder: {
           type: 'plain_text',
           text: '日付を選択',
