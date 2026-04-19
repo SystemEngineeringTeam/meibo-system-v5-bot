@@ -1,6 +1,7 @@
 import type { InferInput } from 'valibot';
 import type { InferRequestBodyType } from '@/types/openapi';
-import { literal, minLength, object, optional, pipe, regex, string, transform, union } from 'valibot';
+import dayjs from 'dayjs';
+import { check, literal, minLength, object, optional, pipe, regex, string, transform, union } from 'valibot';
 
 const nameSchema = pipe(string(), minLength(1));
 const kanaSchema = pipe(
@@ -18,9 +19,16 @@ export const zipCodeSchema = pipe(
   regex(/^\d{3}-\d{4}$/, '郵便番号の形式が不正です'),
 );
 
-const dateSchema = pipe(
+const birthdaySchema = pipe(
   string(),
   regex(/^\d{4}-\d{2}-\d{2}$/, '日付形式が不正です'),
+  check((value) => {
+    const birth = dayjs(value, 'YYYY-MM-DD');
+    if (!birth.isValid()) return false;
+
+    const age = dayjs().diff(birth, 'year');
+    return age >= 18 && age <= 30;
+  }, '18歳以上30歳以下のみ登録できます'),
 );
 
 const sexSchema = union([
@@ -45,7 +53,7 @@ const memberBaseSchema = object({
 });
 
 const memberSensitiveSchema = object({
-  birthday: dateSchema,
+  birthday: birthdaySchema,
   sex: sexSchema,
   phoneNumber: phoneSchema,
   currentZipCode: zipCodeSchema,
