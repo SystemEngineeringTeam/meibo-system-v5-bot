@@ -6,13 +6,18 @@ import { selectFeePayeeStep } from '@/slack/flows/renewal-flow/03-select-fee-pay
 
 export const updateRenewalMember = async (slackUserId: string, validMemberInfo: ValiedMemberInfo, selectMemberTypeTimestamp: string | undefined, { env, client }: SlackHandlerOptions): Promise<boolean> => {
   try {
-    const res = await MeiboApiService.putMemberDetail(slackUserId, validMemberInfo, { env });
-    if (!res.data) {
-      console.error('Failed to update member detail', { slackUserId, validMemberInfo, response: res });
+    const infoRes = await MeiboApiService.putMemberInfoForRenewal(slackUserId, validMemberInfo, { env });
+    if (!infoRes.detail.data || !infoRes.profile.data) {
+      console.error('Failed to update member detail', { slackUserId, validMemberInfo, response: { detail: infoRes.detail, profile: infoRes.profile } });
       return false;
     }
 
-    await selectFeePayeeStep(slackUserId, res.data, { env, client });
+    const info = {
+      detail: infoRes.detail.data.value,
+      profile: infoRes.profile.data.value,
+    };
+
+    await selectFeePayeeStep(slackUserId, info, { env, client });
     if (selectMemberTypeTimestamp) await closeContinuationMessage(slackUserId, selectMemberTypeTimestamp, { client, env });
 
     return true;

@@ -3,7 +3,10 @@ import type { InferResponseType } from '@/types/openapi';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 
-type RequestData = InferResponseType<'/members/_rpc/submit-info', 'post'>;
+interface RequestData {
+  detail: Omit<InferResponseType<'/members/{publicId}/detail', 'put'>['value'], '_referenced'>;
+  profile: Omit<InferResponseType<'/members/{publicId}/profile', 'put'>['value'], '_referenced'>;
+}
 
 export const baseSelectFeePayeeStep = (stepNumber: number, actionId: string) => async (slackUserId: string, requestData: RequestData | undefined, { client, env }: SlackHandlerOptions) => {
   // ユーザのDMチャンネルIDを取得

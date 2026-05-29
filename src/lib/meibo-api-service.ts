@@ -28,7 +28,7 @@ export const MeiboApiService = {
     throw new Error('Failed to create member');
   },
 
-  async putMemberDetail(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
+  async putMemberInfoForRegister(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
     return await apiClient.POST('/members/_rpc/submit-info', {
       body: {
@@ -36,6 +36,29 @@ export const MeiboApiService = {
         ...memberInfo,
       },
     });
+  },
+
+  async putMemberInfoForRenewal(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
+    const userId = await getUserId(slackUserId, { env });
+    const [detail, profile] = await Promise.all([
+      apiClient.PUT('/members/{publicId}/detail', {
+        params: {
+          path: {
+            publicId: userId,
+          },
+        },
+        body: memberInfo.detail,
+      }),
+      apiClient.PUT('/members/{publicId}/profile', {
+        params: {
+          path: {
+            publicId: userId,
+          },
+        },
+        body: memberInfo.profile,
+      }),
+    ]);
+    return { detail, profile };
   },
 
   async updateMemberStatus(payerSlackUserId: string, approverSlackUserId: string, status: Status, reject: boolean, { env }: Options) {

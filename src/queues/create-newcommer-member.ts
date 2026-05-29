@@ -6,13 +6,18 @@ import { selectFeePayeeStep } from '@/slack/flows/new-commer-flow/04-select-fee-
 
 export const createNewcomerMember = async (slackUserId: string, validMemberInfo: ValiedMemberInfo, selectMemberTypeTimestamp: string, { env, client }: SlackHandlerOptions): Promise<boolean> => {
   try {
-    const res = await MeiboApiService.putMemberDetail(slackUserId, validMemberInfo, { env });
+    const res = await MeiboApiService.putMemberInfoForRegister(slackUserId, validMemberInfo, { env });
     if (!res.data) {
       console.error('Failed to update member detail', { slackUserId, validMemberInfo, response: res });
       return false;
     }
 
-    await selectFeePayeeStep(slackUserId, res.data, { env, client });
+    const info = {
+      detail: res.data.value.detail,
+      profile: res.data.value.profile,
+    };
+
+    await selectFeePayeeStep(slackUserId, info, { env, client });
     await closeSelectMemberTypeMessage(slackUserId, selectMemberTypeTimestamp, { client, env });
 
     return true;
