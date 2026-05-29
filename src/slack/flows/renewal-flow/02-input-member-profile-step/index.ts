@@ -5,7 +5,7 @@ import type { SlackHandlerOptionsWithTriggerId } from '@/types/slack-handler-opt
 import type { SlackViewStateInput } from '@/utils/normalize-slack-view-state';
 import { memberSchema } from '@slack/schemas/member';
 import { safeParse } from 'valibot';
-import { apiClient } from '@/lib/fetche-client';
+import { apiClient } from '@/lib/fetch-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getTriggerId } from '@/lib/get-trigger-id';
 import { getUserId } from '@/lib/get-user-id';

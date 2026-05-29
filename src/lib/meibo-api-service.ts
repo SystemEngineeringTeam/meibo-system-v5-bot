@@ -1,9 +1,9 @@
-import type { ValiedMemberInfo } from '@/slack/schemas/member';
+import type { ValidMemberInfo } from '@/slack/schemas/member';
 import type { HonoSlackAppEnv } from '@/types/hono';
 import type { UserData } from '@/types/kv';
 import type { InferRequestBodyType, InferResponseType } from '@/types/openapi';
 import { kv } from '@/utils/kv';
-import { apiClient } from './fetche-client';
+import { apiClient } from './fetch-client';
 import { getUserId } from './get-user-id';
 
 interface Options {
@@ -28,7 +28,7 @@ export const MeiboApiService = {
     throw new Error('Failed to create member');
   },
 
-  async putMemberInfoForRegister(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
+  async putMemberInfoForRegister(slackUserId: string, memberInfo: ValidMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
     return await apiClient.POST('/members/_rpc/submit-info', {
       body: {
@@ -38,7 +38,7 @@ export const MeiboApiService = {
     });
   },
 
-  async putMemberInfoForRenewal(slackUserId: string, memberInfo: ValiedMemberInfo, { env }: Options) {
+  async putMemberInfoForRenewal(slackUserId: string, memberInfo: ValidMemberInfo, { env }: Options) {
     const userId = await getUserId(slackUserId, { env });
     const [detail, profile] = await Promise.all([
       apiClient.PUT('/members/{publicId}/detail', {

@@ -1,7 +1,7 @@
 import type { UserData } from '@/types/kv';
 import type { OptionalClientSlackHandlerOptions } from '@/types/slack-handler-options';
 import { kv } from '@/utils/kv';
-import { apiClient } from './fetche-client';
+import { apiClient } from './fetch-client';
 
 export const getUserId = async (slackUserId: string, { client, env }: OptionalClientSlackHandlerOptions) => {
   // KV からユーザIDを取得

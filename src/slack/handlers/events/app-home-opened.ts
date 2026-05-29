@@ -1,6 +1,6 @@
 import type { AnyHomeTabBlock, EventLazyHandler } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
-import { apiClient } from '@/lib/fetche-client';
+import { apiClient } from '@/lib/fetch-client';
 import { getUserId } from '@/lib/get-user-id';
 
 export const appHomeOpenedEventHandler: EventLazyHandler<'app_home_opened', HonoSlackAppEnv> = async ({ context, payload, env }) => {

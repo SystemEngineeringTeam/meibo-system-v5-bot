@@ -108,18 +108,18 @@ export const externalMemberSchema = object({
 export const inputMemberInfoSchema = union([internalMemberSchema, externalMemberSchema]);
 export type InputMemberInfo = InferInput<typeof inputMemberInfoSchema>;
 
-export type ValiedMemberInfo = Omit<InferRequestBodyType<'/members/_rpc/submit-info', 'post'>, 'publicId'>;
+export type ValidMemberInfo = Omit<InferRequestBodyType<'/members/_rpc/submit-info', 'post'>, 'publicId'>;
 export const memberSchema = pipe(
   inputMemberInfoSchema,
-  transform<InputMemberInfo, ValiedMemberInfo>((input) => {
-    const base: ValiedMemberInfo['profile']['base'] = {
+  transform<InputMemberInfo, ValidMemberInfo>((input) => {
+    const base: ValidMemberInfo['profile']['base'] = {
       firstName: input.firstName,
       lastName: input.lastName,
       firstNameKana: input.firstNameKana,
       lastNameKana: input.lastNameKana,
     };
 
-    const sensitive: ValiedMemberInfo['profile']['sensitive'] = {
+    const sensitive: ValidMemberInfo['profile']['sensitive'] = {
       birthday: input.birthday,
       sex: input.sex,
       phoneNumber: input.phoneNumber,
@@ -131,7 +131,7 @@ export const memberSchema = pipe(
 
     // studentId があれば内部部員、なければ外部部員とみなす
     if ('studentId' in input) {
-      const active: ValiedMemberInfo['detail'] = {
+      const active: ValidMemberInfo['detail'] = {
         type: 'ACTIVE',
         detail: {
           grade: input.grade,
@@ -154,7 +154,7 @@ export const memberSchema = pipe(
       };
     };
 
-    const active: ValiedMemberInfo['detail'] = {
+    const active: ValidMemberInfo['detail'] = {
       type: 'ACTIVE',
       detail: {
         grade: input.grade,

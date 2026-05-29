@@ -4,6 +4,7 @@
     "package.json",
     "worker-configuration.d.ts",
     "openapi.json",
+    "openapi.gen.ts",
   ],
   "words": [
     "meibo",
@@ -13,5 +14,6 @@
     "continuting",
     "ofetch",
     "prefcode",
+    "EVCBMPDSALTHKX",
   ]
 }

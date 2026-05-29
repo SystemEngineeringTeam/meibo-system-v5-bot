@@ -1,7 +1,7 @@
 import type { AnyMessageBlock, SlackAPIClient } from 'slack-cloudflare-workers';
 import type { ChannelData } from '@/types/kv';
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
-import { apiClient } from '@/lib/fetche-client';
+import { apiClient } from '@/lib/fetch-client';
 import { getOrOpenDMChannelId } from '@/lib/get-dm-channel-id';
 import { getUserId } from '@/lib/get-user-id';
 import { kv } from '@/utils/kv';

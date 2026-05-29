@@ -1,16 +1,16 @@
-import type { ValiedMemberInfo } from '@/slack/schemas/member';
+import type { ValidMemberInfo } from '@/slack/schemas/member';
 
 interface NewcommerAfterInputMemberInfoQue {
   type: 'newcommer';
   slackUserId: string;
-  validMemberInfo: ValiedMemberInfo;
+  validMemberInfo: ValidMemberInfo;
   selectMemberTypeTimestamp: string;
 }
 
 interface RenewalAfterInputMemberInfoQue {
   type: 'renewal';
   slackUserId: string;
-  validMemberInfo: ValiedMemberInfo;
+  validMemberInfo: ValidMemberInfo;
   selectMemberTypeTimestamp?: string;
 }
 

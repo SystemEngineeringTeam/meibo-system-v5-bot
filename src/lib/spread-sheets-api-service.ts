@@ -1,6 +1,6 @@
 import type { SlackHandlerOptions } from '@/types/slack-handler-options';
 import { ofetch } from 'ofetch';
-import { apiClient } from './fetche-client';
+import { apiClient } from './fetch-client';
 import { getNotifyChannelId } from './get-notify-channel-id';
 import { getUserId } from './get-user-id';
 
