@@ -14,54 +14,105 @@
 	"compatibility_flags": [
 		"nodejs_compat"
 	],
-	"kv_namespaces": [
-		{
-			"binding": "LINK_KV",
-			"id": "9661c824622e4eef9452ae938f70168b"
+	"env": {
+		"stg": {
+			"kv_namespaces": [
+				{
+					"binding": "LINK_KV",
+					"id": "02c0a294cd254ef19944a6bacd6150a6"
+				},
+				{
+					"binding": "CHANNEL_KV",
+					"id": "f2a5dde4d00b49bf80a9dfe2c06ac086"
+				},
+				{
+					"binding": "USER_KV",
+					"id": "2e917a4698394f839733d4932b012862"
+				},
+				{
+					"binding": "PAYEE_KV",
+					"id": "9415ca6383a64c7ea2f4cedef59b77ec"
+				},
+				{
+					"binding": "SETTINGS_KV",
+					"id": "d37fa568e08d42c8a0d060447226120c"
+				},
+				{
+					"binding": "ACCESS_TOKEN_KV",
+					"id": "ca000f09eebe4434a7f30fe414c6da42"
+				},
+				{
+					"binding": "REFRESH_TOKEN_KV",
+					"id": "8e2193fb2a3a43dda6ee1c0505b42f94"
+				}
+			],
+			"queues": {
+				"producers": [
+					{
+						"queue": "meibo-bot-v5-stg-after-input-member-info",
+						"binding": "AFTER_INPUT_MEMBER_INFO_QUE",
+					}
+				],
+				"consumers": [
+					{
+						"queue": "meibo-bot-v5-stg-after-input-member-info",
+						"max_batch_size": 10,
+						"max_retries": 3,
+					}
+				]
+			}
 		},
-		{
-			"binding": "CHANNEL_KV",
-			"id": "61882864b68347019c031e6e53ddcc40"
-		},
-		{
-			"binding": "USER_KV",
-			"id": "377ddd2491e54fda8496a450c261f444"
-		},
-		{
-			"binding": "PAYEE_KV",
-			"id": "0a02636cd0f241e8a461e0ae94137029"
-		},
-		{
-			"binding": "SETTINGS_KV",
-			"id": "2d126c54f04d485b9e412226ceb83e8d"
-		},
-		{
-			"binding": "ACCESS_TOKEN_KV",
-			"id": "0d1410dacd7047b3b4d70ab78c9bfe3e"
-		},
-		{
-			"binding": "REFRESH_TOKEN_KV",
-			"id": "7f71d690b43f49e39de2a9cd900cc535"
+		"prod": {
+			"kv_namespaces": [
+				{
+					"binding": "LINK_KV",
+					"id": "9661c824622e4eef9452ae938f70168b"
+				},
+				{
+					"binding": "CHANNEL_KV",
+					"id": "61882864b68347019c031e6e53ddcc40"
+				},
+				{
+					"binding": "USER_KV",
+					"id": "377ddd2491e54fda8496a450c261f444"
+				},
+				{
+					"binding": "PAYEE_KV",
+					"id": "0a02636cd0f241e8a461e0ae94137029"
+				},
+				{
+					"binding": "SETTINGS_KV",
+					"id": "2d126c54f04d485b9e412226ceb83e8d"
+				},
+				{
+					"binding": "ACCESS_TOKEN_KV",
+					"id": "0d1410dacd7047b3b4d70ab78c9bfe3e"
+				},
+				{
+					"binding": "REFRESH_TOKEN_KV",
+					"id": "7f71d690b43f49e39de2a9cd900cc535"
+				}
+			],
+			"queues": {
+				"producers": [
+					{
+						"queue": "meibo-bot-v5-after-input-member-info",
+						"binding": "AFTER_INPUT_MEMBER_INFO_QUE",
+					}
+				],
+				"consumers": [
+					{
+						"queue": "meibo-bot-v5-after-input-member-info",
+						"max_batch_size": 10,
+						"max_retries": 3,
+					}
+				]
+			}
 		}
-	],
+	},
 	"assets": {
 		"directory": "./src/assets",
 	},
-	"queues": {
-		"producers": [
-			{
-				"queue": "meibo-bot-v5-after-input-member-info",
-				"binding": "AFTER_INPUT_MEMBER_INFO_QUE",
-			}
-		],
-		"consumers": [
-			{
-				"queue": "meibo-bot-v5-after-input-member-info",
-				"max_batch_size": 10,
-				"max_retries": 3,
-			}
-		]
-	}
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

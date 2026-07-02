@@ -4,7 +4,8 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"deploy": "wrangler deploy",
+		"deploy:stg": "wrangler deploy -e stg",
+		"deploy:prod": "wrangler deploy -e prod",
 		"dev": "wrangler dev --local",
 		"dev:https": "wrangler dev --local --local-protocol=https",
 		"start": "wrangler dev",

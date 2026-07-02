@@ -15,37 +15,37 @@
       {
         "command": "/health-check",
         "description": "起動確認",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/set-notify-channel",
         "description": "通知チャンネルを設定する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/set-payee-nickname",
         "description": "自分を支払い先として追加し，ニックネームを設定する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/profile",
         "description": "自分の登録情報を確認する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/remove-payee-nickname",
         "description": "支払い先のニックネームを削除する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/recovery-newcommer",
         "description": "新入部員登録フローの途中でエラーが発生したユーザーを復旧する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       },
       {
         "command": "/start-renew",
         "description": "継続手続きを開始する",
-        "url": "https://bot.v5.meibo.sysken.net/slack"
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       }
     ],
     "app_home": {
@@ -70,7 +70,7 @@
   },
   "settings": {
     "event_subscriptions": {
-      "request_url": "https://bot.v5.meibo.sysken.net/slack",
+      "request_url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack",
       "bot_events": [
         "app_mention",
         "team_join",
@@ -80,7 +80,7 @@
     },
     "interactivity": {
       "is_enabled": true,
-      "request_url": "https://bot.v5.meibo.sysken.net/slack"
+      "request_url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
     }
   }
 }
