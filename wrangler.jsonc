@@ -96,13 +96,13 @@
 			"queues": {
 				"producers": [
 					{
-						"queue": "meibo-bot-v5-after-input-member-info",
+						"queue": "meibo-bot-v5-prod-after-input-member-info",
 						"binding": "AFTER_INPUT_MEMBER_INFO_QUE",
 					}
 				],
 				"consumers": [
 					{
-						"queue": "meibo-bot-v5-after-input-member-info",
+						"queue": "meibo-bot-v5-prod-after-input-member-info",
 						"max_batch_size": 10,
 						"max_retries": 3,
 					}
