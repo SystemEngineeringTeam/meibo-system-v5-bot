@@ -101,5 +101,10 @@ slackApp.all('/', async (c) => {
   // 現在の住所を実家の住所にコピー
   app.action('copy_current_address', copyCurrentAddressActionHandler);
 
+  // checkboxes は action_id を指定していないため Slack が自動生成した ID が飛んでくる。
+  // 選択自体は proceed_retirement 押下時に state から読み取るのでここでは ack のみ行う。
+  // 最後に登録し、他の特定 action_id のハンドラーを優先させる。
+  app.action('select_retirement_members', async () => {});
+
   return await app.run(c.req.raw, c.executionCtx);
 });
