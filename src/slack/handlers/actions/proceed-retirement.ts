@@ -7,16 +7,22 @@ export const proceedRetirementActionHandler: BlockActionAckHandler<'button', Hon
   const teamId = context.teamId;
   const channelId = context.channelId;
   const userId = payload.user.id;
-  const selectedMemberSlackId = payload.actions[0].value;
 
-  try {
-    // selectedMemberSlackId を返す
+  const selectedMemberIds = Object.values(payload.state.values)
+    .flatMap((blockState) => Object.values(blockState))
+    .flatMap((elementState) => elementState.selected_options?.map((option) => option.value) ?? []);
+
+  if (selectedMemberIds.length === 0) {
     await context.client.chat.postEphemeral({
       channel: channelId ?? await getNotifyChannelId(context.teamId, env),
       user: userId,
-      text: `退部処理を進めるボタンが押されました。選択された部員のSlack ID: ${selectedMemberSlackId}`,
+      text: '退部処理を進める部員が選択されていません。',
     });
-    // await retirementSelectedMemberStep(teamId, channelId, userId, selectedMemberSlackId, { client: context.client, env });
+    return;
+  }
+
+  try {
+    await retirementSelectedMemberStep(teamId, channelId, userId, selectedMemberIds, { client: context.client, env });
   } catch (error) {
     console.error('Error in proceedRetirementActionHandler:', error);
 
