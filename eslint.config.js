@@ -44,6 +44,7 @@ export default antfu({
       'ts/strict-boolean-expressions': ['error', {
         allowNullableNumber: true,
         allowNullableString: true,
+        allowNullableBoolean: true,
       }],
       'ts/switch-exhaustiveness-check': ['error'],
       'ts/array-type': ['error', { default: 'array-simple' }],

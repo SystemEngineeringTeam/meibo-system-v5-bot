@@ -15,3 +15,9 @@ interface RenewalAfterInputMemberInfoQue {
 }
 
 export type AfterInputMemberInfoQue = NewcommerAfterInputMemberInfoQue | RenewalAfterInputMemberInfoQue;
+
+export interface RetrieveFlaggedMembersQue {
+  teamId: string;
+  channelId: string;
+  userId: string;
+}

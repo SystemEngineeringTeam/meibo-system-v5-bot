@@ -46,6 +46,11 @@
         "command": "/start-renew",
         "description": "継続手続きを開始する",
         "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
+      },
+      {
+        "command": "/retrieve-flagged-members",
+        "description": "退部候補の部員を取得する",
+        "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       }
     ],
     "app_home": {

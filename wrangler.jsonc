@@ -47,12 +47,21 @@
 					{
 						"queue": "meibo-bot-v5-stg-after-input-member-info",
 						"binding": "AFTER_INPUT_MEMBER_INFO_QUE"
+					},
+					{
+						"queue": "meibo-bot-v5-stg-retrieve-flagged-members",
+						"binding": "RETRIEVE_FLAGGED_MEMBERS_QUE"
 					}
 				],
 				"consumers": [
 					{
 						"queue": "meibo-bot-v5-stg-after-input-member-info",
 						"max_batch_size": 10,
+						"max_retries": 3
+					},
+					{
+						"queue": "meibo-bot-v5-stg-retrieve-flagged-members",
+						"max_batch_size": 1,
 						"max_retries": 3
 					}
 				]
@@ -94,12 +103,21 @@
 					{
 						"queue": "meibo-bot-v5-prod-after-input-member-info",
 						"binding": "AFTER_INPUT_MEMBER_INFO_QUE"
+					},
+					{
+						"queue": "meibo-bot-v5-prod-retrieve-flagged-members",
+						"binding": "RETRIEVE_FLAGGED_MEMBERS_QUE"
 					}
 				],
 				"consumers": [
 					{
 						"queue": "meibo-bot-v5-prod-after-input-member-info",
 						"max_batch_size": 10,
+						"max_retries": 3
+					},
+					{
+						"queue": "meibo-bot-v5-prod-retrieve-flagged-members",
+						"max_batch_size": 1,
 						"max_retries": 3
 					}
 				]

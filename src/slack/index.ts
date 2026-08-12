@@ -5,6 +5,7 @@ import { autoFillAddressActionHandler } from './handlers/actions/aut-fill-addres
 import { continuingMemberApprovalActionAckHandler, continuingMemberApprovalActionLazyHandler } from './handlers/actions/continuting-member-approval';
 import { copyCurrentAddressActionHandler } from './handlers/actions/copy-current-address';
 import { newcommerApprovalActionAckHandler, newcommerApprovalActionLazyHandler } from './handlers/actions/newcommer-approval';
+import { proceedRetirementActionHandler } from './handlers/actions/proceed-retirement';
 import { selectContinuingMemberFeePayeeActionHandler } from './handlers/actions/select-continuting-member-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { selectNewcommerFeePayeeActionHandler } from './handlers/actions/select-newcommer-fee-payee';
@@ -13,6 +14,7 @@ import { healthCheckCommandHandler } from './handlers/commands/health-check';
 import { profileCommandHandler } from './handlers/commands/profile';
 import { recoveryNewcommerCommandHandler } from './handlers/commands/recovery-newcommer';
 import { removePayeeNicknameCommandHandler } from './handlers/commands/remove-payee-nickname';
+import { retrieveFlaggedMembersCommandHandler } from './handlers/commands/retrieve-flagged-members';
 import { setNotifyChannelCommandHandler } from './handlers/commands/set-notify-channel';
 import { setPayeeNicknameCommandHandler } from './handlers/commands/set-payee-nickname';
 import { startContinuationCommandHandler } from './handlers/commands/start-continuation';
@@ -85,6 +87,13 @@ slackApp.all('/', async (c) => {
   // STEP 5: 承認・拒否
   app.action('continuing_member_approve', continuingMemberApprovalActionAckHandler(true), continuingMemberApprovalActionLazyHandler(true));
   app.action('continuing_member_reject', continuingMemberApprovalActionAckHandler(false), continuingMemberApprovalActionLazyHandler(false));
+
+  // ===== [retirement-flow] =====
+  // STEP 1: FLAGGED_MEMBER を取得
+  app.command('/retrieve-flagged-members', adminOnlyCommand(retrieveFlaggedMembersCommandHandler));
+
+  // STEP 2: 選択した部員の退部処理
+  app.action('proceed_retirement', proceedRetirementActionHandler);
 
   // ===== 共通 =====
   // 住所の自動入力
