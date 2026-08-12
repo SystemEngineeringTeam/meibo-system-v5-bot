@@ -32,6 +32,7 @@ export const retrieveFlaggedMembersStep = async (_teamId: string, channelId: str
   const flaggedMembersRes = await apiClient.POST('/members/_rpc/retrieve-flagged-members', { body: { slackIds } });
 
   if (!flaggedMembersRes.data) {
+    console.error('Failed to retrieve flagged members from API:', flaggedMembersRes.error);
     await client.chat.postEphemeral({
       channel: channelId,
       user: userId,
@@ -50,7 +51,7 @@ export const retrieveFlaggedMembersStep = async (_teamId: string, channelId: str
     await postMembersSelectMessages(client, channelId, flaggedMembers, slackNameByUserId);
     await postMembersManualRemovalMessages(client, channelId, flaggedMembers);
   } catch (error) {
-    console.error(error);
+    console.error('Failed to post flagged members messages:', error, error instanceof Error ? { name: error.name, message: error.message } : { value: error });
     throw error;
   }
 };

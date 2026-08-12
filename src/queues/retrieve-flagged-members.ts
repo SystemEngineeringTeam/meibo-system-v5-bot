@@ -6,7 +6,7 @@ export const processRetrieveFlaggedMembers = async (teamId: string, channelId: s
     await retrieveFlaggedMembersStep(teamId, channelId, userId, { client, env });
     return true;
   } catch (error) {
-    console.error('Failed to retrieve flagged members:', error);
+    console.error('Failed to retrieve flagged members:', error, error instanceof Error ? { name: error.name, message: error.message } : { value: error });
     return false;
   }
 };

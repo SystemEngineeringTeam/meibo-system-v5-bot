@@ -8,9 +8,23 @@ export const proceedRetirementActionHandler: BlockActionAckHandler<'button', Hon
   const channelId = context.channelId;
   const userId = payload.user.id;
 
-  const selectedMemberIds = Object.values(payload.state.values)
+  // 現在メッセージ上に実際に存在する checkbox の value のみを対象にする
+  // (クライアント側の表示が更新前のままだと、既に退部処理済みで消したはずの選択肢が
+  //  state.values に残ってしまうことがあるため)
+  const currentCheckboxValues = new Set(
+    (payload.message.blocks ?? [])
+      .filter((block) => block.type === 'actions')
+      .flatMap((block) => block.elements)
+      .filter((element) => element.type === 'checkboxes')
+      .flatMap((element) => element.options)
+      .map((option) => option.value),
+  );
+
+  const selectedOptions = Object.values(payload.state.values)
     .flatMap((blockState) => Object.values(blockState))
-    .flatMap((elementState) => elementState.selected_options?.map((option) => option.value) ?? []);
+    .flatMap((elementState) => elementState.selected_options ?? [])
+    .filter((option) => currentCheckboxValues.has(option.value));
+  const selectedMemberIds = selectedOptions.map((option) => option.value);
 
   if (selectedMemberIds.length === 0) {
     await context.client.chat.postEphemeral({
@@ -23,7 +37,10 @@ export const proceedRetirementActionHandler: BlockActionAckHandler<'button', Hon
 
   try {
     const succeeded = await retirementSelectedMemberStep(teamId, channelId, userId, selectedMemberIds, { client: context.client, env });
-    if (succeeded) await disableProcessedCheckboxes(context.client, payload, selectedMemberIds);
+    if (succeeded) {
+      await disableProcessedCheckboxes(context.client, payload, selectedMemberIds);
+      await notifyProcessedMembers(context.client, payload, selectedOptions.map((option) => option.text.text));
+    }
   } catch (error) {
     console.error('Error in proceedRetirementActionHandler:', error);
 
@@ -59,5 +76,16 @@ async function disableProcessedCheckboxes(client: SlackAPIClient, payload: Messa
     ts: payload.message.ts,
     text: payload.message.text,
     blocks: updatedBlocks,
+  });
+}
+
+/** 退部処理が完了した部員の一覧をスレッドに返信する */
+async function notifyProcessedMembers(client: SlackAPIClient, payload: MessageBlockAction<ButtonAction>, processedMemberTexts: string[]) {
+  const memberList = processedMemberTexts.map((text) => `• ${text}`).join('\n');
+
+  await client.chat.postMessage({
+    channel: payload.channel.id,
+    thread_ts: payload.message.thread_ts ?? payload.message.ts,
+    text: `以下の部員の退部処理が完了しました。\n${memberList}`,
   });
 }
