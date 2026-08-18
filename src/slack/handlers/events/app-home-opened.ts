@@ -2,6 +2,7 @@ import type { AnyHomeTabBlock, EventLazyHandler } from 'slack-cloudflare-workers
 import type { HonoSlackAppEnv } from '@/types/hono';
 import { apiClient } from '@/lib/fetch-client';
 import { getUserId } from '@/lib/get-user-id';
+import { isAdminUser } from '@/lib/is-admin-user';
 
 export const appHomeOpenedEventHandler: EventLazyHandler<'app_home_opened', HonoSlackAppEnv> = async ({ context, payload, env }) => {
   const slackUserId = payload.user;
@@ -14,12 +15,13 @@ export const appHomeOpenedEventHandler: EventLazyHandler<'app_home_opened', Hono
     });
 
     const isRenewalPending = statusRes.data?.value.currentStatusDetail.renewStatus?.type === 'RENEW_WAITING';
+    const isAdmin = await isAdminUser(context.client, slackUserId);
 
     await context.client.views.publish({
       user_id: payload.user,
       view: {
         type: 'home',
-        blocks: buildBlocks(isRenewalPending),
+        blocks: buildBlocks(isRenewalPending, isAdmin),
       },
     });
   } catch (error) {
@@ -42,8 +44,8 @@ export const appHomeOpenedEventHandler: EventLazyHandler<'app_home_opened', Hono
   }
 };
 
-function buildBlocks(isRenewalPending: boolean): AnyHomeTabBlock[] {
-  return [
+function buildBlocks(isRenewalPending: boolean, isAdmin: boolean): AnyHomeTabBlock[] {
+  const blocks: AnyHomeTabBlock[] = [
     {
       type: 'section',
       text: {
@@ -53,6 +55,12 @@ function buildBlocks(isRenewalPending: boolean): AnyHomeTabBlock[] {
     },
     generateRenewalPendingBlock(isRenewalPending),
   ];
+
+  if (isAdmin) {
+    blocks.push({ type: 'divider' }, generateRetireFlowBlock());
+  }
+
+  return blocks;
 }
 
 function generateRenewalPendingBlock(isRenewalPending: boolean): AnyHomeTabBlock {
@@ -77,6 +85,22 @@ function generateRenewalPendingBlock(isRenewalPending: boolean): AnyHomeTabBlock
         },
         style: 'primary',
         action_id: 'start_continuation_from_home',
+      },
+    ],
+  };
+}
+
+function generateRetireFlowBlock(): AnyHomeTabBlock {
+  return {
+    type: 'actions',
+    elements: [
+      {
+        type: 'button',
+        text: {
+          type: 'plain_text',
+          text: '退部候補の部員を取得する',
+        },
+        action_id: 'retrieve_flagged_members_from_home',
       },
     ],
   };

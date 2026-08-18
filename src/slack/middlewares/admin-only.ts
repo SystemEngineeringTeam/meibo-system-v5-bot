@@ -1,5 +1,6 @@
 import type { MessageAckResponse, SlackRequestWithRespond, SlashCommand } from 'slack-cloudflare-workers';
 import type { HonoSlackAppEnv } from '@/types/hono';
+import { isAdminUser } from '@/lib/is-admin-user';
 
 /** 管理者のみ実行可能 */
 export const adminOnlyCommand = (handler: (req: SlackRequestWithRespond<HonoSlackAppEnv, SlashCommand>) => Promise<MessageAckResponse>) =>
@@ -8,17 +9,7 @@ export const adminOnlyCommand = (handler: (req: SlackRequestWithRespond<HonoSlac
 
     const userId = payload.user_id;
 
-    // ユーザー情報取得
-    const res = await context.client.users.info({
-      user: userId,
-    });
-
-    const user = res.user;
-
-    const isAdmin
-      = user?.is_admin === true
-        || user?.is_owner === true
-        || user?.is_primary_owner === true;
+    const isAdmin = await isAdminUser(context.client, userId);
 
     if (!isAdmin) {
       await context.client.chat.postEphemeral({

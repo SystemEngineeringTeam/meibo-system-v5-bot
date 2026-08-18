@@ -6,6 +6,7 @@ import { continuingMemberApprovalActionAckHandler, continuingMemberApprovalActio
 import { copyCurrentAddressActionHandler } from './handlers/actions/copy-current-address';
 import { newcommerApprovalActionAckHandler, newcommerApprovalActionLazyHandler } from './handlers/actions/newcommer-approval';
 import { proceedRetirementActionHandler } from './handlers/actions/proceed-retirement';
+import { retrieveFlaggedMembersFromHomeActionHandler } from './handlers/actions/retrieve-flagged-members-from-home';
 import { selectContinuingMemberFeePayeeActionHandler } from './handlers/actions/select-continuting-member-fee-payee';
 import { selectMemberTypeActionHandler } from './handlers/actions/select-member-type';
 import { selectNewcommerFeePayeeActionHandler } from './handlers/actions/select-newcommer-fee-payee';
@@ -91,6 +92,8 @@ slackApp.all('/', async (c) => {
   // ===== [retirement-flow] =====
   // STEP 1: FLAGGED_MEMBER を取得
   app.command('/retrieve-flagged-members', adminOnlyCommand(retrieveFlaggedMembersCommandHandler));
+  // STEP 1: App Home から実行
+  app.action('retrieve_flagged_members_from_home', retrieveFlaggedMembersFromHomeActionHandler);
 
   // STEP 2: 選択した部員の退部処理
   app.action('proceed_retirement', proceedRetirementActionHandler);
