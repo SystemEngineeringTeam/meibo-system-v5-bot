@@ -12,6 +12,12 @@ const MAX_CHECKBOX_OPTIONS = 10;
 const MAX_OPTION_TEXT_LENGTH = 75;
 // Slack の section text は最大3000文字なので、余裕を持って1メッセージあたりのメンション数を制限する
 const MAX_MANUAL_REMOVAL_MENTIONS_PER_MESSAGE = 100;
+// 要確認の部員に出さない Slack ID のリスト
+const EXCLUDED_SLACK_IDS = [
+  'USLACKBOT', // Slackbot(なぜか is_bot が false で返ってくる)
+  'U05Q796TKGA', // 顧問(伊藤暢浩)
+  'U049R34EXU2', // シス研管理アカウント
+];
 
 export const retrieveFlaggedMembersStep = async (_teamId: string, channelId: string, userId: string, { client }: SlackHandlerOptions) => {
   const usersRes = await client.users.list();
@@ -26,7 +32,7 @@ export const retrieveFlaggedMembersStep = async (_teamId: string, channelId: str
   }
 
   // 解除済みアカウントや BOT アカウントは対象外 (Slackbot は is_bot が false で返ってくるため id で除外)
-  const activeMembers = usersRes.members.filter((member) => !member.deleted && !member.is_bot && member.id !== 'USLACKBOT');
+  const activeMembers = usersRes.members.filter((member) => !member.deleted && !member.is_bot && member.id != null && !EXCLUDED_SLACK_IDS.includes(member.id));
   const slackIds = activeMembers.map((member) => member.id).filter((id): id is string => !!id);
 
   const flaggedMembersRes = await apiClient.POST('/members/_rpc/retrieve-flagged-members', { body: { slackIds } });
@@ -42,9 +48,9 @@ export const retrieveFlaggedMembersStep = async (_teamId: string, channelId: str
     await client.chat.postEphemeral({
       channel: channelId,
       user: userId,
-      text: '退部候補の部員の取得に失敗しました。管理者に連絡してください',
+      text: '要確認の部員の取得に失敗しました。管理者に連絡してください',
     });
-    throw new Error('退部候補の部員の取得に失敗しました');
+    throw new Error('要確認の部員の取得に失敗しました');
   }
 
   const flaggedMembers: FlaggedMembers = flaggedMembersRes.data.value.items;

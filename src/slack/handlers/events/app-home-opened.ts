@@ -98,7 +98,7 @@ function generateRetireFlowBlock(): AnyHomeTabBlock {
         type: 'button',
         text: {
           type: 'plain_text',
-          text: '退部候補の部員を取得する',
+          text: '要確認の部員を取得する',
         },
         action_id: 'retrieve_flagged_members_from_home',
       },

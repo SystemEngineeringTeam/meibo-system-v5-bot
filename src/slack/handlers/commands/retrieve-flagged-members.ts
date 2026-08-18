@@ -13,7 +13,7 @@ export const retrieveFlaggedMembersCommandHandler: SlashCommandAckHandler<HonoSl
     await context.client.chat.postEphemeral({
       channel: channelId,
       user: userId,
-      text: '退部候補の部員を取得しています。しばらくお待ちください。',
+      text: '要確認の部員を取得しています。しばらくお待ちください。',
     });
   } catch (error) {
     console.error('Error occurred while enqueueing retrieve flagged members job:', error);

@@ -49,7 +49,7 @@
       },
       {
         "command": "/retrieve-flagged-members",
-        "description": "退部候補の部員を取得する",
+        "description": "要確認の部員を取得する",
         "url": "https://meibo-system-v5-bot-prod.ait-sysken.workers.dev/slack"
       }
     ],
